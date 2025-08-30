@@ -138,5 +138,6 @@
     body {
         @apply bg-background text-foreground;
         @apply bg-white;
+        @apply text-black;
     }
 }
