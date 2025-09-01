@@ -141,3 +141,12 @@
         @apply text-black;
     }
 }
+@layer base {
+    button,
+    a,
+    [role="button"],
+    input[type="button"],
+    input[type="submit"] {
+      @apply cursor-pointer;
+    }
+  }
