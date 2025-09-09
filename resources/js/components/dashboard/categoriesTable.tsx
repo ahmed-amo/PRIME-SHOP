@@ -67,6 +67,10 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import * as XLSX from "xlsx";
+import { useForm } from "@inertiajs/react";
+import { CreateCategory } from "@/types/categories";
+import { FormEventHandler, useState } from "react";
+import { CompactFileInput } from "../formInputs/imageUpload";
 
 export type Product = {
   id: string;
@@ -79,7 +83,7 @@ export type Product = {
   status: "in-stock" | "out-stock";
 };
 
-const data: Product[] = [
+const categories: Product[] = [
   {
     id: "prod-001",
     name: "Wireless Headphones",
@@ -266,6 +270,7 @@ export const columns: ColumnDef<Product>[] = [
   },
 ];
 
+const [images, setImages] = useState<File[]>([]);
 export default function CategoriesTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -277,18 +282,9 @@ export default function CategoriesTable() {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [showAddDialog, setShowAddDialog] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [newProduct, setNewProduct] = React.useState<Partial<Product>>({
-    name: "",
-    category: "",
-    price: 0,
-    stock: 0,
-    status: "in-stock",
-    salesCount: 0,
-    image: "/placeholder.svg?height=40&width=40",
-  });
 
   const table = useReactTable({
-    data,
+    data:categories,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -351,32 +347,24 @@ export default function CategoriesTable() {
     XLSX.writeFile(workbook, "products.xlsx");
   };
 
-  const handleAddProduct = () => {
-    // In a real application, you would add the product to your database
-    console.log("Adding new product:", newProduct);
+  const { data, setData, post, processing, errors, reset } = useForm<Required<CreateCategory>>({
+    name: '',
+    slug: '',
+    color: '',
+    image: null,
+});
+const submit: FormEventHandler = (e) => {
+  e.preventDefault();
+  console.log(data);
+  // post(route('register'), {
+  //     onFinish: () => reset('password', 'password_confirmation'),
+  // });
+};
 
-    // Reset form and close dialog
-    setNewProduct({
-      name: "",
-      category: "",
-      price: 0,
-      stock: 0,
-      status: "in-stock",
-      salesCount: 0,
-      image: "/placeholder.svg?height=40&width=40",
-    });
-    setShowAddDialog(false);
-  };
 
-  // Calculate total value of all products
-  const totalValue = data.reduce(
-    (sum, product) => sum + product.price * product.stock,
-    0
-  );
-  const formattedTotalValue = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(totalValue);
+  function setFiles1(files: File[]): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <Card className="w-full">
@@ -402,112 +390,47 @@ export default function CategoriesTable() {
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[750px]">
-                <DialogHeader>
-                  <DialogTitle>Add New Product</DialogTitle>
+               <form action="" onSubmit={submit}>
+               <DialogHeader>
+                  <DialogTitle>Add New Category</DialogTitle>
                   <DialogDescription>
-                    Fill in the details to add a new product to your inventory.
+                    Fill in the details to add a new Category to your inventory.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-6 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Product Name</Label>
+                    <Label htmlFor="name">Category Name</Label>
                     <Input
                       id="name"
-                      value={newProduct.name}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, name: e.target.value })
+                      value={data.name}
+                      onChange={(e) =>setData('name', e.target.value)
                       }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Category color eg"bg-slate-100"</Label>
                     <Input
-                      id="category"
-                      value={newProduct.category}
+                      id="color"
+                      value={data.color}
                       onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          category: e.target.value,
-                        })
+                        setData('color' , e.target.value)
                       }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={newProduct.price}
-                      onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          price: Number.parseFloat(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="stock">Stock</Label>
-                    <Input
-                      id="stock"
-                      type="number"
-                      value={newProduct.stock}
-                      onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          stock: Number.parseInt(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="salesCount">Sales Count</Label>
-                    <Input
-                      id="salesCount"
-                      type="number"
-                      value={newProduct.salesCount}
-                      onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          salesCount: Number.parseInt(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={newProduct.status}
-                      onValueChange={(value) =>
-                        setNewProduct({
-                          ...newProduct,
-                          status: value as "in-stock" | "out-stock",
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="in-stock">In Stock</SelectItem>
-                        <SelectItem value="out-stock">Out of Stock</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="supplier">Supplier</Label>
-                    <Input id="supplier" placeholder="Enter supplier name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Image URL</Label>
-                    <Input
-                      id="image"
-                      value={newProduct.image}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, image: e.target.value })
-                      }
-                      placeholder="Enter image URL"
-                    />
+                  <div className="p-6 max-w-4xl mx-auto">
+                  <h1 className="text-2xl font-bold mb-6">Image Upload</h1>
+<div className="mb-8">
+  <h2 className="text-lg font-semibold mb-3"></h2>
+  <div className="p-4 border rounded">
+    <CompactFileInput
+      multiple={true}
+      maxSizeMB={1}
+      onChange={setImages}
+    />
+  </div>
+</div>
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
@@ -517,10 +440,11 @@ export default function CategoriesTable() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" onClick={handleAddProduct}>
-                    Add Product
+                  <Button type="submit">
+                    Add Category
                   </Button>
                 </DialogFooter>
+               </form>
               </DialogContent>
             </Dialog>
           </div>

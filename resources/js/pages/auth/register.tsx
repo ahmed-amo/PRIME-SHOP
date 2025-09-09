@@ -30,6 +30,7 @@ export default function Register() {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
+    
 
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
