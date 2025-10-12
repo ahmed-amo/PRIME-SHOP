@@ -120,7 +120,7 @@ export default function NavBarOne() {
             </div>
           </Link>
         </div>
-  
+
         {/* Search bar */}
         <div className="hidden md:flex flex-1 max-w-xl mx-8">
           <div className="relative flex w-full items-center">
@@ -137,14 +137,14 @@ export default function NavBarOne() {
             </Button>
           </div>
         </div>
-  
+
         {/* Actions */}
         <div className="flex items-center gap-1 md:gap-6">
-          <Link href={'login'}>
-          <Button
-variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2 border-black">
-  Login
-</Button>
+          <Link href={route('login')}>
+            <Button
+            variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2 border-black">
+            Login
+            </Button>
           </Link>
 
           {/* Account */}
@@ -160,7 +160,7 @@ variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:tex
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Dashboard</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">Orders</DropdownMenuItem>
@@ -169,7 +169,7 @@ variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:tex
               <DropdownMenuItem className="cursor-pointer">Sign out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-  
+
           {/* Help */}
           <Dialog>
             <DialogTrigger asChild>
@@ -231,7 +231,7 @@ variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:tex
               </div>
             </DialogContent>
           </Dialog>
-  
+
           {/* Shopping Cart */}
           <Sheet>
             <SheetTrigger asChild>
@@ -383,7 +383,7 @@ variant="ghost" className="rounded-full text-black hover:bg-orange-200 hover:tex
               )}
             </SheetContent>
           </Sheet>
-  
+
           {/* Mobile menu button */}
           <Sheet>
             <SheetTrigger asChild>

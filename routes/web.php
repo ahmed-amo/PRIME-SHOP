@@ -1,24 +1,25 @@
 <?php
 
-use App\Http\Controllers\Shop\HomeController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+
+///OPEN ROUTES
 Route::get('/', function () {
     return Inertia::render('home');
 })->name('home');
-
-Route::get('/',[HomeController::class,'get_home_data']) ->name('home');
 
 Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 }) ->name('product');
 
 
+///PROTECTED ROUTES
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        return Inertia::render('dashboard/index');
+        return Inertia::render('dashboard/stats');
     })->name('dashboard');
     Route::get('/products', function () {
         return Inertia::render('dashboard/products');
