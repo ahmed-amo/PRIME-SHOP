@@ -50,9 +50,18 @@ class User extends Authenticatable
     public function getRedirectRoute(): string
     {
         return match ($this->role) {
-            'admin' => '/dashboard',
+            'admin' => '/admin/dashboard',
             'client' => '/home',
             default => '/home',
         };
+    }
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isClient()
+    {
+        return $this->role === 'client';
     }
 }

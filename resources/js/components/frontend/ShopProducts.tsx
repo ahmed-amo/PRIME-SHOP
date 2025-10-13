@@ -334,10 +334,7 @@ const ProductTwo = () => {
   };
 
   // Calculate displayed products
-  const displayedProducts = products.slice(
-    currentIndex,
-    Math.min(currentIndex + visibleProducts, products.length)
-  );
+
 
   // Auto scroll function
   useEffect(() => {

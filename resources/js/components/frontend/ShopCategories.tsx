@@ -16,6 +16,7 @@ export default function CategoryOne({categories}:{categories: CategoryItem[]}) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
+
   // Animation on mount
   useEffect(() => {
     setIsVisible(true);

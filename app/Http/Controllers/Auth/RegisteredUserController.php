@@ -5,34 +5,27 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Inertia; // Make sure this is imported
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Show the registration page.
-     */
-    public function create(): Response
+    // This method shows the registration form
+    public function create()
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('Auth/Register'); // Adjust this path based on your setup
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): RedirectResponse
+    // This method handles the registration logic
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -40,12 +33,15 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'client', // Make sure your User model has a role field
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->intended(route('/dashboard', absolute: false));
+        return response()->json([
+            'redirect' => $user->getRedirectRoute(), // Ensure this method exists in your User model
+        ]);
     }
 }
