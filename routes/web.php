@@ -21,6 +21,9 @@ Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 }) ->name('product');
 
+Route::get('/admin/dashboard', function() {
+    return Inertia::render('Dashboard/Admin/Stats');
+}) ->name('dashboard');
 
 
 

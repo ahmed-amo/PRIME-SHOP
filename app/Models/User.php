@@ -46,22 +46,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function getRedirectRoute(): string
-    {
-        return match ($this->role) {
-            'admin' => '/admin/dashboard',
-            'client' => '/home',
-            default => '/home',
-        };
-    }
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isClient()
+    public function isUser(): bool
     {
-        return $this->role === 'client';
+        return $this->role === 'user';
     }
+
+    // Optional: Get redirect route based on role
+    public function getRedirectRoute(): string
+    {
+        return $this->isAdmin() ? route('dashboard') : '/';
+    }
+
 }

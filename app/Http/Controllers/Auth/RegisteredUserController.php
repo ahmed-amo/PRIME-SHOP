@@ -5,26 +5,31 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Inertia\Inertia; // Make sure this is imported
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    // This method shows the registration form
-    public function create()
+    /**
+     * Display the registration view.
+     */
+    public function create(): Response
     {
-        return Inertia::render('Auth/Register'); // Adjust this path based on your setup
+        return Inertia::render('auth/register');
     }
 
-    // This method handles the registration logic
-    public function store(Request $request): JsonResponse
+    /**
+     * Handle an incoming registration request.
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -33,15 +38,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'client', // Make sure your User model has a role field
+            'role' => 'client',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return response()->json([
-            'redirect' => $user->getRedirectRoute(), // Ensure this method exists in your User model
-        ]);
+        return redirect('/');
     }
 }
