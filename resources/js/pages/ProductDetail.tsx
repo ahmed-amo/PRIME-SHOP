@@ -10,7 +10,7 @@ import {
   ChevronLeft,
   Check,
 } from "lucide-react";
-import ShopFrontLayout from "@/layouts/shop-front-layout";
+import ShopFrontLayout from "@/layouts/shop-layout";
 
 // Types
 interface Product {
@@ -145,7 +145,7 @@ const frequentlyBoughtTogether: FrequentlyBoughtTogether[] = [
 ];
 
 const ProductDetails = () => {
-    
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState(0);

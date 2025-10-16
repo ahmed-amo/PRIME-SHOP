@@ -1,12 +1,17 @@
-
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { CategoryItem } from "@/types/categories";
 
+interface CategoryItem {
+  id: number;
+  name: string;
+  slug: string;
+  image: string;
+  color: string;
+}
 
-
-export default function CategoryOne({categories}:{categories: CategoryItem[]}) {
+export default function CategoryOne() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -16,14 +21,110 @@ export default function CategoryOne({categories}:{categories: CategoryItem[]}) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-
   // Animation on mount
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
   // Premium categories data
-
+  const categories: CategoryItem[] = [
+    {
+      id: 1,
+      name: "Beauty & Fragrance",
+      slug: "beauty-fragrance",
+      image:
+        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-amber-50",
+    },
+    {
+      id: 2,
+      name: "Electronics",
+      slug: "electronics",
+      image:
+        "https://images.unsplash.com/photo-166202691159-5558e9949346?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-gray-100",
+    },
+    {
+      id: 3,
+      name: "Health & Personal",
+      slug: "health-personal",
+      image:
+        "https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-sky-50",
+    },
+    {
+      id: 4,
+      name: "Men's Fashion",
+      slug: "mens-fashion",
+      image:
+        "https://images.unsplash.com/photo-1516257984-b1b4d707412e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-blue-50",
+    },
+    {
+      id: 5,
+      name: "Sports & Outdoors",
+      slug: "sports-outdoors",
+      image:
+        "https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-purple-50",
+    },
+    {
+      id: 6,
+      name: "Women's Fashion",
+      slug: "womens-fashion",
+      image:
+        "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-indigo-50",
+    },
+    {
+      id: 7,
+      name: "Automotive",
+      slug: "automotive",
+      image:
+        "https://images.unsplash.com/photo-1504215680853-026ed2a45def?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-blue-50",
+    },
+    {
+      id: 8,
+      name: "Health & Nutrition",
+      slug: "health-nutrition",
+      image:
+        "https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-sky-50",
+    },
+    {
+      id: 9,
+      name: "Kids Fashion",
+      slug: "kids-fashion",
+      image:
+        "https://images.unsplash.com/photo-1543854608-fbb5c5c8a307?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-violet-50",
+    },
+    {
+      id: 10,
+      name: "Refurbished Department",
+      slug: "refurbished",
+      image:
+        "https://images.unsplash.com/photo-1603706585128-8d096bea0021?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-blue-50",
+    },
+    {
+      id: 11,
+      name: "Stationary, Books & Media",
+      slug: "stationary-books-media",
+      image:
+        "https://images.unsplash.com/photo-1599204606395-ede983886ce9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-amber-50",
+    },
+    {
+      id: 12,
+      name: "Baby",
+      slug: "baby",
+      image:
+        "https://images.unsplash.com/photo-1586683086816-c674f6bb3c69?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      color: "bg-teal-50",
+    },
+  ];
 
   // Calculate visible items based on screen size
   useEffect(() => {
@@ -105,8 +206,8 @@ export default function CategoryOne({categories}:{categories: CategoryItem[]}) {
   };
 
   return (
-    <div className="rounded-2xl my-8 mx-4 overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+    <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
+      <div className="max-w-7xl mx-auto">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-32 h-32 bg-amber-200/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-40 h-40 bg-amber-300/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
