@@ -4,7 +4,7 @@ import ShopFooter from '../components/frontend/ShopFooter'
 
 export default function ShopFrontLayout({children}: {children: ReactNode}) {
   return (
-    <div>
+    <div className='bg-white'>
         <ShopHeader />
             {children}
         <ShopFooter />

@@ -1,6 +1,7 @@
 import type React from "react"
-import { Home, Package, FolderTree, ShoppingCart, Users, Settings, BarChart3, Link } from "lucide-react"
+import { Home, Package, FolderTree, ShoppingCart, Users, Settings, BarChart3 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Link, usePage } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
-  { name: "Dashboard", href: "/admin", icon: Home },
+  { name: "Dashboard", href: "/admin/dashboard", icon: Home },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: FolderTree },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
@@ -27,6 +28,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  // ✅ Get current URL from Inertia
+  const { url } = usePage()
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
@@ -36,19 +40,30 @@ export default function AdminLayout({
           <p className="text-sm text-muted-foreground mt-1">E-commerce Dashboard</p>
         </div>
 
+        {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          ))}
+          {navigation.map((item) => {
+            const isActive =
+              url === item.href || url.startsWith(item.href + "/")
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-orange-500 text-white"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            )
+          })}
         </nav>
 
+        {/* Footer user info */}
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 px-3 py-2">
             <Avatar className="h-8 w-8">
