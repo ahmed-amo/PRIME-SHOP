@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Search, Package, Truck, CheckCircle, Clock } from "lucide-react"
+import ClientLayout from "../Layouts/client-layout"
 
 const orders = [
   {
@@ -153,3 +154,4 @@ export default function OrdersPage() {
     </div>
   )
 }
+OrdersPage.layout = (page: React.ReactNode) => <ClientLayout>{page}</ClientLayout>;

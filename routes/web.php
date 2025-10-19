@@ -23,7 +23,24 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/home', function () {
     return Inertia::render('Home');
-})->name('ClientHome');
+    })->name('ClientHome');
+    Route::prefix('client')->group(function () {
+     Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard/Client/Dashpage');
+    })->name('client-dashboard');
+    Route::get('/orders', function () {
+    return Inertia::render('Dashboard/Client/Orders');
+    })->name('client-orders');
+    Route::get('/profile', function () {
+    return Inertia::render('Dashboard/Client/Profile');
+    })->name('client-profile');
+    Route::get('/wishlist', function () {
+    return Inertia::render('Dashboard/Client/WishList');
+    })->name('client-wishlist');
+});
+
+
+
 
     //ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

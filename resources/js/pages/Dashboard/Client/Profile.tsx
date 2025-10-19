@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera } from "lucide-react"
+import ClientLayout from "../Layouts/client-layout"
 
 export default function ProfilePage() {
   const [formData, setFormData] = useState({
@@ -202,3 +203,4 @@ export default function ProfilePage() {
     </div>
   )
 }
+ProfilePage.layout = (page: React.ReactNode) => <ClientLayout>{page}</ClientLayout>;

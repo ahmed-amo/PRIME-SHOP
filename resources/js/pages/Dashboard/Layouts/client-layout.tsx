@@ -1,5 +1,6 @@
 import type React from "react"
-import { User, ShoppingBag, Heart, Home, Link } from "lucide-react"
+import { User, ShoppingBag, Heart, Home } from "lucide-react"
+import {Link} from "@inertiajs/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,10 +14,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
-  { name: "Dashboard", href: "/client", icon: Home },
-  { name: "Profile", href: "/client/profile", icon: User },
+  { name: "Dashboard", href: "/client/dashboard", icon: Home },
   { name: "Orders", href: "/client/orders", icon: ShoppingBag },
   { name: "Wishlist", href: "/client/wishlist", icon: Heart },
+  { name: "Profile", href: "/client/profile", icon: User },
 ]
 
 export default function ClientLayout({

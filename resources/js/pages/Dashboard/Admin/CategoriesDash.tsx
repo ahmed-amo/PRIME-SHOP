@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Search, Pencil, Trash2,Link } from "lucide-react"
+import { Search, Pencil, Trash2 } from "lucide-react"
 import AdminLayout from "../Layouts/admin-layout"
+import {Link} from "@inertiajs/react"
 
 // Mock data
 const mockCategories = [
@@ -37,9 +38,8 @@ export default function CategoriesPage() {
           <h1 className="text-3xl font-bold text-foreground text-balance">Categories</h1>
           <p className="mt-1 text-sm text-muted-foreground">Organize your products into categories</p>
         </div>
-        <Link href="/admin/products/add">
+        <Link href="/admin/categories/add">
           <Button className="gap-2">
-            <Plus className="h-4 w-4 " />
             Add Category
           </Button>
         </Link>

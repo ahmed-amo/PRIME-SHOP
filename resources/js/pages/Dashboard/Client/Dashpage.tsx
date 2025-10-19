@@ -2,6 +2,7 @@ import { ShoppingBag, Heart, Package, Clock, Link } from "lucide-react"
 import StatsCard from "@/components/extra/adminStats"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import ClientLayout from "../Layouts/client-layout"
 
 
 const recentOrders = [
@@ -111,3 +112,4 @@ export default function ClientDashboard() {
     </div>
   )
 }
+ClientDashboard.layout = (page: React.ReactNode) => <ClientLayout>{page}</ClientLayout>;

@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Search, Pencil, Trash2, Eye, Link } from "lucide-react"
+import { Plus, Search, Pencil, Trash2, Eye} from "lucide-react"
 import AdminLayout from "../Layouts/admin-layout"
+import {Link} from "@inertiajs/react"
 
 // Mock data
 const mockProducts = [
@@ -45,7 +46,7 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold text-foreground text-balance">Products</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage your product inventory and pricing</p>
         </div>
-        <Link href="/admin/products/new">
+        <Link href="/admin/products/add">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
             Add Product

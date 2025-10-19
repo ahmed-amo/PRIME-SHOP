@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Search, ShoppingCart, Trash2 } from "lucide-react"
+import ClientLayout from "../Layouts/client-layout"
 
 const wishlistItems = [
   {
@@ -177,3 +178,4 @@ export default function WishlistPage() {
     </div>
   )
 }
+WishlistPage.layout = (page: React.ReactNode) => <ClientLayout>{page}</ClientLayout>;
