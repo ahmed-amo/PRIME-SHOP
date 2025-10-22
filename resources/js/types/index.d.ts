@@ -1,6 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { PageProps as InertiaPageProps } from '@inertiajs/core'
 export interface Auth {
     user: User;
 }
@@ -41,3 +42,12 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+
+export interface SharedProps {
+  auth: {
+    user: User
+  }
+}
+
+export type PageProps<T = Record<string, unknown>> = InertiaPageProps & SharedProps & T
