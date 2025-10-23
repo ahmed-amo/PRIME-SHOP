@@ -12,11 +12,22 @@ class Category extends Model
         'slug',
         'color',
         'image',
+        'products_number',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => 'boolean'
     ];
 
     public function products(): HasMany
 {
     return $this->hasMany(Product::class);
 }
-    
+public function getProductsCountAttribute(): int
+{
+    return $this->products()->count();
+}
+
+
 }

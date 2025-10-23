@@ -1,5 +1,5 @@
 import React from "react"
-import { usePage, Link } from "@inertiajs/react"
+import { usePage, Link, router } from "@inertiajs/react"
 import { User, ShoppingBag, Heart, Home } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { PageProps } from "@/types"
-
+ const handleLogout = () => {
+  router.post(route('logout'));
+};
 const navigation = [
   { name: "Dashboard", href: "/client/dashboard", icon: Home },
   { name: "Orders", href: "/client/orders", icon: ShoppingBag },
@@ -106,7 +108,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}
+                >Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

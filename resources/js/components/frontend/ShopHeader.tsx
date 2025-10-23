@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Search,
   HelpCircle,
+  ShoppingBag,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -100,8 +101,8 @@ export default function NavBarOne() {
                 {/* Login Button */}
                 <Link href={route('login')}>
                   <Button
-                    variant="ghost"
-                    className="rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2"
+
+                    className="rounded-full text-black hover:bg-orange-300 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2"
                   >
                     Login
                   </Button>
@@ -111,73 +112,13 @@ export default function NavBarOne() {
                 <Link href={route('register')}>
                   <Button
                     variant="ghost"
-                    className="rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2"
+                    className="rounded-full text-black hover:bg-white-200 hover:text-black transition-colors duration-200 cursor-pointer px-4 py-2"
                   >
                     Sign Up
                   </Button>
                 </Link>
 
-                {/* Help Icon */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hidden md:flex rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200 cursor-pointer"
-                    >
-                      <HelpCircle className="h-5 w-5 text-black" />
-                      <span className="sr-only">Help</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Customer Support</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex gap-8 py-10 m-5">
-                      <div className="rounded-lg bg-slate-50 p-4 m-6">
-                        <h3 className="font-medium mb-2">Contact Us</h3>
-                        <p className="text-sm text-slate-600 mb-1">
-                          Email: support@luxeplus.com
-                        </p>
-                        <p className="text-sm text-slate-600 mb-1">
-                          Phone: +1 (800) 123-4567
-                        </p>
-                        <p className="text-sm text-slate-600">
-                          Hours: 24/7 Concierge Support
-                        </p>
-                      </div>
-                      <div className="grid gap-3">
-                        <h3 className="font-medium">Quick Links</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Shipping Information
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Returns & Exchanges
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Order Tracking
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            FAQ
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+
               </>
             ) : (
               /* AUTHENTICATED VIEW - Profile, Help */
@@ -229,55 +170,58 @@ export default function NavBarOne() {
                       <span className="sr-only">Help</span>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-3xl">
-                    <DialogHeader>
-                      <DialogTitle>Customer Support</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex gap-6 py-8">
-                      <div className="rounded-lg bg-slate-50 p-4">
-                        <h3 className="font-medium mb-2">Contact Us</h3>
-                        <p className="text-sm text-slate-600 mb-1">
-                          Email: support@luxeplus.com
+                  <DialogContent className="max-w-3xl w-full p-8">
+                        <DialogHeader>
+                        <DialogTitle className="text-3xl font-bold text-primary">
+                        Customer Support
+                        </DialogTitle>
+                        </DialogHeader>
+
+                    <div className="flex gap-12 mt-4">
+                        <div className="rounded-lg bg-slate-50 p-4">
+                        <h3 className="font-semibold text-lg mb-2">Contact Us</h3>
+                        <p className="text-base text-slate-600 mb-1">
+                            Email: support@luxeplus.com
                         </p>
-                        <p className="text-sm text-slate-600 mb-1">
-                          Phone: +1 (800) 123-4567
+                        <p className="text-base text-slate-600 mb-1">
+                            Phone: +1 (800) 123-4567
                         </p>
-                        <p className="text-sm text-slate-600">
-                          Hours: 24/7 Concierge Support
+                        <p className="text-base text-slate-600">
+                            Hours: 24/7 Concierge Support
                         </p>
-                      </div>
-                      <div className="grid gap-3">
-                        <h3 className="font-medium">Quick Links</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Shipping Information
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Returns & Exchanges
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            Order Tracking
-                          </Link>
-                          <Link
-                            href="#"
-                            className="text-sm text-orange-500 hover:underline"
-                          >
-                            FAQ
-                          </Link>
                         </div>
-                      </div>
+
+                        <div className="grid gap-4">
+                        <h3 className="font-semibold text-lg">Quick Links</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                            <Link href="#" className="text-base text-orange-500 hover:underline">
+                            Shipping Information
+                            </Link>
+                            <Link href="#" className="text-base text-orange-500 hover:underline">
+                            Returns & Exchanges
+                            </Link>
+                            <Link href="#" className="text-base text-orange-500 hover:underline">
+                            Order Tracking
+                            </Link>
+                            <Link href="#" className="text-base text-orange-500 hover:underline">
+                            FAQ
+                            </Link>
+                        </div>
+                        </div>
                     </div>
-                  </DialogContent>
+                    </DialogContent>
+
                 </Dialog>
+                {/* Shoping bag */}
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full relative text-black hidden md:flex rounded-full text-black hover:bg-orange-200 hover:text-black transition-colors duration-200  			cursor-pointer"
+              >
+                <ShoppingBag className="h-5 w-5 text-black" />
+                <span className="sr-only">Shopping Cart</span>
+              </Button>
 
               </>
             )}

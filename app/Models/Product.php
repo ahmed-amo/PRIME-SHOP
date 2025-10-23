@@ -5,38 +5,46 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class Product extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'category_id',
         'name',
         'slug',
         'description',
         'price',
-        'old_price',
-        'rating',
-        'review_count',
         'stock',
+        'category_id',
         'image',
         'gallery',
-        'colors',
-        'sizes',
-        'is_featured',
-        'is_active',
+        'status',
     ];
+
     protected $casts = [
-        'colors'=>'array',
-        'original_price'=>'decimal:2',
-        'price'=>'decimal:2',
-        'rating'=>'decimal1',
-     ];
-        
+        'price' => 'decimal:2',
+        'stock' => 'integer',
+        'gallery' => 'array',
+        'status' => 'string',
+    ];
+
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
-    public function scopeSimilaire($query,$productId){
-        $product = static::FirstOrFail($productId);
-        return  $query ->where('category_id',$product->category_id)->where('id','!=',$product);
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function isLowStock(): bool
+    {
+        return $this->status === 'low_stock';
+    }
+
+    public function isOutOfStock(): bool
+    {
+        return $this->status === 'out_of_stock';
     }
 }

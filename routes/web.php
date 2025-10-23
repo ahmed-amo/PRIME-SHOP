@@ -1,11 +1,13 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\Shop\HomeController;
 
 //PUBLIC ROUTES//
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 
 Route::get('/', function () {
     return Inertia::render('Home');
