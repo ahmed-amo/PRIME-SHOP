@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -11,7 +9,11 @@ interface CategoryItem {
   color: string;
 }
 
-export default function CategoryOne() {
+interface CategoryProps  {
+  categories: CategoryItem[];
+}
+
+export default function CategoryOne({ categories = [] }: CategoryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -25,106 +27,6 @@ export default function CategoryOne() {
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  // Premium categories data
-  const categories: CategoryItem[] = [
-    {
-      id: 1,
-      name: "Beauty & Fragrance",
-      slug: "beauty-fragrance",
-      image:
-        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-amber-50",
-    },
-    {
-      id: 2,
-      name: "Electronics",
-      slug: "electronics",
-      image:
-        "https://images.unsplash.com/photo-166202691159-5558e9949346?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-gray-100",
-    },
-    {
-      id: 3,
-      name: "Health & Personal",
-      slug: "health-personal",
-      image:
-        "https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-sky-50",
-    },
-    {
-      id: 4,
-      name: "Men's Fashion",
-      slug: "mens-fashion",
-      image:
-        "https://images.unsplash.com/photo-1516257984-b1b4d707412e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-blue-50",
-    },
-    {
-      id: 5,
-      name: "Sports & Outdoors",
-      slug: "sports-outdoors",
-      image:
-        "https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-purple-50",
-    },
-    {
-      id: 6,
-      name: "Women's Fashion",
-      slug: "womens-fashion",
-      image:
-        "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-indigo-50",
-    },
-    {
-      id: 7,
-      name: "Automotive",
-      slug: "automotive",
-      image:
-        "https://images.unsplash.com/photo-1504215680853-026ed2a45def?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-blue-50",
-    },
-    {
-      id: 8,
-      name: "Health & Nutrition",
-      slug: "health-nutrition",
-      image:
-        "https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-sky-50",
-    },
-    {
-      id: 9,
-      name: "Kids Fashion",
-      slug: "kids-fashion",
-      image:
-        "https://images.unsplash.com/photo-1543854608-fbb5c5c8a307?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-violet-50",
-    },
-    {
-      id: 10,
-      name: "Refurbished Department",
-      slug: "refurbished",
-      image:
-        "https://images.unsplash.com/photo-1603706585128-8d096bea0021?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-blue-50",
-    },
-    {
-      id: 11,
-      name: "Stationary, Books & Media",
-      slug: "stationary-books-media",
-      image:
-        "https://images.unsplash.com/photo-1599204606395-ede983886ce9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-amber-50",
-    },
-    {
-      id: 12,
-      name: "Baby",
-      slug: "baby",
-      image:
-        "https://images.unsplash.com/photo-1586683086816-c674f6bb3c69?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-      color: "bg-teal-50",
-    },
-  ];
 
   // Calculate visible items based on screen size
   useEffect(() => {
@@ -205,6 +107,16 @@ export default function CategoryOne() {
     return categories.slice(startIdx, startIdx + visibleItems);
   };
 
+  // Helper function to get Tailwind background color class from hex
+  const getColorClass = (color: string) => {
+    // If color is already a Tailwind class, return it
+    if (color && color.startsWith('bg-')) {
+      return color;
+    }
+    // Default fallback
+    return 'bg-amber-50';
+  };
+
   return (
     <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
       <div className="max-w-7xl mx-auto">
@@ -282,7 +194,7 @@ export default function CategoryOne() {
                 >
                   <div
                     className={`w-full aspect-square rounded-full overflow-hidden ${
-                      category.color
+                      getColorClass(category.color)
                     } p-1.5 ${
                       hoveredCategory === category.id
                         ? "shadow-md ring-2 ring-amber-300 ring-opacity-50"
@@ -294,7 +206,7 @@ export default function CategoryOne() {
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center">
                       <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10"></div>
                       <img
-                        src={category.image}
+                        src={category.image || '/placeholder-category.png'}
                         alt={category.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
@@ -312,21 +224,23 @@ export default function CategoryOne() {
         </div>
 
         {/* Enhanced Dot Navigation */}
-        <div className="flex justify-center items-center space-x-3 mt-8">
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToPage(index)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                activeIndex === index
-                  ? "w-10 bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm"
-                  : "w-2.5 bg-gray-200 hover:bg-amber-200"
-              }`}
-              aria-label={`Go to page ${index + 1}`}
-              aria-current={activeIndex === index ? "true" : "false"}
-            />
-          ))}
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-3 mt-8">
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToPage(index)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  activeIndex === index
+                    ? "w-10 bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm"
+                    : "w-2.5 bg-gray-200 hover:bg-amber-200"
+                }`}
+                aria-label={`Go to page ${index + 1}`}
+                aria-current={activeIndex === index ? "true" : "false"}
+              />
+            ))}
+          </div>
+        )}
 
         {/* View All Categories Button */}
         <div
@@ -343,6 +257,13 @@ export default function CategoryOne() {
             <ChevronRight className="h-4 w-4 ml-1" />
           </a>
         </div>
+
+        {/* No categories message */}
+        {categories.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No categories available at the moment.</p>
+          </div>
+        )}
       </div>
     </div>
   );
