@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import  {Category}  from '../../types/categories';
 
-interface CategoryItem {
-  id: number;
-  name: string;
-  slug: string;
-  image: string;
-  color: string;
+interface ShopCategoriesProps {
+    categories: Category[];
 }
 
-interface CategoryProps  {
-  categories: CategoryItem[];
-}
 
-export default function CategoryOne({ categories = [] }: CategoryProps) {
+export default function CategoryOne( { categories }: ShopCategoriesProps ) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -117,6 +111,13 @@ export default function CategoryOne({ categories = [] }: CategoryProps) {
     return 'bg-amber-50';
   };
 
+   if (!categories || categories.length === 0) {
+    return (
+      <div className="w-full py-12 text-center">
+        <p className="text-gray-500">No categories available at the moment.</p>
+      </div>
+    );
+  }
   return (
     <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
       <div className="max-w-7xl mx-auto">

@@ -3,27 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\Category;
 use Inertia\Inertia;
-use App\Http\Controllers\Shop\CategoriesController;
+use App\Http\Controllers\Shop\HomeController;
 
-Route::get('/test-categories', function() {
-    $categories = Category::where('status', true)
-        ->latest()
-        ->get()
-        ->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'image' => $category->image,
-                'color' => $category->color,
-            ];
-        });
-
-    return response()->json($categories);
-});
+Route::get('/categories', [HomeController::class, 'show_categories'])->name('categories');
 //PUBLIC ROUTES//
-Route::get('/testcate', [CategoriesController::class, 'show_categories']);
-
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 Route::get('/', function () {

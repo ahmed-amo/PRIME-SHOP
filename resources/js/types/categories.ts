@@ -1,14 +1,24 @@
-export interface CategoryItem {
+
+export interface Category {
     id: number;
     name: string;
-    slug: string;
-    image: string;
-    color: string;
-  }
+    color:string;
+    slug:string
+    description?: string;
+    image?: string;
 
-  export interface CreateCategory {
+}
+
+export interface Product {
+    id: number;
     name: string;
-    slug: string;
-    image: File | null; 
-    color: string;
-  }
+    price: number;
+    description?: string;
+    category_id: number;
+    category?: Category;
+}
+
+export interface HomeProps {
+    categories: Category[];
+    featuredProducts?: Product[];
+}
