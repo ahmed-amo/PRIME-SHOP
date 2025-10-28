@@ -10,9 +10,9 @@ class Category extends Model
     protected $fillable =[
         'name',
         'slug',
-        'color',
+        'description',
         'image',
-        'products_number',
+        'color',
         'status',
     ];
 
@@ -20,14 +20,16 @@ class Category extends Model
         'status' => 'boolean'
     ];
 
-    public function products(): HasMany
-{
-    return $this->hasMany(Product::class);
-}
-public function getProductsCountAttribute(): int
-{
-    return $this->products()->count();
-}
+// protected $appends = ['products_count'];
+
+//     public function products(): HasMany
+// {
+//     return $this->hasMany(Product::class);
+// }
+// public function getProductsCountAttribute(): int
+// {
+//     return $this->products()->count();
+// }
 
 
 }

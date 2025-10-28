@@ -5,25 +5,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
-      public function index(): Response
-    {
-        $categories = Category::all();
+      public function get_home_data(): Response
+{
+    $categories = Category::where('status', true)
+        ->withCount('products')
+        ->latest()
+        ->get()
+        ->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'color' => $category->color ?? 'bg-amber-50',
+                'image' => $category->image,
+                'products_count' => $category->products_count ?? 0,
+                'status' => $category->status,
+            ];
+        });
 
-        return Inertia::render('Home', [  // ← Changed from 'Categories/Index' to 'Home'
-            'categories' => $categories
-        ]);
-    }
+    // Debug: Log what we're sending
+    Log::info('Categories being sent:', ['categories' => $categories->toArray()]);
 
-    // CATEGORIES PAGE - Separate page for all categories
-    public function show_categories(): Response
-    {
-        $categories = Category::all();
-
-        return Inertia::render('Categories/Index', [
-            'categories' => $categories
-        ]);
+    return Inertia::render('Home', [
+        'categories' => $categories
+    ]);
 }
 }

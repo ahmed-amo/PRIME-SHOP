@@ -5,9 +5,9 @@ use App\Models\Category;
 use Inertia\Inertia;
 use App\Http\Controllers\Shop\HomeController;
 
-Route::get('/categories', [HomeController::class, 'show_categories'])->name('categories');
+
 //PUBLIC ROUTES//
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'get_home_data'])->name('home');
 
 
 Route::get('/', function () {

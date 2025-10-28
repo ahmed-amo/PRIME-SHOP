@@ -2,49 +2,59 @@
 
 namespace App\Models;
 
+
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
+        'category_id',
         'name',
         'slug',
         'description',
-        'price',
-        'stock',
-        'category_id',
+        'original_price',
+        'discount_price',
+        'discount_percentage',
         'image',
-        'gallery',
+        'images',
+        'rating',
+        'reviews_count',
+        'stock',
+        'is_new',
+        'is_featured',
         'status',
+        'sku',
+        'meta_description',
+        'meta_keywords',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'discount_percentage' => 'integer',
+        'rating' => 'decimal:2',
+        'reviews_count' => 'integer',
         'stock' => 'integer',
-        'gallery' => 'array',
-        'status' => 'string',
+        'is_new' => 'boolean',
+        'is_featured' => 'boolean',
+        'status' => 'boolean',
+        'images' => 'array',
+        'meta_keywords' => 'array',
     ];
 
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
-    }
+    protected $appends = [
+        'final_price',
+        'savings',
+        'is_in_stock',
+        'is_low_stock',
+    ];
 
-    public function isLowStock(): bool
-    {
-        return $this->status === 'low_stock';
-    }
 
-    public function isOutOfStock(): bool
-    {
-        return $this->status === 'out_of_stock';
-    }
+
 }

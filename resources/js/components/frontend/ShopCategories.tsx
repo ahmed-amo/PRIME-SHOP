@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import  {Category}  from '../../types/categories';
-
-interface ShopCategoriesProps {
-    categories: Category[];
-}
+import { Category } from '../../types/categories';
 
 
-export default function CategoryOne( { categories }: ShopCategoriesProps ) {
+
+export default function CategoryOne({categories}:{categories:Category[]}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -16,6 +13,10 @@ export default function CategoryOne( { categories }: ShopCategoriesProps ) {
   const [touchEnd, setTouchEnd] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Safe way to check if categories exist
+  const hasCategories = Array.isArray(categories) && categories.length > 0;
+  const categoryCount = Array.isArray(categories) ? categories.length : 0;
 
   // Animation on mount
   useEffect(() => {
@@ -44,26 +45,26 @@ export default function CategoryOne( { categories }: ShopCategoriesProps ) {
   }, []);
 
   // Calculate maximum pages
-  const totalPages = Math.ceil(categories.length / visibleItems);
-  const maxIndex = totalPages - 1;
+  const totalPages = categoryCount > 0 ? Math.ceil(categoryCount / visibleItems) : 0;
+  const maxIndex = totalPages > 0 ? totalPages - 1 : 0;
 
   // Navigation functions
   const goToNext = () => {
-    if (sliding) return;
+    if (sliding || !hasCategories) return;
     setSliding(true);
     setActiveIndex((current) => (current === maxIndex ? 0 : current + 1));
     setTimeout(() => setSliding(false), 500);
   };
 
   const goToPrev = () => {
-    if (sliding) return;
+    if (sliding || !hasCategories) return;
     setSliding(true);
     setActiveIndex((current) => (current === 0 ? maxIndex : current - 1));
     setTimeout(() => setSliding(false), 500);
   };
 
   const goToPage = (index: number) => {
-    if (sliding || index === activeIndex) return;
+    if (sliding || index === activeIndex || !hasCategories) return;
     setSliding(true);
     setActiveIndex(index);
     setTimeout(() => setSliding(false), 500);
@@ -97,6 +98,7 @@ export default function CategoryOne( { categories }: ShopCategoriesProps ) {
 
   // Calculate visible categories based on active index
   const visibleCategories = () => {
+    if (!hasCategories) return [];
     const startIdx = activeIndex * visibleItems;
     return categories.slice(startIdx, startIdx + visibleItems);
   };
@@ -111,13 +113,15 @@ export default function CategoryOne( { categories }: ShopCategoriesProps ) {
     return 'bg-amber-50';
   };
 
-   if (!categories || categories.length === 0) {
+  // Early return if no categories
+  if (!hasCategories) {
     return (
-      <div className="w-full py-12 text-center">
+      <div className="w-full py-12 text-center bg-gradient-to-b from-amber-50/70 to-amber-50/30">
         <p className="text-gray-500">No categories available at the moment.</p>
       </div>
     );
   }
+
   return (
     <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
       <div className="max-w-7xl mx-auto">
@@ -258,13 +262,6 @@ export default function CategoryOne( { categories }: ShopCategoriesProps ) {
             <ChevronRight className="h-4 w-4 ml-1" />
           </a>
         </div>
-
-        {/* No categories message */}
-        {categories.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No categories available at the moment.</p>
-          </div>
-        )}
       </div>
     </div>
   );
