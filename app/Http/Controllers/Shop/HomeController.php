@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -27,10 +26,8 @@ class HomeController extends Controller
             ];
         });
 
-    // Debug: Log what we're sending
-    Log::info('Categories being sent:', ['categories' => $categories->toArray()]);
 
-    return Inertia::render('Home', [
+    return Inertia::render('home', [
         'categories' => $categories
     ]);
 }

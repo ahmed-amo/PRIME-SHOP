@@ -17,39 +17,40 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'Electronics',
                 'color' => '#3b82f6', // blue-500
-                'image' => 'electronics.jpg',
+                'image' => 'wireless-mouse.png',
             ],
             [
                 'name' => 'Clothing',
                 'color' => '#f97316', // orange-500
-                'image' => 'clothing.jpg',
+                'image' => 'mechanical-keyboard.png',
             ],
             [
                 'name' => 'Home & Kitchen',
                 'color' => '#10b981', // green-500
-                'image' => 'home.jpg',
+                'image' => 'laptop-stand.png',
             ],
             [
                 'name' => 'Toys',
                 'color' => '#eab308', // yellow-500
-                'image' => 'toys.jpg',
+                'image' => 'classic-webcam.png',
             ],
             [
                 'name' => 'Books',
                 'color' => '#8b5cf6', // purple-500
-                'image' => 'books.jpg',
+                'image' => 'premium-headphones.png',
             ],
         ];
 
         foreach ($categories as $cat) {
-            Category::create([
-                'name' => $cat['name'],
-                'slug' => Str::slug($cat['name']),
-                'color' => $cat['color'],
-                'image' => $cat['image'],
-                'products_number' => 0,
-                'status' => true,
-            ]);
+            Category::updateOrCreate(
+                ['slug' => Str::slug($cat['name'])],
+                [
+                    'name' => $cat['name'],
+                    'color' => $cat['color'],
+                    'image' => $cat['image'],
+                    'status' => true,
+                ]
+            );
         }
     }
 }

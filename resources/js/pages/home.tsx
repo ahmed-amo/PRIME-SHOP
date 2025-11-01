@@ -7,7 +7,7 @@ import { Category } from '../types/categories';
 
 
 export default function Home({ categories }: {categories:Category[]}) {
-  console.log('Categories received:', categories);
+
 
   return (
     <div className="bg-white">

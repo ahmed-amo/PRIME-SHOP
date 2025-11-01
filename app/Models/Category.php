@@ -20,16 +20,8 @@ class Category extends Model
         'status' => 'boolean'
     ];
 
-// protected $appends = ['products_count'];
-
-//     public function products(): HasMany
-// {
-//     return $this->hasMany(Product::class);
-// }
-// public function getProductsCountAttribute(): int
-// {
-//     return $this->products()->count();
-// }
-
-
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

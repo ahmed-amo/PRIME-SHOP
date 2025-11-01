@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,27 +8,37 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, Pencil, Trash2 } from "lucide-react"
 import AdminLayout from "../Layouts/admin-layout"
-import {Link} from "@inertiajs/react"
+import { Link, router } from "@inertiajs/react"
 
-// Mock data
-const mockCategories = [
-  { id: 1, name: "Electronics", slug: "electronics", productCount: 156, status: "active" },
-  { id: 2, name: "Accessories", slug: "accessories", productCount: 89, status: "active" },
-  { id: 3, name: "Clothing", slug: "clothing", productCount: 234, status: "active" },
-  { id: 4, name: "Home & Garden", slug: "home-garden", productCount: 67, status: "active" },
-  { id: 5, name: "Sports", slug: "sports", productCount: 45, status: "active" },
-  { id: 6, name: "Books", slug: "books", productCount: 123, status: "active" },
-]
+interface Category {
+  id: number
+  name: string
+  slug: string
+  description?: string | null
+  status?: boolean
+  products_count?: number
+}
 
-export default function CategoriesPage() {
+interface Paginated<T> {
+  data: T[]
+  links: { url: string | null; label: string; active: boolean }[]
+  meta?: any
+}
+
+export default function CategoriesPage({ categories }: { categories: Paginated<Category> }) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [categories] = useState(mockCategories)
 
-  const filteredCategories = categories.filter(
-    (category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.slug.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  const filtered = useMemo(() => {
+    const source = categories?.data ?? []
+    if (!searchQuery) return source
+    const q = searchQuery.toLowerCase()
+    return source.filter((c) => c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q))
+  }, [categories, searchQuery])
+
+  const onDelete = (id: number) => {
+    if (!confirm("Delete this category?")) return
+    router.delete(route('admin.categories.destroy', { category: id }))
+  }
 
   return (
     <div className="space-y-6">
@@ -65,7 +75,7 @@ export default function CategoriesPage() {
       {/* Categories table */}
       <Card className="border-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-foreground">All Categories ({filteredCategories.length})</CardTitle>
+          <CardTitle className="text-foreground">All Categories ({filtered.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -79,14 +89,14 @@ export default function CategoriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredCategories.map((category) => (
+              {filtered.map((category) => (
                 <TableRow key={category.id} className="border-border">
                   <TableCell className="font-medium">{category.name}</TableCell>
                   <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                  <TableCell>{category.productCount} products</TableCell>
+                  <TableCell>{category.products_count ?? 0} products</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="bg-green-500/10 text-green-700 border-green-200">
-                      {category.status}
+                    <Badge variant="outline" className={`${category.status ? 'bg-green-500/10 text-green-700 border-green-200' : 'bg-gray-200 text-gray-700 border-gray-300'}`}>
+                      {category.status ? 'active' : 'inactive'}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -96,7 +106,7 @@ export default function CategoriesPage() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" onClick={() => onDelete(category.id)}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>

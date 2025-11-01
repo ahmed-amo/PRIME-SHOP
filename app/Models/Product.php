@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,43 +16,38 @@ class Product extends Model
         'name',
         'slug',
         'description',
-        'original_price',
-        'discount_price',
-        'discount_percentage',
-        'image',
-        'images',
-        'rating',
-        'reviews_count',
+        'price',
         'stock',
-        'is_new',
-        'is_featured',
-        'status',
         'sku',
-        'meta_description',
-        'meta_keywords',
+        'status',
     ];
 
     protected $casts = [
-        'original_price' => 'decimal:2',
-        'discount_price' => 'decimal:2',
-        'discount_percentage' => 'integer',
-        'rating' => 'decimal:2',
-        'reviews_count' => 'integer',
+        'price' => 'decimal:2',
         'stock' => 'integer',
-        'is_new' => 'boolean',
-        'is_featured' => 'boolean',
         'status' => 'boolean',
-        'images' => 'array',
-        'meta_keywords' => 'array',
     ];
 
     protected $appends = [
-        'final_price',
-        'savings',
         'is_in_stock',
-        'is_low_stock',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($product) {
+            $product->slug = Str::slug($product->name);
+        });
+    }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function getIsInStockAttribute(): bool
+    {
+        return $this->stock > 0;
+    }
 }

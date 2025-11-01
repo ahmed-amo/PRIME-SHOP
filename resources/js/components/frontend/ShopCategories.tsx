@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Category } from '../../types/categories';
 
+interface CategoryItem {
+  id: number;
+  name: string;
+  slug: string;
+  image?: string;
+  image_url?: string;
+  color?: string;
+}
 
-
-export default function CategoryOne({categories}:{categories:Category[]}) {
+export default function CategoryOne({ categories = [] }: { categories?: CategoryItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -14,16 +21,10 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Safe way to check if categories exist
-  const hasCategories = Array.isArray(categories) && categories.length > 0;
-  const categoryCount = Array.isArray(categories) ? categories.length : 0;
-
-  // Animation on mount
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  // Calculate visible items based on screen size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
@@ -44,33 +45,30 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate maximum pages
-  const totalPages = categoryCount > 0 ? Math.ceil(categoryCount / visibleItems) : 0;
-  const maxIndex = totalPages > 0 ? totalPages - 1 : 0;
+  const totalPages = Math.ceil((categories?.length ?? 0) / visibleItems) || 1;
+  const maxIndex = totalPages - 1;
 
-  // Navigation functions
   const goToNext = () => {
-    if (sliding || !hasCategories) return;
+    if (sliding) return;
     setSliding(true);
     setActiveIndex((current) => (current === maxIndex ? 0 : current + 1));
     setTimeout(() => setSliding(false), 500);
   };
 
   const goToPrev = () => {
-    if (sliding || !hasCategories) return;
+    if (sliding) return;
     setSliding(true);
     setActiveIndex((current) => (current === 0 ? maxIndex : current - 1));
     setTimeout(() => setSliding(false), 500);
   };
 
   const goToPage = (index: number) => {
-    if (sliding || index === activeIndex || !hasCategories) return;
+    if (sliding || index === activeIndex) return;
     setSliding(true);
     setActiveIndex(index);
     setTimeout(() => setSliding(false), 500);
   };
 
-  // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -96,36 +94,38 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
     setTouchEnd(0);
   };
 
-  // Calculate visible categories based on active index
   const visibleCategories = () => {
-    if (!hasCategories) return [];
     const startIdx = activeIndex * visibleItems;
     return categories.slice(startIdx, startIdx + visibleItems);
   };
 
-  // Helper function to get Tailwind background color class from hex
-  const getColorClass = (color: string) => {
-    // If color is already a Tailwind class, return it
-    if (color && color.startsWith('bg-')) {
-      return color;
+  // Helper function to get the correct image URL
+  const getCategoryImage = (category: CategoryItem) => {
+    // If image_url is provided (from backend), use it
+    if (category.image_url) {
+      return category.image_url;
     }
-    // Default fallback
-    return 'bg-amber-50';
-  };
 
-  // Early return if no categories
-  if (!hasCategories) {
-    return (
-      <div className="w-full py-12 text-center bg-gradient-to-b from-amber-50/70 to-amber-50/30">
-        <p className="text-gray-500">No categories available at the moment.</p>
-      </div>
-    );
-  }
+    // If image exists, construct the storage URL
+    if (category.image) {
+      // If it's already a full URL
+      if (category.image.startsWith('http://') || category.image.startsWith('https://')) {
+        return category.image;
+      }
+      // If it's a storage path, prepend /storage/
+      if (!category.image.startsWith('/')) {
+        return `/storage/${category.image}`;
+      }
+      return category.image;
+    }
+
+    // Fallback to placeholder
+    return '/placeholder.jpg';
+  };
 
   return (
     <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
       <div className="max-w-7xl mx-auto">
-        {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-32 h-32 bg-amber-200/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-40 h-40 bg-amber-300/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
 
@@ -166,7 +166,6 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
           </div>
         </div>
 
-        {/* Categories Carousel */}
         <div
           ref={carouselRef}
           className="relative overflow-hidden"
@@ -186,7 +185,7 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
           >
             <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 md:gap-6">
               {visibleCategories().map((category, idx) => (
-                <a
+                <Link
                   key={category.id}
                   href={`/category/${category.slug}`}
                   className="flex flex-col items-center group"
@@ -199,7 +198,7 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
                 >
                   <div
                     className={`w-full aspect-square rounded-full overflow-hidden ${
-                      getColorClass(category.color)
+                      category.color || 'bg-gradient-to-br from-amber-200 to-amber-300'
                     } p-1.5 ${
                       hoveredCategory === category.id
                         ? "shadow-md ring-2 ring-amber-300 ring-opacity-50"
@@ -211,9 +210,13 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center">
                       <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10"></div>
                       <img
-                        src={category.image || '/placeholder-category.png'}
+                        src={getCategoryImage(category)}
                         alt={category.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder.jpg';
+                        }}
                       />
                     </div>
                   </div>
@@ -222,32 +225,28 @@ export default function CategoryOne({categories}:{categories:Category[]}) {
                       {category.name}
                     </h3>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Enhanced Dot Navigation */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center space-x-3 mt-8">
-            {Array.from({ length: totalPages }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToPage(index)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  activeIndex === index
-                    ? "w-10 bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm"
-                    : "w-2.5 bg-gray-200 hover:bg-amber-200"
-                }`}
-                aria-label={`Go to page ${index + 1}`}
-                aria-current={activeIndex === index ? "true" : "false"}
-              />
-            ))}
-          </div>
-        )}
+        <div className="flex justify-center items-center space-x-3 mt-8">
+          {Array.from({ length: totalPages }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToPage(index)}
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                activeIndex === index
+                  ? "w-10 bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm"
+                  : "w-2.5 bg-gray-200 hover:bg-amber-200"
+              }`}
+              aria-label={`Go to page ${index + 1}`}
+              aria-current={activeIndex === index ? "true" : "false"}
+            />
+          ))}
+        </div>
 
-        {/* View All Categories Button */}
         <div
           className={`flex justify-center mt-8 transition-opacity duration-1000 ${
             isVisible ? "opacity-100" : "opacity-0"
