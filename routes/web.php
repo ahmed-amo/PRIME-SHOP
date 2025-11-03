@@ -10,7 +10,9 @@ use App\Http\Controllers\User\ProductController;
 
 //PUBLIC ROUTES//
 Route::get('/', [HomeController::class, 'get_home_data'])->name('home');
-
+Route::get('/categories',function() {
+    return Inertia::render('Categories');
+})->name('categories');
 Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 }) ->name('product');

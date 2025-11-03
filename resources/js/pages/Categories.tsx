@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { TrendingUp, ArrowRight, Zap, Tag } from "lucide-react";
+import ShopFrontLayout from "@/layouts/shop-layout";
 
 interface CategoryItem {
   id: number;
@@ -116,7 +117,8 @@ export default function CategoryFour() {
   ];
 
   return (
-    <div className="w-full py-12 px-4 md:px-8 bg-gray-50">
+    <ShopFrontLayout>
+        <div className="w-full py-12 px-4 md:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="mb-10 text-center">
@@ -248,5 +250,7 @@ export default function CategoryFour() {
         </div>
       </div>
     </div>
+    </ShopFrontLayout>
+
   );
 }

@@ -40,36 +40,32 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex items-center justify-between">
+      {/* Page header with search */}
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground text-balance">Products</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage your product inventory and pricing</p>
         </div>
-        <Link href="/admin/products/add">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Product
-          </Button>
-        </Link>
-      </div>
-
-      {/* Search and filters */}
-      <Card className="border-border shadow-sm">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search products by name or category..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+        <div className="flex items-center gap-3">
+          {/* Search bar */}
+          <div className="relative w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardContent>
-      </Card>
+          <Link href="/admin/products/add">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Product
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       {/* Products table */}
       <Card className="border-border shadow-sm">
