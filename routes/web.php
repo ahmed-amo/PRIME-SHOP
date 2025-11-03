@@ -14,6 +14,9 @@ Route::get('/', [HomeController::class, 'get_home_data'])->name('home');
 Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 }) ->name('product');
+// Add this in the PUBLIC ROUTES section, after the home route
+Route::get('/category/{category:slug}', [HomeController::class, 'get_category_products'])
+->name('category.show');
 
 //PROTECTED ROUTES
 
