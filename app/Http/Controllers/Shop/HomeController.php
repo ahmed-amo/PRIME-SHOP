@@ -29,17 +29,15 @@ class HomeController extends Controller
         'categories' => $categories
     ]);
 }
-// Add this method to your HomeController
+
 public function get_category_products(Category $category)
 {
-    // Get products for this category with pagination
     $products = $category->products()
-        ->where('status', true) // Only active products
-        ->with(['category']) // Load category relationship
+        ->where('status', true)
+        ->with(['category'])
         ->latest()
         ->paginate(12);
 
-    // Transform products to include image URLs
     $products->getCollection()->transform(function ($product) {
         if ($product->image) {
             $product->image_url = asset('storage/' . $product->image);
