@@ -8,15 +8,15 @@ use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
 
 
-//PUBLIC ROUTES//
-Route::get('/', [HomeController::class, 'get_home_data'])->name('home');
+                //PUBLIC ROUTES//
+Route::get('/', [HomeController::class, 'get_home_data'])
+->name('home');
 Route::get('/categories',function() {
     return Inertia::render('Categories');
 })->name('categories');
 Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 }) ->name('product');
-// Add this in the PUBLIC ROUTES section, after the home route
 Route::get('/category/{category:slug}', [HomeController::class, 'get_category_products'])
 ->name('category.show');
 
@@ -26,7 +26,8 @@ Route::middleware('auth')->group(function () {
 
     //CLIENT ROUTES
 
-    Route::get('/home', [HomeController::class, 'get_home_data'])->name('ClientHome');
+    Route::get('/home', [HomeController::class, 'get_home_data'])
+    ->name('ClientHome');
     Route::prefix('client')->group(function () {
      Route::get('/dashboard', function () {
     return Inertia::render('Dashboard/Client/Dashpage');
@@ -46,7 +47,7 @@ Route::middleware('auth')->group(function () {
 
 
     //ADMIN ROUTES
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
     // Products CRUD
@@ -85,7 +86,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 }) ->name('customers');
 Route::get('/dashboard', function() {
     return Inertia::render('Dashboard/Admin/Stats');
-}) ->name('dashboard');
+}) ->name('admin.dashboard');
 
 
 });

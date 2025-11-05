@@ -20,6 +20,8 @@ interface Props {
 }
 
 export default function AddProduct({ categories }: Props) {
+  // Debug: Check if categories are coming from backend
+  console.log('Categories from Laravel:', categories)
   const [formData, setFormData] = useState({
     name: "",
     category_id: "",
@@ -130,11 +132,17 @@ export default function AddProduct({ categories }: Props) {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id.toString()}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
+                        {categories && categories.length > 0 ? (
+                          categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id.toString()}>
+                              {cat.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                            No categories available
+                          </div>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>

@@ -27,12 +27,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePage } from '@inertiajs/react';
 import { Link, router } from "@inertiajs/react";
+
+
+
 export default function NavBarOne() {
   const [isScrolled, setIsScrolled] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,7 +138,10 @@ export default function NavBarOne() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="center" className="w-56">
-                    <Link href={route('client-dashboard')}>
+                    <Link href={
+                    user?.role === 'admin'
+                        ? route('admin.dashboard')
+                        : route('client-dashboard')}>
                     <DropdownMenuItem className="cursor-pointer" >
                       Dashboard
                     </DropdownMenuItem>

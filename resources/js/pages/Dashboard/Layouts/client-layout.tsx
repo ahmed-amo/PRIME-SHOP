@@ -3,6 +3,7 @@ import { usePage, Link, router } from "@inertiajs/react"
 import { User, ShoppingBag, Heart, Home } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,6 +78,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </div>
 
           <div className="flex items-center gap-4">
+          <Link href={route('home')}>
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium">
+                <Home className="h-4 w-4" />
+                    Home
+                </Button>
+         </Link>
             <Button variant="ghost" size="icon">
               <svg
                 className="h-5 w-5"

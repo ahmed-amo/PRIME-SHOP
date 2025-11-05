@@ -1,7 +1,7 @@
 import type React from "react"
 import { Home, Package, FolderTree, ShoppingCart, Users, Settings, BarChart3 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Link, usePage } from "@inertiajs/react"
+import { Link, router, usePage } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -22,7 +22,9 @@ const navigation = [
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
-
+const handleLogout = () => {
+    router.post(route('logout'));
+  };
 export default function AdminLayout({
   children,
 }: {
@@ -87,6 +89,13 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-4">
+
+          <Link href={route('home')}>
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium">
+                <Home className="h-4 w-4" />
+                    Home
+                </Button>
+         </Link>
             <Button variant="ghost" size="icon">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -113,7 +122,8 @@ export default function AdminLayout({
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem
+                onClick={handleLogout} className="cursor-pointer">Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
