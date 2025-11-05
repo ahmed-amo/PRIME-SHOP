@@ -1,35 +1,64 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import { router } from '@inertiajs/react';
+import { useState, FormEvent } from "react"
+import { router } from '@inertiajs/react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Link } from "lucide-react"
-import AdminLayout from "../Layouts/admin-layout";
+import { ArrowLeft } from "lucide-react"
+import { Link } from '@inertiajs/react'
+import AdminLayout from "../Layouts/admin-layout"
 
+interface Category {
+  id: number
+  name: string
+}
 
-export default function NewProductPage() {
+interface Props {
+  categories: Category[]
+}
 
+export default function AddProduct({ categories }: Props) {
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
+    category_id: "",
     price: "",
     stock: "",
     description: "",
     sku: "",
   })
+  const [image, setImage] = useState<File | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    console.log("[v0] Product created:", formData)
-    // In a real app, this would save to database
-    router.visit('/dashboard');
+    setIsSubmitting(true)
+
+    const data = new FormData()
+    data.append('name', formData.name)
+    data.append('category_id', formData.category_id)
+    data.append('price', formData.price)
+    data.append('stock', formData.stock)
+    data.append('description', formData.description)
+    data.append('sku', formData.sku)
+    if (image) {
+      data.append('image', image)
+    }
+
+    router.post('/admin/products', data, {
+      onSuccess: () => {
+        // Form submitted successfully
+        console.log('Product created successfully')
+      },
+      onError: (errors) => {
+        console.error('Validation errors:', errors)
+        setIsSubmitting(false)
+      },
+      onFinish: () => {
+        setIsSubmitting(false)
+      }
+    })
   }
 
   return (
@@ -58,7 +87,7 @@ export default function NewProductPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Product Name</Label>
+                  <Label htmlFor="name">Product Name *</Label>
                   <Input
                     id="name"
                     placeholder="Enter product name"
@@ -91,19 +120,21 @@ export default function NewProductPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Category *</Label>
                     <Select
-                      value={formData.category}
-                      onValueChange={(value) => setFormData({ ...formData, category: value })}
+                      value={formData.category_id}
+                      onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                      required
                     >
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="electronics">Electronics</SelectItem>
-                        <SelectItem value="accessories">Accessories</SelectItem>
-                        <SelectItem value="clothing">Clothing</SelectItem>
-                        <SelectItem value="home">Home & Garden</SelectItem>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id.toString()}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -118,7 +149,7 @@ export default function NewProductPage() {
               <CardContent className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price ($)</Label>
+                    <Label htmlFor="price">Price ($) *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -131,7 +162,7 @@ export default function NewProductPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="stock">Stock Quantity</Label>
+                    <Label htmlFor="stock">Stock Quantity *</Label>
                     <Input
                       id="stock"
                       type="number"
@@ -155,10 +186,21 @@ export default function NewProductPage() {
               <CardContent>
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   <div className="space-y-2">
-                    <div className="text-muted-foreground text-sm">Drag and drop or click to upload</div>
-                    <Button variant="outline" size="sm" type="button">
-                      Choose File
-                    </Button>
+                    <div className="text-muted-foreground text-sm">
+                      {image ? image.name : "Drag and drop or click to upload"}
+                    </div>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setImage(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <Label htmlFor="image-upload">
+                      <Button variant="outline" size="sm" type="button" asChild>
+                        <span>Choose File</span>
+                      </Button>
+                    </Label>
                   </div>
                 </div>
               </CardContent>
@@ -169,8 +211,8 @@ export default function NewProductPage() {
                 <CardTitle className="text-foreground">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button type="submit" className="w-full">
-                  Create Product
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create Product"}
                 </Button>
                 <Link href="/admin/products" className="block">
                   <Button type="button" variant="outline" className="w-full bg-transparent">
@@ -185,4 +227,5 @@ export default function NewProductPage() {
     </div>
   )
 }
-NewProductPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
+
+AddProduct.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>

@@ -16,7 +16,24 @@ class ProductController extends Controller
 {
     public function index(): Response
     {
-        $products = Product::with('category')->latest()->paginate(10)->withQueryString();
+        $products = Product::with('category')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn ($product) => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'description' => $product->description,
+                'price' => (float) $product->price,
+                'stock' => (int) $product->stock,
+                'sku' => $product->sku,
+                'status' => $this->getStockStatus($product->stock),
+                'category' => $product->category ? $product->category->name : null,
+                'category_id' => $product->category_id,
+                'image_url' => $product->image ? Storage::url($product->image) : null,
+            ]);
+
         $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Dashboard/Admin/ProductsDash', [
@@ -40,12 +57,13 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path; // store relative path only
+            $data['image'] = $path;
         }
 
         Product::create($data);
 
-        return redirect()->route('products')->with('success', 'Product created');
+        return redirect()->route('products')
+            ->with('success', 'Product created successfully');
     }
 
     public function edit(Product $product): Response
@@ -53,7 +71,18 @@ class ProductController extends Controller
         $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Dashboard/Admin/EditProduct', [
-            'product' => $product->only(['id','name','slug','description','price','stock','sku','status','category_id','image']),
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'description' => $product->description,
+                'price' => (float) $product->price,
+                'stock' => (int) $product->stock,
+                'sku' => $product->sku,
+                'status' => $product->status,
+                'category_id' => $product->category_id,
+                'image_url' => $product->image ? Storage::url($product->image) : null,
+            ],
             'categories' => $categories,
         ]);
     }
@@ -63,7 +92,6 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // delete old if exists
             if (!empty($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -73,7 +101,8 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('products')->with('success', 'Product updated');
+        return redirect()->route('products')
+            ->with('success', 'Product updated successfully');
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -81,8 +110,22 @@ class ProductController extends Controller
         if (!empty($product->image)) {
             Storage::disk('public')->delete($product->image);
         }
+
         $product->delete();
 
-        return back()->with('success', 'Product deleted');
+        return back()->with('success', 'Product deleted successfully');
+    }
+
+    /**
+     * Helper method to determine stock status
+     */
+    private function getStockStatus(int $stock): string
+    {
+        if ($stock === 0) {
+            return 'out of stock';
+        } elseif ($stock < 20) {
+            return 'low stock';
+        }
+        return 'active';
     }
 }
