@@ -20,8 +20,7 @@ interface Props {
 }
 
 export default function AddProduct({ categories }: Props) {
-  // Debug: Check if categories are coming from backend
-  console.log('Categories from Laravel:', categories)
+
   const [formData, setFormData] = useState({
     name: "",
     category_id: "",
@@ -48,9 +47,8 @@ export default function AddProduct({ categories }: Props) {
       data.append('image', image)
     }
 
-    router.post('/admin/products', data, {
+    router.post(route('admin.products.store'), data, {
       onSuccess: () => {
-        // Form submitted successfully
         console.log('Product created successfully')
       },
       onError: (errors) => {

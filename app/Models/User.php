@@ -59,7 +59,7 @@ class User extends Authenticatable
 
     public function getRedirectRoute(): string
     {
-        return $this->isAdmin() ? route('dashboard') : '/home';
+        return $this->isAdmin() ? route('admin.dashboard') : '/home';
     }
 
 }
