@@ -112,13 +112,9 @@ class ProductController extends Controller
         }
 
         $product->delete();
-
         return back()->with('success', 'Product deleted successfully');
     }
 
-    /**
-     * Helper method to determine stock status
-     */
     private function getStockStatus(int $stock): string
     {
         if ($stock === 0) {

@@ -26,6 +26,9 @@ class CategoryController extends Controller
 
     return Inertia::render('Dashboard/Admin/CategoriesDash', [
         'categories' => $categories,
+        'flash' => [
+            'success' => session('success')
+        ]
     ]);
 }
 
@@ -42,7 +45,7 @@ class CategoryController extends Controller
             'description' => ['nullable','string'],
             'color' => ['nullable','string','max:255'],
             'status' => ['nullable'],
-            'image' => ['nullable','image','max:2048'],
+            'image' => ['nullable','image','max:20488'],
         ]);
 
         // Handle image upload
@@ -53,7 +56,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('categories')->with('success', 'Category created');
+        return redirect()->route('admin.categories')->with('success', 'Category created');
     }
 
     public function edit(Category $category): Response
@@ -94,7 +97,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories')->with('success', 'Category updated');
+        return redirect()->route('admin.categories')->with('success', 'Category updated');
     }
 
     public function destroy(Category $category): RedirectResponse

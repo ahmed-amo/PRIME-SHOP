@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, Pencil, Trash2 } from "lucide-react"
 import AdminLayout from "../Layouts/admin-layout"
-import { Link, router } from "@inertiajs/react"
+import { Link, usePage, router } from "@inertiajs/react"
 
 interface Category {
   id: number
@@ -26,7 +27,16 @@ interface Paginated<T> {
 }
 
 export default function CategoriesPage({ categories }: { categories: Paginated<Category> }) {
+  const { props } = usePage<{ flash?: { success?: string } }>()
   const [searchQuery, setSearchQuery] = useState("")
+  const [flashMessage, setFlashMessage] = useState(props.flash?.success ?? "")
+
+  useEffect(() => {
+    if (flashMessage) {
+      const timer = setTimeout(() => setFlashMessage(""), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [flashMessage])
 
   const filtered = useMemo(() => {
     const source = categories?.data ?? []
@@ -42,6 +52,21 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
 
   return (
     <div className="space-y-6">
+      {/* ✅ Animated Success Message */}
+      <AnimatePresence>
+        {flashMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="p-3 rounded-md border border-green-300 bg-green-100 text-green-800 text-sm font-medium shadow-sm"
+          >
+            {flashMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Page header with search */}
       <div className="flex items-center justify-between gap-4">
         <div>
@@ -49,7 +74,6 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
           <p className="mt-1 text-sm text-muted-foreground">Organize your products into categories</p>
         </div>
         <div className="flex items-center gap-3">
-          {/* Search bar */}
           <div className="relative w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -61,9 +85,7 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
             />
           </div>
           <Link href="/admin/categories/add">
-            <Button className="gap-2">
-              Add Category
-            </Button>
+            <Button className="gap-2">Add Category</Button>
           </Link>
         </div>
       </div>
@@ -91,8 +113,15 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
                   <TableCell className="text-muted-foreground">{category.slug}</TableCell>
                   <TableCell>{category.products_count ?? 0} products</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={`${category.status ? 'bg-green-500/10 text-green-700 border-green-200' : 'bg-gray-200 text-gray-700 border-gray-300'}`}>
-                      {category.status ? 'active' : 'inactive'}
+                    <Badge
+                      variant="outline"
+                      className={`${
+                        category.status
+                          ? "bg-green-500/10 text-green-700 border-green-200"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
+                    >
+                      {category.status ? "active" : "inactive"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -116,4 +145,5 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
     </div>
   )
 }
-CategoriesPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
+
+CategoriesPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>

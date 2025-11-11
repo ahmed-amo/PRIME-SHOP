@@ -39,8 +39,8 @@ const statusColors = {
 }
 
 export default function ProductsDash({ products }: Props) {
-  const [searchQuery, setSearchQuery] = useState("")
 
+  const [searchQuery, setSearchQuery] = useState("")
   const handleDelete = (productId: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
         router.delete(`/admin/products/${productId}`, {
@@ -80,7 +80,7 @@ export default function ProductsDash({ products }: Props) {
               className="pl-9"
             />
           </div>
-          <Link href="/admin/products/add">
+          <Link href={route('admin.products.create')}>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
               Add Product

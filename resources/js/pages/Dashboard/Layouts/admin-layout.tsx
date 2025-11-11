@@ -1,6 +1,7 @@
 import type React from "react"
 import { Home, Package, FolderTree, ShoppingCart, Users, Settings, BarChart3 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import DarkModeToggle from "@/components/darkmode";
 import { Link, router, usePage } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import {
@@ -95,7 +96,8 @@ export default function AdminLayout({
                 <Home className="h-4 w-4" />
                     Home
                 </Button>
-         </Link>
+            </Link>
+            <DarkModeToggle />
             <Button variant="ghost" size="icon">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
