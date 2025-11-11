@@ -63,7 +63,8 @@ class ProductController extends Controller
         Product::create($data);
 
         return redirect()->route('admin.products')
-            ->with('success', 'Product created successfully');
+        ->with('success', 'Product created successfully')
+        ->with('preserveScroll', true);
     }
 
     public function edit(Product $product): Response
@@ -101,8 +102,9 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('products')
-            ->with('success', 'Product updated successfully');
+        return redirect()->route('admin.products')
+        ->with('success', 'Product created successfully')
+        ->with('preserveScroll', true);
     }
 
     public function destroy(Product $product): RedirectResponse

@@ -21,7 +21,7 @@ class StoreProductRequest extends FormRequest
             'stock' => ['required', 'integer', 'min:0'],
             'sku' => ['nullable', 'string', 'max:255'],
             'status' => ['boolean'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'image' => ['nullable', 'image', 'max:20488'],
         ];
     }
 }

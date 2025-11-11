@@ -36,7 +36,7 @@ const sampleProducts: Product[] = [
       "Handcrafted full-grain leather travel bag with brass hardware and cotton lining",
     images: [
       "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1622560480654-d96214fdc887?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1622560480654-d96214e20314?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
     ],
     category: "Travel",
     rating: 4.8,
@@ -472,42 +472,63 @@ const ProductThree = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
+      {/* Header - ORANGE + BLUE DISCOVER BOX */}
       <div className="mb-8">
-        <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8 overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
-            <svg
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              className="w-full h-full"
-            >
+        <div className="relative bg-gradient-to-r from-orange-600 via-orange-500 to-blue-600 rounded-2xl p-8 overflow-hidden shadow-2xl">
+          {/* Animated background glow */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-transparent to-blue-400 blur-3xl"></div>
+          </div>
+
+          {/* Decorative wave */}
+          <div className="absolute top-0 right-0 w-96 h-96 opacity-20">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
               <path
                 fill="white"
-                d="M0,0 L100,0 L100,100 L80,100 C60,100 40,60 20,80 L0,100 Z"
-              ></path>
+                d="M40,-61.6C51.7,-52.8,61.3,-40.3,68.2,-25.3C75.1,-10.3,79.3,7.2,75.8,22.3C72.3,37.4,61.1,50.1,47.7,58.3C34.3,66.5,18.7,70.2,2.5,68.7C-13.7,67.2,-27.4,60.5,-40.3,51.3C-53.2,42.1,-65.3,30.4,-70.5,15.2C-75.7,0,-74,-18.7,-67.6,-34.8C-61.2,-50.9,-50.1,-64.4,-36.6,-72.8C-23.1,-81.2,-7.3,-83.5,8.5,-83.8C24.3,-84.1,48.6,-82.4,40,-61.6Z"
+                transform="translate(100 100)"
+              />
             </svg>
           </div>
+
           <div className="relative z-10 max-w-3xl">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
               Discover Premium Products
             </h1>
-            <p className="text-gray-200 mb-6">
-              Explore our curated collection of high-quality items, crafted for
-              those who appreciate exceptional design and superior
-              functionality.
+            <p className="text-lg text-orange-100 mb-8 drop-shadow-md">
+              Explore our curated collection of high-quality items — crafted for those who value excellence.
             </p>
+
+            {/* Search bar with orange accent */}
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search for products..."
-                className="w-full py-3 pl-4 pr-12 rounded-xl bg-white/90 backdrop-blur text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Search for luxury watches, bags, electronics..."
+                className="w-full py-4 pl-12 pr-16 rounded-xl bg-white/95 backdrop-blur-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-orange-400/50 shadow-xl transition-all duration-300"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
-                size={20}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-600"
+                size={24}
               />
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <button className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg shadow-lg hover:shadow-orange-500/50 hover:scale-105 transition-all duration-200">
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {/* Quick category pills */}
+            <div className="flex flex-wrap gap-3 mt-6">
+              {["Watches", "Bags", "Electronics", "Fashion"].map((cat) => (
+                <button
+                  key={cat}
+                  className="px-4 py-2 bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-full text-sm font-medium hover:bg-white/30 transition-all duration-200"
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -519,7 +540,7 @@ const ProductThree = () => {
           {/* Category filter */}
           <div className="relative w-48">
             <select
-              className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -538,7 +559,7 @@ const ProductThree = () => {
           {/* Sort by */}
           <div className="relative w-48">
             <select
-              className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -555,7 +576,7 @@ const ProductThree = () => {
           </div>
 
           {/* Filter button */}
-          <button className="flex items-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200">
+          <button className="flex items-center gap-2 py-2 px-4 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg transition-colors duration-200">
             <Sliders size={16} />
             <span>Filters</span>
           </button>
@@ -575,7 +596,7 @@ const ProductThree = () => {
             <button
               className={`p-2 ${
                 viewMode === "grid"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-orange-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() => setViewMode("grid")}
@@ -586,7 +607,7 @@ const ProductThree = () => {
             <button
               className={`p-2 ${
                 viewMode === "list"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-orange-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() => setViewMode("list")}
@@ -624,8 +645,8 @@ const ProductThree = () => {
       {/* Empty state */}
       {sortedProducts.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="bg-gray-100 p-4 rounded-full mb-4">
-            <Search size={32} className="text-gray-400" />
+          <div className="bg-orange-100 p-4 rounded-full mb-4">
+            <Search size={32} className="text-orange-600" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No products found
@@ -640,23 +661,23 @@ const ProductThree = () => {
       {/* Pagination */}
       <div className="mt-12 flex justify-center">
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+          <button className="px-4 py-2 border border-orange-300 rounded-md text-orange-700 hover:bg-orange-50">
             Previous
           </button>
-          <button className="px-3 py-1 bg-gray-900 text-white rounded-md hover:bg-black">
+          <button className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
             1
           </button>
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+          <button className="px-4 py-2 border border-orange-300 rounded-md text-orange-700 hover:bg-orange-50">
             2
           </button>
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+          <button className="px-4 py-2 border border-orange-300 rounded-md text-orange-700 hover:bg-orange-50">
             3
           </button>
           <span className="px-2 text-gray-500">...</span>
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+          <button className="px-4 py-2 border border-orange-300 rounded-md text-orange-700 hover:bg-orange-50">
             8
           </button>
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+          <button className="px-4 py-2 border border-orange-300 rounded-md text-orange-700 hover:bg-orange-50">
             Next
           </button>
         </div>
