@@ -111,7 +111,7 @@ export default function CategoriesPage({ categories }: { categories: Paginated<C
                 <TableRow key={category.id} className="border-border">
                   <TableCell className="font-medium">{category.name}</TableCell>
                   <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                  <TableCell>{category.products_count ?? 0} products</TableCell>
+                  <TableCell>{category.products_count}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"

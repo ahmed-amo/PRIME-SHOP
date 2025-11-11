@@ -62,7 +62,7 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()->route('products')
+        return redirect()->route('admin.products')
             ->with('success', 'Product created successfully');
     }
 

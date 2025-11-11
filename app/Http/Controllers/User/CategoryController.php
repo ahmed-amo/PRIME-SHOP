@@ -14,7 +14,10 @@ class CategoryController extends Controller
 {
     public function index(): Response
 {
-    $categories = Category::latest()->paginate(10)->withQueryString();
+    $categories = Category::withCount('products')
+    ->latest()
+    ->paginate(10)
+    ->withQueryString();
 
 
     $categories->getCollection()->transform(function ($category) {

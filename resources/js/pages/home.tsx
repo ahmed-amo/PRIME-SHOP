@@ -4,6 +4,7 @@ import ShopProducts from '@/components/frontend/ShopProducts';
 import ShopFrontLayout from '@/layouts/shop-layout';
 import React from 'react';
 import { Category } from '../types/categories';
+import ShopSales from '@/components/frontend/ShopSales';
 
 
 export default function Home({ categories }: {categories:Category[]}) {
@@ -17,6 +18,9 @@ export default function Home({ categories }: {categories:Category[]}) {
       <ShopCategories categories={categories} />
       <div className="py-18">
         <ShopProducts />
+      </div>
+      <div>
+        <ShopSales />
       </div>
     </div>
   );
