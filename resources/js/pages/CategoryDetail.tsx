@@ -93,7 +93,7 @@ export default function CategoryDetail() {
   }
 
   const getDisplayPrice = (product: Product) => {
-    return product.sale_price || product.price
+    return Number(product.sale_price || product.price || 0);
   }
 
   const hasDiscount = (product: Product) => {

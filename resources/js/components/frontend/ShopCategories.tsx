@@ -28,15 +28,15 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setVisibleItems(3);
+        setVisibleItems(2);
       } else if (window.innerWidth < 768) {
-        setVisibleItems(4);
+        setVisibleItems(3);
       } else if (window.innerWidth < 1024) {
-        setVisibleItems(5);
+        setVisibleItems(4);
       } else if (window.innerWidth < 1280) {
-        setVisibleItems(6);
+        setVisibleItems(5);
       } else {
-        setVisibleItems(8);
+        setVisibleItems(6);
       }
     };
 
@@ -135,7 +135,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
           }`}
         >
           <div>
-            <div className="flex items-center">
+            <div className="flex items-center m-4">
               <div className="w-1.5 h-8 bg-amber-500 rounded-full mr-3"></div>
               <h2 className="text-xl md:text-2xl font-bold text-gray-800">
                 Shop by Category
@@ -146,7 +146,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
             </p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 m-10">
             <button
               onClick={goToPrev}
               disabled={sliding}
@@ -183,7 +183,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
               transitionDelay: "0.2s",
             }}
           >
-            <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 md:gap-6">
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-10">
               {visibleCategories().map((category, idx) => (
                 <Link
                   key={category.id}
@@ -197,15 +197,18 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
                   }}
                 >
                   <div
-                    className={`w-full aspect-square rounded-full overflow-hidden ${
-                      category.color || 'bg-gradient-to-br from-amber-200 to-amber-300'
-                    } p-1.5 ${
+                    className={`w-full aspect-square rounded-full overflow-hidden p-1.5 ${
                       hoveredCategory === category.id
-                        ? "shadow-md ring-2 ring-amber-300 ring-opacity-50"
-                        : "shadow-sm"
+                        ? "shadow-lg ring-4 ring-opacity-60"
+                        : "shadow-sm bg-gradient-to-br from-amber-200 to-amber-300"
                     } transition-all duration-300 transform ${
-                      hoveredCategory === category.id ? "scale-105" : ""
+                      hoveredCategory === category.id ? "scale-110" : ""
                     }`}
+                    style={{
+                      background: hoveredCategory === category.id && category.color
+                        ? category.color
+                        : undefined
+                    }}
                   >
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center">
                       <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10"></div>
@@ -220,8 +223,8 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
                       />
                     </div>
                   </div>
-                  <div className="mt-3 text-center">
-                    <h3 className="text-xs sm:text-sm font-medium text-gray-800 line-clamp-2 group-hover:text-amber-700 transition-colors">
+                  <div className="mt-4 text-center">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-800 line-clamp-2 group-hover:text-amber-700 transition-colors">
                       {category.name}
                     </h3>
                   </div>

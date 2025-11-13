@@ -185,7 +185,7 @@ export default function ProductsDash({ products }: Props) {
                       <TableCell className="font-medium">{product.name}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{product.sku || "-"}</TableCell>
                       <TableCell>{product.category || "-"}</TableCell>
-                      <TableCell className="font-semibold">{product.price.toFixed(2)} DZD</TableCell>
+                      <TableCell className="font-semibold">{product.price.toFixed(2)} $</TableCell>
                       <TableCell>{product.stock}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={statusBadge[product.status]}>
