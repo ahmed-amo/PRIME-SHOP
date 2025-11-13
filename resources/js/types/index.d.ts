@@ -1,6 +1,5 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PageProps as InertiaPageProps } from '@inertiajs/core'
 export interface Auth {
     user: User;

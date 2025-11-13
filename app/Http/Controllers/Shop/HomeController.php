@@ -25,6 +25,7 @@ class HomeController extends Controller
                 'stock' => (int) $product->stock,
                 'category' => $product->category ? $product->category->name : null,
                 'category_id' => $product->category_id,
+                'rating' => 4.5,
                 'image_url' => $product->image ? asset('storage/' . $product->image) : null,
             ]);
 
@@ -42,6 +43,7 @@ class HomeController extends Controller
         return Inertia::render('home', [
             'products' => $products,
             'categories' => $categories,
+
         ]);
     }
 

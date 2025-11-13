@@ -28,7 +28,7 @@ Route::get('/category/{category:slug}', [HomeController::class, 'get_category_pr
 Route::middleware('auth')->group(function () {
 
     //CLIENT ROUTES
-    Route::get('/home', [HomeController::class, 'get_home_data'])
+    Route::get('/home', [HomeController::class, 'index'])
         ->name('ClientHome');
 
     Route::prefix('client')->group(function () {
