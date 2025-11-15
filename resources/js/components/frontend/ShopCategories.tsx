@@ -96,7 +96,8 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
           <div>
             <div className="flex items-center m-4">
               <div className="w-1.5 h-8 bg-amber-500 rounded-full mr-3"></div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Shop by Category</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Shop by Category</h2>
+
             </div>
             <p className="text-gray-500 text-sm mt-1 ml-4">Explore our premium collections</p>
           </div>
@@ -138,8 +139,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
                   </div>
                   <div className="mt-4 text-center">
                     <h3
-                      className="text-sm sm:text-base font-medium line-clamp-2 transition-colors"
-                      style={{ color: hoveredCategory === category.id && category.color ? category.color : undefined }}
+                     className="text-xl font-medium line-clamp-2 transition-colors text-black"
                     >
                       {category.name}
                     </h3>

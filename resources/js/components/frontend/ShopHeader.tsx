@@ -183,7 +183,7 @@ export default function NavBarOne() {
                         </DialogHeader>
 
                     <div className="flex gap-12 mt-4">
-                        <div className="rounded-lg bg-slate-50 p-4">
+                        <div className="rounded-lg bg-slate-50 p-10">
                         <h3 className="font-semibold text-lg mb-2">Contact Us</h3>
                         <p className="text-base text-slate-600 mb-1">
                             Email: support@luxeplus.com

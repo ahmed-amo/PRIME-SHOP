@@ -51,8 +51,8 @@ class HomeController extends Controller
     public function get_category_products(Category $category)
     {
         $products = $category->products()
-            ->where('status', true)
-            ->with(['category'])
+        ->where('status', true)
+        ->with(['category'])
         ->latest()
         ->paginate(12);
 
@@ -60,6 +60,7 @@ class HomeController extends Controller
         if ($product->image) {
             $product->image_url = asset('storage/' . $product->image);
         }
+        $product->in_stock = $product->stock > 0;
         return $product;
     });
 

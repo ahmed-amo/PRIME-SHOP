@@ -23,7 +23,7 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price' => 'float',
         'stock' => 'integer',
         'status' => 'boolean',
     ];
@@ -46,7 +46,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function getIsInStockAttribute(): bool
+    public function getIsInStockAttribute()
     {
         return $this->stock > 0;
     }
