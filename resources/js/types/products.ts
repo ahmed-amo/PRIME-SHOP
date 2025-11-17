@@ -12,5 +12,6 @@ export interface Product {
   image?: string | null
   image_url?: string | null;
   reviews_count:number;
+  images?: string[];
 }
 

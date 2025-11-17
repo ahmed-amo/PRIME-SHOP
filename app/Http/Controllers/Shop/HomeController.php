@@ -77,4 +77,21 @@ class HomeController extends Controller
         'products' => $products,
     ]);
 }
+public function get_categories(){
+    $categories = Category::orderBy('name')
+            ->get()
+            ->map(fn ($category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'description' => $category->description,
+                'color' => $category->color,
+                'image_url' => $category->image ? asset('storage/' . $category->image) : null,
+            ]);
+
+        return Inertia::render('Categories', [
+            'categories' => $categories,
+        ]);
+}
+
 }

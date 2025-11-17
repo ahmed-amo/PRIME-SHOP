@@ -12,12 +12,14 @@ use App\Http\Controllers\User\ProductController;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
-Route::get('/categories', function() {
-    return Inertia::render('Categories');
-})->name('shop.categories');
+Route::get('/categories', [HomeController::class, 'get_categories'])
+    ->name('categories');
+
+Route::get('/product/{product:slug}', [ProductController::class, 'get_product_detail'])
+    ->name('product_detail');
 
 Route::get('/product', function() {
-    return Inertia::render('productDetail');
+    return Inertia::render('ProductDetail');
 })->name('product');
 
 Route::get('/category/{category:slug}', [HomeController::class, 'get_category_products'])

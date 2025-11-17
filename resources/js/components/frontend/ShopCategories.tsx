@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Category } from "@/types/categories";
 
-interface CategoryItem {
-  id: number;
-  name: string;
-  slug: string;
-  image?: string;
-  image_url?: string;
-  color?: string;
-}
 
-export default function CategoryOne({ categories = [] }: { categories?: CategoryItem[] }) {
+
+export default function CategoryOne({ categories = [] }: { categories?: Category[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [visibleItems, setVisibleItems] = useState(6);
@@ -77,7 +71,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
     return categories.slice(startIdx, startIdx + visibleItems);
   };
 
-  const getCategoryImage = (category: CategoryItem) => {
+  const getCategoryImage = (category: Category) => {
     if (category.image_url) return category.image_url;
     if (category.image) {
       if (category.image.startsWith('http://') || category.image.startsWith('https://')) return category.image;

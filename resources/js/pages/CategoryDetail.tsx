@@ -224,33 +224,6 @@ export default function CategoryDetail() {
                     />
                   </div>
 
-                  {/* Input Fields */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-gray-500 mb-1 block">Min</label>
-                      <input
-                        type="number"
-                        min={minPrice}
-                        max={priceRange[1]}
-                        step="0.01"
-                        value={priceRange[0].toFixed(2)}
-                        onChange={(e) => handlePriceRangeChange(0, Number(e.target.value))}
-                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="text-xs text-gray-500 mb-1 block">Max</label>
-                      <input
-                        type="number"
-                        min={priceRange[0]}
-                        max={maxPrice}
-                        step="0.01"
-                        value={priceRange[1].toFixed(2)}
-                        onChange={(e) => handlePriceRangeChange(1, Number(e.target.value))}
-                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -309,7 +282,7 @@ export default function CategoryDetail() {
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <Link href={`/product/${product.id}`} key={product.id} className="group block">
+                  <Link href={`/product/${product.slug}`} key={product.id} className="group block">
                     <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4">
                       <img
                         src={getProductImage(product)}

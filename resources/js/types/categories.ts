@@ -7,5 +7,7 @@ export interface Category {
     description:string;
     status: string;
     image?: string;
+    image_url?: string;
+    size?: "small" | "medium" | "large";
 }
 

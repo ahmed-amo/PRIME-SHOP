@@ -126,4 +126,35 @@ class ProductController extends Controller
         }
         return 'active';
     }
+
+    // app/Http/Controllers/ProductController.php
+public function get_product_detail(Product $product)
+{
+    // EAGER LOAD THE CATEGORY
+    $product->load('category');
+
+    // If no category, default to null
+    $category = $product->category;
+
+    return Inertia::render('ProductDetail', [
+        'product' => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'description' => $product->description,
+            'price' => (float) $product->price,
+            'stock' => (int) $product->stock,
+            'in_stock' => $product->stock > 0,
+            'rating' => 4.5,
+            'reviews_count' => 254,
+            'image_url' => $product->image ? Storage::url($product->image) : null,
+            'images' => [$product->image ? Storage::url($product->image) : null],
+        ],
+        'category' => $category ? [
+            'id' => $category->id,
+            'name' => $category->name,
+            'slug' => $category->slug,
+        ] : null, // ← Important: allow null
+    ]);
+}
 }
