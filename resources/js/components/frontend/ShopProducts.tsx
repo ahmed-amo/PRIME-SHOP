@@ -1,8 +1,9 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { Search, Grid, List, ChevronDown, ShoppingCart } from "lucide-react";
+import { Search, Grid, List, ChevronDown } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import { Product } from "@/types/products";
+import  AddToCartButton  from "../addToCartButton"
 
 export default function ShopProducts({ products }: { products: Product[] | { data: Product[] } }) {
   // Handle both paginated or plain arrays
@@ -159,9 +160,16 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
                 >
                   View
                 </Link>
-                <button className="flex items-center gap-2 bg-orange-500 text-white px-3 py-2 rounded-md hover:bg-orange-600 transition">
-                  <ShoppingCart size={16} /> Add
-                </button>
+                <AddToCartButton
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image ?? "",
+                    description: product.description ?? "",
+                  }}
+                  showQuantitySelector={true}
+                />
               </div>
             </div>
           </div>
