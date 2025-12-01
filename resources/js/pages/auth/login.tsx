@@ -39,10 +39,18 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
             <Head title="Log in" />
 
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            {status && (
+                <div className="mb-4 p-3 text-center text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg">
+                    {status}
+                </div>
+            )}
+
+            <div className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email" className="text-gray-900 font-medium">
+                            Email address
+                        </Label>
                         <Input
                             id="email"
                             type="email"
@@ -53,15 +61,22 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             placeholder="email@example.com"
+                            className="bg-white border-gray-300 text-gray-900"
                         />
                         <InputError message={errors.email} />
                     </div>
 
                     <div className="grid gap-2">
                         <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-gray-900 font-medium">
+                                Password
+                            </Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm text-black" tabIndex={5}>
+                                <TextLink
+                                    href={route('password.request')}
+                                    className="ml-auto text-sm text-orange-600 hover:text-orange-700 font-medium"
+                                    tabIndex={5}
+                                >
                                     Forgot password?
                                 </TextLink>
                             )}
@@ -74,7 +89,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder="••••••••"
+                            className="bg-white border-gray-300 text-gray-900"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -86,25 +102,36 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
+                            className="border-gray-300"
                         />
-                        <Label htmlFor="remember">Remember me</Label>
+                        <Label htmlFor="remember" className="text-gray-900 font-normal cursor-pointer">
+                            Remember me
+                        </Label>
                     </div>
 
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    <Button
+                        type="submit"
+                        className="mt-4 w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold"
+                        tabIndex={4}
+                        disabled={processing}
+                        onClick={submit}
+                    >
+                        {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                         Log in
                     </Button>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
-                    Don't have an account?{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
+                <div className="text-center text-sm">
+                    <span className="text-gray-600">Don't have an account? </span>
+                    <TextLink
+                        className="text-orange-600 hover:text-orange-700 font-medium underline"
+                        href={route('register')}
+                        tabIndex={5}
+                    >
                         Sign up
                     </TextLink>
                 </div>
-            </form>
-
-            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            </div>
         </AuthLayout>
     );
 }

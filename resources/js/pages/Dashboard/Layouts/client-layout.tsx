@@ -1,6 +1,6 @@
 import React from "react"
 import { usePage, Link, router } from "@inertiajs/react"
-import { User, ShoppingBag, Heart, Home } from "lucide-react"
+import { User, ShoppingBag, Heart, Home, Package, UserCog, LogOut, LayoutDashboard } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
@@ -101,24 +101,50 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </Button>
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/admin-avatar.png" />
-                    <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}
-                >Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 text-white font-semibold">
+                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                        </button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent className="w-56">
+                        <DropdownMenuLabel className="font-bold">{user.name}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem asChild>
+                          <Link href="/client/dashboard" className="flex items-center gap-2 cursor-pointer">
+                            <LayoutDashboard size={18} />
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link href="/client/orders" className="flex items-center gap-2 cursor-pointer">
+                            <Package size={18} />
+                            My Orders
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link href="/client/wishlist" className="flex items-center gap-2 cursor-pointer">
+                            <Heart size={18} />
+                            Wishlist
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/client/profile" className="flex items-center gap-2 cursor-pointer">
+                            <UserCog size={18} />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
+                          <LogOut size={18} />
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
           </div>
         </header>
 

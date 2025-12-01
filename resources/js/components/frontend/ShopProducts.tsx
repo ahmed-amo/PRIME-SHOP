@@ -133,46 +133,50 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
         }
       >
         {sorted.map((product) => (
-          <div key={product.id} className="bg-white shadow rounded-xl overflow-hidden p-4">
+          <Link
+            key={product.id}
+            href={`/product/${product.slug ?? product.id}`}
+            className="bg-white shadow rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 group"
+          >
             <img
               src={product.image_url ?? placeholder}
               alt={product.name}
-              className="w-full h-56 object-cover rounded-md mb-3"
+              className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => {
                 const t = e.target as HTMLImageElement;
                 t.src = placeholder;
               }}
             />
-            <h3 className="text-lg font-medium text-gray-800 line-clamp-1">
-              {product.name}
-            </h3>
-            <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-              {product.description}
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-lg text-gray-900">
-                ${product.price.toFixed(2)}
-              </span>
-              <div className="flex gap-2">
-                <Link
-                  href={`/product/${product.slug ?? product.id}`}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-                >
-                  View
-                </Link>
-                <AddToCartButton
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image ?? "",
-                    description: product.description ?? "",
-                  }}
-                  showQuantitySelector={true}
-                />
+
+            <div className="p-4 flex flex-col flex-1">
+              <h3 className="text-lg font-medium text-gray-800 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                {product.name}
+              </h3>
+              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+                {product.description}
+              </p>
+
+              <div className="mt-auto space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-lg text-gray-900">
+                    ${product.price.toFixed(2)}
+                  </span>
+                </div>
+
+                <div onClick={(e) => e.preventDefault()}>
+                  <AddToCartButton
+                    product={{
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.image_url ?? "",
+                      description: product.description ?? "",
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

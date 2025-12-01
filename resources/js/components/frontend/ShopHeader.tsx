@@ -9,7 +9,8 @@ import {
   Package,
   Plus,
   Minus,
-  X
+  X,
+  UserCog
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -379,7 +380,12 @@ export default function NavBarOne() {
                             Wishlist
                           </Link>
                         </DropdownMenuItem>
-
+                        <DropdownMenuItem asChild>
+                          <Link href="/client/profile" className="flex items-center gap-2 cursor-pointer">
+                            <UserCog size={18} />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
 
                         <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
