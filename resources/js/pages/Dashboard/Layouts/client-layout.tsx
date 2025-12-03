@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { PageProps } from "@/types"
+import DarkModeToggle from "@/components/darkmode"
  const handleLogout = () => {
   router.post(route('logout'));
 };
@@ -35,9 +36,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <aside className="w-64 border-r bg-card flex flex-col">
         <div className="p-6 border-b">
           <h1 className="text-2xl font-bold text-primary">
-            Welcome back, {user.name} 👋
+            Welcome back 👋 {user.name}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Customer Dashboard</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -84,6 +84,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     Home
                 </Button>
          </Link>
+         <DarkModeToggle />
             <Button variant="ghost" size="icon">
               <svg
                 className="h-5 w-5"
