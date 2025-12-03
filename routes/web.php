@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\Request;
 use App\Models\Category;
 use Inertia\Inertia;
 use App\Http\Controllers\Shop\HomeController;
@@ -42,8 +44,14 @@ Route::middleware('auth')->group(function () {
             return Inertia::render('Dashboard/Client/Orders');
         })->name('client-orders');
 
-        Route::get('/profile', function () {
-            return Inertia::render('Dashboard/Client/Profile');
+        Route::get('/profile', function (Request $request) {
+            $user = $request->user();
+
+            return Inertia::render('Dashboard/Client/Profile', [
+                'user' => $user ? $user->only(['id', 'name', 'email', 'phone', 'address', 'picture']) : null,
+                'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+                'status' => $request->session()->get('status'),
+            ]);
         })->name('client-profile');
 
         Route::get('/wishlist', function () {

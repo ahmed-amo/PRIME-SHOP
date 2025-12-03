@@ -43,7 +43,7 @@ class ProfileController extends Controller
         $user->fill($data);
         $user->save();
 
-        return to_route('settings.profile.edit')->with('status', 'profile-updated');
+        return to_route('profile.edit')->with('status', 'profile-updated');
     }
 
     public function picture(PictureUploadRequest $request): RedirectResponse
@@ -57,8 +57,8 @@ class ProfileController extends Controller
             }
             $user->picture = $path;
             $user->save();
-            return to_route('settings.profile.edit')->with('status', 'picture-updated');
+            return to_route('profile.edit')->with('status', 'picture-updated');
         }
-        return to_route('settings.profile.edit')->with('status', 'picture-failed');
+        return to_route('profile.edit')->with('status', 'picture-failed');
     }
 }

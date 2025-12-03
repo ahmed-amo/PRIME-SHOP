@@ -43,7 +43,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    patch(route('settings.profile.update'), {
+    patch(route('profile.update'), {
       preserveScroll: true,
       onSuccess: () => {
         showAlert('success', 'Profile updated successfully');
@@ -69,7 +69,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
     }
 
     router.post(
-      route('settings.profile.picture'),
+      route('profile.picture'),
       { picture: file },
       {
         preserveScroll: true,
