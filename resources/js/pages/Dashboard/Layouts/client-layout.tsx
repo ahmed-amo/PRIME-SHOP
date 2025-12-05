@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { PageProps } from "@/types"
+import { getAvatarUrl } from "@/lib/avatar"
 import DarkModeToggle from "@/components/darkmode"
+import { CartProvider } from "@/contexts/cartContext"
+import { WishlistProvider } from "@/contexts/wishlistContext"
  const handleLogout = () => {
   router.post(route('logout'));
 };
@@ -29,8 +32,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // ✅ Correct way: get page props from Inertia
   const { auth } = usePage<PageProps>().props
   const user = auth.user
+  const avatarUrl = getAvatarUrl(user?.picture)
+  const userInitials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U"
 
   return (
+    <CartProvider>
+      <WishlistProvider>
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <aside className="w-64 border-r bg-card flex flex-col">
@@ -56,8 +63,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 px-3 py-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="/admin-avatar.png" />
-              <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage src={avatarUrl ?? undefined} alt={user.name} />
+              <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user.name}</p>
@@ -102,11 +109,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </Button>
 
             <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 text-white font-semibold">
-                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                        </button>
-                      </DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="p-0 rounded-full h-10 w-10">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={avatarUrl ?? undefined} alt={user.name} />
+                    <AvatarFallback>{userInitials}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
 
                       <DropdownMenuContent className="w-56">
                         <DropdownMenuLabel className="font-bold">{user.name}</DropdownMenuLabel>
@@ -153,5 +163,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
+      </WishlistProvider>
+    </CartProvider>
   )
 }

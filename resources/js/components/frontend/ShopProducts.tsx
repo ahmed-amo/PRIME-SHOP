@@ -1,9 +1,10 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { Search, Grid, List, ChevronDown } from "lucide-react";
+import { Search, Grid, List,  } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import { Product } from "@/types/products";
-import  AddToCartButton  from "../addToCartButton"
+import AddToCartButton from "@/components/AddToCartButton"
+import FavoriteButton from "@/components/FavoriteButton"
 
 export default function ShopProducts({ products }: { products: Product[] | { data: Product[] } }) {
   // Handle both paginated or plain arrays
@@ -78,15 +79,11 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
             >
               <option value="All Categories">All Categories</option>
             </select>
-            <ChevronDown
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              size={16}
-            />
           </div>
 
           <div className="relative w-48">
             <select
-              className="w-full bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-10 text-gray-700"
+              className="w-full bg-white border border-gray-300 rounded-lg py-2 pl-2 pr-10 px-10 text-gray-700"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -94,10 +91,6 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
             </select>
-            <ChevronDown
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              size={16}
-            />
           </div>
         </div>
 
@@ -133,25 +126,44 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
         }
       >
         {sorted.map((product) => (
-          <Link
+          <div
             key={product.id}
-            href={`/product/${product.slug ?? product.id}`}
-            className="bg-white shadow rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 group"
+            className="bg-white shadow rounded-xl overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 group relative"
           >
-            <img
-              src={product.image_url ?? placeholder}
-              alt={product.name}
-              className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={(e) => {
-                const t = e.target as HTMLImageElement;
-                t.src = placeholder;
-              }}
-            />
+            <Link href={`/product/${product.slug ?? product.id}`}>
+              <img
+                src={product.image_url ?? placeholder}
+                alt={product.name}
+                className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  const t = e.target as HTMLImageElement;
+                  t.src = placeholder;
+                }}
+              />
+            </Link>
+
+            {/* Favorite button overlay */}
+            <div className="absolute top-3 right-3 z-10">
+              <FavoriteButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image_url ?? "",
+                  description: product.description ?? "",
+                  category: product.category ?? "",
+                  slug: product.slug,
+                }}
+                variant="icon"
+              />
+            </div>
 
             <div className="p-4 flex flex-col flex-1">
-              <h3 className="text-lg font-medium text-gray-800 line-clamp-1 group-hover:text-orange-500 transition-colors">
-                {product.name}
-              </h3>
+              <Link href={`/product/${product.slug ?? product.id}`}>
+                <h3 className="text-lg font-medium text-gray-800 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                  {product.name}
+                </h3>
+              </Link>
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                 {product.description}
               </p>
@@ -176,7 +188,7 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
 

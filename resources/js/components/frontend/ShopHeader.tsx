@@ -24,6 +24,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarUrl } from "@/lib/avatar";
 
 import {
   Sheet,
@@ -57,6 +59,8 @@ export default function NavBarOne() {
   const user = auth.user;
   const isGuest = !user;
   const isAdmin = user && user.role === "admin";
+  const avatarUrl = user ? getAvatarUrl(user.picture) : null;
+  const userInitials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";
 
   const handleLogout = () => {
     router.post(route("logout"));
@@ -351,9 +355,12 @@ export default function NavBarOne() {
                     {/* CLIENT PROFILE DROPDOWN */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 text-white font-semibold">
-                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                        </button>
+                        <Button variant="ghost" className="p-0 rounded-full h-10 w-10">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={avatarUrl ?? undefined} alt={user.name} />
+                            <AvatarFallback>{userInitials}</AvatarFallback>
+                          </Avatar>
+                        </Button>
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent className="w-56">

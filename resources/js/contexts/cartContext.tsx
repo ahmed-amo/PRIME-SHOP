@@ -1,6 +1,7 @@
 // resources/js/Contexts/CartContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
+import { usePage } from '@inertiajs/react';
+import { PageProps } from '@/types';
 interface CartItem {
   id: number;
   name: string;
@@ -34,25 +35,37 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { auth } = usePage<PageProps>().props;
+    const user = auth?.user;
+    const userId = user?.id || null;
 
-  // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('prime-sh-cart');
+    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest';
+    const savedCart = localStorage.getItem(cartKey);
     if (savedCart) {
       try {
         setCartItems(JSON.parse(savedCart));
       } catch (error) {
         console.error('Error loading cart:', error);
+        setCartItems([]);
       }
+    } else {
+      setCartItems([]);
     }
-  }, []);
+  }, [userId]);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('prime-sh-cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest';
+    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+  }, [cartItems, userId]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
+    if (!userId) {
+        alert('Please log in to add items to cart');
+        return; // Stop here if not logged in
+      }
+
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(
         item => item.id === product.id

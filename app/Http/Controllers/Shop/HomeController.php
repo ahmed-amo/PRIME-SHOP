@@ -40,10 +40,39 @@ class HomeController extends Controller
                 'image_url' => $category->image ? asset('storage/' . $category->image) : null,
             ]);
 
+        // Fetch products for sales section (with dynamic discount calculation)
+        $salesProducts = Product::with('category')
+            ->where('status', true)
+            ->where('stock', '>', 0)
+            ->inRandomOrder()
+            ->limit(8)
+            ->get()
+            ->map(function ($product) {
+                // Calculate a random discount between 20-35% for sales section
+                $discountPercentage = rand(20, 35);
+                $originalPrice = (float) $product->price;
+                $discountPrice = round($originalPrice * (1 - $discountPercentage / 100), 2);
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'description' => $product->description,
+                    'price' => $discountPrice,
+                    'originalPrice' => $originalPrice,
+                    'discountPercentage' => $discountPercentage,
+                    'stock' => (int) $product->stock,
+                    'category' => $product->category ? $product->category->name : null,
+                    'category_id' => $product->category_id,
+                    'rating' => round(4.0 + (rand(0, 10) / 10), 1), // Random rating between 4.0-5.0
+                    'image_url' => $product->image ? asset('storage/' . $product->image) : null,
+                ];
+            });
+
         return Inertia::render('home', [
             'products' => $products,
             'categories' => $categories,
-
+            'salesProducts' => $salesProducts,
         ]);
     }
 

@@ -1,143 +1,29 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronRight,
   ChevronLeft,
-  Heart,
-  ShoppingCart,
   Eye,
   Tag,
 } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import AddToCartButton from "@/components/AddToCartButton";
+import FavoriteButton from "@/components/FavoriteButton";
 
-// Product type definition with discount properties
-type Product = {
-  id: string;
+// Product type definition matching backend structure
+type SalesProduct = {
+  id: number;
   name: string;
+  slug: string;
   originalPrice: number;
-  discountPrice: number;
+  price: number; // discounted price
   discountPercentage: number;
   description: string;
-  image: string;
-  category: string;
+  image_url: string | null;
+  category: string | null;
   rating: number;
-  isNew?: boolean;
-  favorite?: boolean;
-  inCart?: boolean;
   stock: number;
+  favorite?: boolean;
 };
-
-// Sample product data with Unsplash images
-const sampleProducts: Product[] = [
-  {
-    id: "1",
-    name: "Italian Leather Crossbody Bag",
-    originalPrice: 249.99,
-    discountPrice: 189.99,
-    discountPercentage: 24,
-    description: "Handcrafted in Florence with premium full-grain leather",
-    image:
-      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Accessories",
-    rating: 4.9,
-    isNew: true,
-    stock: 15,
-  },
-  {
-    id: "2",
-    name: "Automatic Chronograph Watch",
-    originalPrice: 599.99,
-    discountPrice: 449.99,
-    discountPercentage: 25,
-    description:
-      "Swiss-made movement with sapphire crystal and exhibition caseback",
-    image:
-      "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Watches",
-    rating: 4.8,
-    stock: 8,
-  },
-  {
-    id: "3",
-    name: "Premium Wireless Earbuds",
-    originalPrice: 199.99,
-    discountPrice: 149.99,
-    discountPercentage: 25,
-    description: "Active noise cancellation with 30-hour battery life",
-    image:
-      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Electronics",
-    rating: 4.7,
-    stock: 22,
-  },
-  {
-    id: "4",
-    name: "Pure Cashmere Sweater",
-    originalPrice: 299.99,
-    discountPrice: 199.99,
-    discountPercentage: 33,
-    description: "Ultra-soft, sustainably sourced cashmere in a relaxed fit",
-    image:
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Clothing",
-    rating: 4.6,
-    stock: 10,
-  },
-  {
-    id: "5",
-    name: "Smart Home Security Camera",
-    originalPrice: 179.99,
-    discountPrice: 129.99,
-    discountPercentage: 28,
-    description: "4K resolution with night vision and two-way audio",
-    image:
-      "https://images.unsplash.com/photo-1580745294621-2914fd8fee67?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Electronics",
-    rating: 4.5,
-    isNew: true,
-    stock: 18,
-  },
-  {
-    id: "6",
-    name: "Artisanal Ceramic Pour-Over Set",
-    originalPrice: 89.99,
-    discountPrice: 64.99,
-    discountPercentage: 28,
-    description:
-      "Hand-thrown ceramic pour-over coffee dripper with matching cup",
-    image:
-      "https://images.unsplash.com/photo-1516543647435-f8c78a45081f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Home & Kitchen",
-    rating: 4.7,
-    stock: 12,
-  },
-  {
-    id: "7",
-    name: "Designer Sunglasses",
-    originalPrice: 159.99,
-    discountPrice: 99.99,
-    discountPercentage: 38,
-    description: "Polarized lenses with premium acetate frames",
-    image:
-      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Accessories",
-    rating: 4.8,
-    stock: 9,
-  },
-  {
-    id: "8",
-    name: "Luxury Scented Candle",
-    originalPrice: 69.99,
-    discountPrice: 49.99,
-    discountPercentage: 29,
-    description: "Hand-poured soy wax with essential oils, 60-hour burn time",
-    image:
-      "https://images.unsplash.com/photo-1602178141046-c9fe5b7eade4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    category: "Home & Decor",
-    rating: 4.6,
-    stock: 20,
-  },
-];
 
 // Star rating component
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
@@ -166,18 +52,23 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
 
 // Product Card Component with discount
 const ProductCard: React.FC<{
-  product: Product;
-  onFavoriteToggle: (id: string) => void;
-  onAddToCart: (id: string) => void;
-}> = ({ product, onFavoriteToggle, onAddToCart }) => {
+  product: SalesProduct;
+}> = ({ product }) => {
+  const placeholder = "/placeholder.jpg";
+  const imageUrl = product.image_url || placeholder;
+
   return (
     <div className="group relative flex flex-col h-full rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300">
       {/* Image container with aspect ratio */}
       <div className="relative w-full pb-[100%] bg-gray-50 overflow-hidden">
         <img
-          src={product.image}
+          src={imageUrl}
           alt={product.name}
           className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = placeholder;
+          }}
         />
 
         {/* Badges */}
@@ -187,38 +78,42 @@ const ProductCard: React.FC<{
               {product.discountPercentage}% OFF
             </span>
           )}
-          {product.isNew && (
-            <span className="px-2 py-1 bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-sm">
-              NEW
-            </span>
-          )}
-          {product.stock <= 10 && (
+          {product.stock <= 10 && product.stock > 0 && (
             <span className="px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-lg shadow-sm">
               Only {product.stock} left
+            </span>
+          )}
+          {product.stock === 0 && (
+            <span className="px-2 py-1 bg-gray-500 text-white text-xs font-bold rounded-lg shadow-sm">
+              Out of Stock
             </span>
           )}
         </div>
 
         {/* Action buttons */}
         <div className="absolute top-3 right-3">
-          <button
-            onClick={() => onFavoriteToggle(product.id)}
-            className="flex items-center justify-center w-8 h-8 mb-2 rounded-full bg-white bg-opacity-90 hover:bg-opacity-100 shadow-sm transition-all duration-200"
-            aria-label="Add to favorites"
-          >
-            <Heart
-              size={16}
-              className={
-                product.favorite ? "fill-red-500 text-red-500" : "text-gray-700"
-              }
-            />
-          </button>
+          <FavoriteButton
+            product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: imageUrl,
+              description: product.description || "",
+              category: product.category || "",
+              slug: product.slug,
+            }}
+            variant="icon"
+            className="bg-white bg-opacity-90 hover:bg-opacity-100"
+          />
         </div>
 
         {/* Quick actions overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 flex gap-2">
-            <Link href="/product" className="flex items-center gap-1 py-2 px-3 bg-white text-gray-800 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-md">
+            <Link
+              href={`/product/${product.slug}`}
+              className="flex items-center gap-1 py-2 px-3 bg-white text-gray-800 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-md"
+            >
               <Eye size={16} />
               <span>Quick View</span>
             </Link>
@@ -230,7 +125,7 @@ const ProductCard: React.FC<{
       <div className="flex flex-col p-4 flex-grow">
         <div className="mb-1">
           <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            {product.category}
+            {product.category || "Uncategorized"}
           </span>
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mt-1">
             {product.name}
@@ -242,7 +137,7 @@ const ProductCard: React.FC<{
         </div>
 
         <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-          {product.description}
+          {product.description || "No description available"}
         </p>
 
         <div className="mt-auto pt-3 flex items-end justify-between border-t border-gray-100">
@@ -252,28 +147,25 @@ const ProductCard: React.FC<{
             </span>
             <div className="flex items-baseline gap-1">
               <span className="font-bold text-lg text-gray-900">
-                ${product.discountPrice.toFixed(2)}
+                ${product.price.toFixed(2)}
               </span>
-              {/* <span className="text-xs font-medium text-red-500">
-                Save $
-                {(product.originalPrice - product.discountPrice).toFixed(2)}
-              </span> */}
             </div>
           </div>
 
-          <button
-            onClick={() => onAddToCart(product.id)}
-            className={`flex items-center gap-1 py-2 px-3 rounded-lg transition-all duration-200 shadow-sm ${
-              product.inCart
-                ? "bg-green-50 text-green-600 border border-green-200"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white"
-            }`}
-          >
-            <ShoppingCart size={16} />
-            <span className="text-xs font-medium">
-              {product.inCart ? "Added" : "Add"}
-            </span>
-          </button>
+          <div onClick={(e) => e.stopPropagation()}>
+            <AddToCartButton
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: imageUrl,
+                description: product.description || "",
+                category: product.category || "",
+              }}
+              variant="icon"
+              disabled={product.stock === 0}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -281,11 +173,16 @@ const ProductCard: React.FC<{
 };
 
 // Main Carousel Component
-const ProductTwo = () => {
-  const [products, setProducts] = useState<Product[]>(sampleProducts);
+interface ShopSalesProps {
+  products?: SalesProduct[];
+}
+
+const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleProducts, setVisibleProducts] = useState(4);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  const products: SalesProduct[] = propsProducts;
 
   // Handle screen resize to adjust number of visible products
   useEffect(() => {
@@ -308,42 +205,36 @@ const ProductTwo = () => {
 
   // Navigation functions
   const goToNext = () => {
+    if (products.length <= visibleProducts) return;
     setCurrentIndex((prev) =>
       prev + 1 >= products.length - visibleProducts + 1 ? 0 : prev + 1
     );
   };
 
   const goToPrev = () => {
+    if (products.length <= visibleProducts) return;
     setCurrentIndex((prev) =>
       prev - 1 < 0 ? Math.max(0, products.length - visibleProducts) : prev - 1
     );
   };
 
-  // Toggle product as favorite
-  const toggleFavorite = (id: string) => {
-    setProducts(
-      products.map((p) => (p.id === id ? { ...p, favorite: !p.favorite } : p))
-    );
-  };
-
-  // Add product to cart
-  const addToCart = (id: string) => {
-    setProducts(
-      products.map((p) => (p.id === id ? { ...p, inCart: !p.inCart } : p))
-    );
-  };
-
-  // Calculate displayed products
-
 
   // Auto scroll function
   useEffect(() => {
+    if (products.length <= visibleProducts) return;
     const interval = setInterval(() => {
       goToNext();
     }, 5000);
 
     return () => clearInterval(interval);
   }, [currentIndex, products.length, visibleProducts]);
+
+  // Don't render if no products
+  if (!products || products.length === 0) {
+    return null;
+  }
+
+  const maxIndex = Math.max(0, products.length - visibleProducts);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 bg-gradient-to-b from-gray-50 to-white">
@@ -364,22 +255,24 @@ const ProductTwo = () => {
           </p>
         </div>
 
-        <div className="flex space-x-3">
-          <button
-            onClick={goToPrev}
-            className="p-3 rounded-full bg-white shadow-sm hover:shadow border border-gray-200 hover:border-gray-300 transition-all duration-200"
-            aria-label="Previous products"
-          >
-            <ChevronLeft size={18} className="text-gray-700" />
-          </button>
-          <button
-            onClick={goToNext}
-            className="p-3 rounded-full bg-white shadow-sm hover:shadow border border-gray-200 hover:border-gray-300 transition-all duration-200"
-            aria-label="Next products"
-          >
-            <ChevronRight size={18} className="text-gray-700" />
-          </button>
-        </div>
+        {products.length > visibleProducts && (
+          <div className="flex space-x-3">
+            <button
+              onClick={goToPrev}
+              className="p-3 rounded-full bg-white shadow-sm hover:shadow border border-gray-200 hover:border-gray-300 transition-all duration-200"
+              aria-label="Previous products"
+            >
+              <ChevronLeft size={18} className="text-gray-700" />
+            </button>
+            <button
+              onClick={goToNext}
+              className="p-3 rounded-full bg-white shadow-sm hover:shadow border border-gray-200 hover:border-gray-300 transition-all duration-200"
+              aria-label="Next products"
+            >
+              <ChevronRight size={18} className="text-gray-700" />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="relative overflow-hidden" ref={carouselRef}>
@@ -387,7 +280,9 @@ const ProductTwo = () => {
           className="flex transition-transform duration-500 ease-out"
           style={{
             transform: `translateX(-${
-              currentIndex * (100 / visibleProducts)
+              products.length <= visibleProducts
+                ? 0
+                : currentIndex * (100 / visibleProducts)
             }%)`,
           }}
         >
@@ -398,8 +293,6 @@ const ProductTwo = () => {
             >
               <ProductCard
                 product={product}
-                onFavoriteToggle={toggleFavorite}
-                onAddToCart={addToCart}
               />
             </div>
           ))}
@@ -407,28 +300,33 @@ const ProductTwo = () => {
       </div>
 
       {/* Pagination dots */}
-      <div className="flex justify-center mt-6 space-x-2">
-        {Array.from({
-          length: Math.min(products.length - visibleProducts + 1, 8),
-        }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentIndex(i)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === currentIndex
-                ? "bg-red-500 w-6"
-                : "bg-gray-300 hover:bg-gray-400"
-            }`}
-            aria-label={`Go to slide ${i + 1}`}
-          />
-        ))}
-      </div>
+      {products.length > visibleProducts && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {Array.from({
+            length: Math.min(maxIndex + 1, 8),
+          }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? "bg-red-500 w-6"
+                  : "bg-gray-300 hover:bg-gray-400"
+              }`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* View all button */}
       <div className="flex justify-center mt-8">
-        <button className="px-6 py-2 border-2 border-gray-900 text-gray-900 font-medium rounded-lg hover:bg-gray-900 hover:text-white transition-colors duration-300">
+        <Link
+          href="/shop"
+          className="px-6 py-2 border-2 border-gray-900 text-gray-900 font-medium rounded-lg hover:bg-gray-900 hover:text-white transition-colors duration-300"
+        >
           View All Sales
-        </button>
+        </Link>
       </div>
     </div>
   );

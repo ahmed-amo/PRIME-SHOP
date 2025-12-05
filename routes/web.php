@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
+use App\Http\Controllers\Settings\ProfileController;
 
 
 //PUBLIC ROUTES
@@ -52,7 +53,10 @@ Route::middleware('auth')->group(function () {
                 'mustVerifyEmail' => $user instanceof MustVerifyEmail,
                 'status' => $request->session()->get('status'),
             ]);
-        })->name('client-profile');
+        })->name('client.profile');
+
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('client.profile.update');
+        Route::post('/profile/picture', [ProfileController::class, 'picture'])->name('client.profile.picture');
 
         Route::get('/wishlist', function () {
             return Inertia::render('Dashboard/Client/WishList');
@@ -117,4 +121,3 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php';
-require __DIR__.'/settings.php';

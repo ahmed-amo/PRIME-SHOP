@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { ChevronRight, Star, Heart, ShoppingCart, ChevronDown } from "lucide-react"
+import { ChevronRight, Star, ChevronDown } from "lucide-react"
 import ShopFrontLayout from "@/layouts/shop-layout"
 import { Link, usePage } from '@inertiajs/react'
 import { Product } from "@/types/products"
 import { Category } from "@/types/categories"
+import AddToCartButton from "@/components/AddToCartButton"
+import FavoriteButton from "@/components/FavoriteButton"
 
 interface PaginatedProducts {
   data: Product[]
@@ -33,7 +35,6 @@ export default function CategoryDetail() {
   const [selectedRating, setSelectedRating] = useState(0)
   const [showOnlyInStock, setShowOnlyInStock] = useState(false)
   const [isSortOpen, setIsSortOpen] = useState(false)
-  const [wishlist, setWishlist] = useState<number[]>([])
 
   useEffect(() => {
     setPriceRange([minPrice, maxPrice])
@@ -77,14 +78,6 @@ export default function CategoryDetail() {
     return '/placeholder.jpg'
   }
 
-  const toggleWishlist = (e: React.MouseEvent, productId: number) => {
-    e.preventDefault()
-    setWishlist(prev =>
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    )
-  }
 
   const handlePriceRangeChange = (index: number, value: number) => {
     const newRange = [...priceRange]
@@ -282,19 +275,38 @@ export default function CategoryDetail() {
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <Link href={`/product/${product.slug}`} key={product.id} className="group block">
-                    <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4">
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
-                        onError={(e) => { const target = e.target as HTMLImageElement; target.src = '/placeholder.jpg' }}
+                  <div key={product.id} className="group relative">
+                    <Link href={`/product/${product.slug}`} className="block">
+                      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4">
+                        <img
+                          src={getProductImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+                          onError={(e) => { const target = e.target as HTMLImageElement; target.src = '/placeholder.jpg' }}
+                        />
+                        {!product.in_stock && (
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                            <span className="text-white font-medium">Out of Stock</span>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+
+                    {/* Favorite button overlay */}
+                    <div className="absolute top-2 right-2 z-10">
+                      <FavoriteButton
+                        product={{
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: getProductImage(product),
+                          description: product.description || "",
+                          category: product.category || "",
+                          slug: product.slug,
+                        }}
+                        variant="icon"
+                        className="bg-white bg-opacity-90 hover:bg-opacity-100"
                       />
-                      {!product.in_stock && (
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <span className="text-white font-medium">Out of Stock</span>
-                        </div>
-                      )}
                     </div>
                     <div className="space-y-2">
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-orange-600 transition">
@@ -314,32 +326,26 @@ export default function CategoryDetail() {
                         <span className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</span>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <button
+                        <div
                           onClick={(e) => e.preventDefault()}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-xs font-medium transition flex items-center justify-center gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                          disabled={!product.in_stock}
+                          className="flex-1"
                         >
-                          <ShoppingCart className="h-4 w-4" />
-                          {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
-                        </button>
-                        <button
-                          onClick={(e) => toggleWishlist(e, product.id)}
-                          className={`p-2 rounded-md transition ${
-                            wishlist.includes(product.id)
-                              ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
-                          title={wishlist.includes(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
-                        >
-                          <Heart
-                            className={`h-4 w-4 transition-all ${
-                              wishlist.includes(product.id) ? 'fill-red-600' : ''
-                            }`}
+                          <AddToCartButton
+                            product={{
+                              id: product.id,
+                              name: product.name,
+                              price: product.price,
+                              image: getProductImage(product),
+                              description: product.description || "",
+                              category: product.category || "",
+                            }}
+                            variant="outline"
+                            disabled={!product.in_stock}
                           />
-                        </button>
+                        </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (

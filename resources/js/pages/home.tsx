@@ -7,7 +7,21 @@ import { Category } from '../types/categories';
 import { Product } from '../types/products';
 import ShopSales from '@/components/frontend/ShopSales';
 
-export default function Home({ categories, products }: { categories: Category[]; products: Product[] }) {
+interface SalesProduct {
+  id: number;
+  name: string;
+  slug: string;
+  originalPrice: number;
+  price: number;
+  discountPercentage: number;
+  description: string;
+  image_url: string | null;
+  category: string | null;
+  rating: number;
+  stock: number;
+}
+
+export default function Home({ categories, products, salesProducts }: { categories: Category[]; products: Product[]; salesProducts?: SalesProduct[] }) {
   return (
     <div className="bg-white">
       <div className='px-20'>
@@ -17,9 +31,11 @@ export default function Home({ categories, products }: { categories: Category[];
       <div className="py-18">
         <ShopProducts products={products} />
       </div>
-      <div>
-        <ShopSales />
-      </div>
+      {salesProducts && salesProducts.length > 0 && (
+        <div>
+          <ShopSales products={salesProducts} />
+        </div>
+      )}
     </div>
   );
 }

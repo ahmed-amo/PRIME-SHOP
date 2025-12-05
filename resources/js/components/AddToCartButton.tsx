@@ -1,4 +1,4 @@
-// resources/js/Components/AddToCartButton.tsx
+
 import { useState } from 'react';
 import { ShoppingCart, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,18 +19,22 @@ interface AddToCartButtonProps {
   variant?: 'default' | 'icon' | 'outline';
   showQuantitySelector?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function AddToCartButton({
   product,
   variant = 'default',
-  className = ''
+  className = '',
+  disabled = false
 }: AddToCartButtonProps) {
   const { addToCart, isInCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
   const handleAddToCart = () => {
+    if (disabled) return;
+
     setIsAdding(true);
 
     // Add to cart
@@ -55,7 +59,7 @@ export default function AddToCartButton({
     return (
       <Button
         onClick={handleAddToCart}
-        disabled={isAdding}
+        disabled={isAdding || disabled}
         size="icon"
         className={`${className} ${justAdded ? 'bg-green-500 hover:bg-green-600' : 'bg-orange-500 hover:bg-orange-600'}`}
       >
@@ -73,7 +77,7 @@ export default function AddToCartButton({
     return (
       <Button
         onClick={handleAddToCart}
-        disabled={isAdding}
+        disabled={isAdding || disabled}
         variant="outline"
         className={`${className} ${justAdded ? 'border-green-500 text-green-500' : 'border-orange-500 text-orange-500 hover:bg-orange-50'}`}
       >
@@ -104,7 +108,7 @@ export default function AddToCartButton({
 
       <Button
         onClick={handleAddToCart}
-        disabled={isAdding}
+        disabled={isAdding || disabled}
         className={`w-full ${justAdded ? 'bg-green-500 hover:bg-green-600' : 'bg-orange-500 hover:bg-orange-600'}`}
       >
         {isAdding ? (

@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import {
   Star,
-  Heart,
-  ShoppingCart,
   Share2,
   ChevronRight,
 } from "lucide-react";
@@ -12,6 +10,8 @@ import ShopFrontLayout from "@/layouts/shop-layout";
 import { Product } from "@/types/products";
 import { Category } from "@/types/categories";
 import { Link } from "@inertiajs/react";
+import AddToCartButton from "@/components/AddToCartButton";
+import FavoriteButton from "@/components/FavoriteButton";
 
 interface Props {
   product: Product;
@@ -143,15 +143,32 @@ export default function ProductDetail({ product, category }: Props) {
             </div>
 
             <div className="flex space-x-4">
-              <button className="flex-1 rounded-md bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition-all">
-                <div className="flex items-center justify-center">
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Add to Cart
-                </div>
-              </button>
-              <button className="rounded-md border border-gray-300 p-3 hover:bg-gray-50">
-                <Heart className="h-5 w-5 text-gray-500" />
-              </button>
+              <div className="flex-1">
+                <AddToCartButton
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image_url || product.image || "",
+                    description: product.description || "",
+                    category: product.category || "",
+                  }}
+                  disabled={!product.in_stock}
+                />
+              </div>
+              <FavoriteButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image_url || product.image || "",
+                  description: product.description || "",
+                  category: product.category || "",
+                  slug: product.slug,
+                }}
+                variant="outline"
+                size="default"
+              />
               <button className="rounded-md border border-gray-300 p-3 hover:bg-gray-50">
                 <Share2 className="h-5 w-5 text-gray-500" />
               </button>

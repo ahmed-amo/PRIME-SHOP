@@ -1,5 +1,5 @@
 import { Head, useForm, router } from '@inertiajs/react';
-import { FormEventHandler, ChangeEvent, useState } from 'react';
+import { FormEventHandler, ChangeEvent, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,7 @@ interface ProfilePageProps {
     phone: string | null;
     address: string | null;
     picture: string | null;
-  };
+  } | null;
   mustVerifyEmail: boolean;
   status?: string;
 }
@@ -28,8 +28,19 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
     email: user?.email || '',
     phone: user?.phone || '',
     address: user?.address || '',
-    picture: user?.picture || '',
   });
+
+  const avatarSrc = useMemo(() => {
+    if (!user?.picture) {
+      return undefined;
+    }
+
+    if (user.picture.startsWith('http')) {
+      return user.picture;
+    }
+
+    return `/storage/${user.picture.replace(/^storage\//, '')}`;
+  }, [user?.picture]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setData(e.target.name as keyof typeof data, e.target.value);
@@ -43,7 +54,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    patch(route('profile.update'), {
+    patch(route('client.profile.update'), {
       preserveScroll: true,
       onSuccess: () => {
         showAlert('success', 'Profile updated successfully');
@@ -69,10 +80,11 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
     }
 
     router.post(
-      route('profile.picture'),
+      route('client.profile.picture'),
       { picture: file },
       {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
           showAlert('success', 'Profile picture updated successfully');
         },
@@ -90,7 +102,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
   };
 
   return (
-    <ClientLayout>
+    <>
       <Head title="Profile Settings" />
 
       {alertMessage && (
@@ -128,7 +140,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
             <CardContent className="flex flex-col items-center gap-4">
               <div className="relative">
                 <Avatar className="h-32 w-32">
-                  <AvatarImage src={user.picture || undefined} alt={data.name} />
+                  <AvatarImage src={avatarSrc} alt={data.name} />
                   <AvatarFallback className="text-2xl">{getInitials()}</AvatarFallback>
                 </Avatar>
                 <Button size="icon" className="absolute bottom-0 right-0 rounded-full h-10 w-10" type="button">
@@ -161,28 +173,28 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
               <div className="space-y-6">
 
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-900 font-medium">Full Name</Label>
+                  <Label htmlFor="name" className="text-orange-600 font-medium">Full Name</Label>
                   <Input id="name" name="name" value={data.name} onChange={handleChange} disabled={processing} className="bg-white border-gray-300 text-gray-900" />
                   {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-900 font-medium">Email</Label>
+                  <Label htmlFor="email" className="text-orange-600 font-medium">Email</Label>
                   <Input id="email" name="email" type="email" value={data.email} onChange={handleChange} disabled={processing} className="bg-white border-gray-300 text-gray-900" />
                   {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
-                  {mustVerifyEmail && user.email !== data.email && (
+                  {mustVerifyEmail && user && user.email !== data.email && (
                     <p className="text-sm text-amber-600">Your email address is unverified. Please verify your email.</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-gray-900 font-medium">Phone</Label>
+                  <Label htmlFor="phone" className="text-orange-600 font-medium">Phone</Label>
                   <Input id="phone" name="phone" value={data.phone} onChange={handleChange} disabled={processing} className="bg-white border-gray-300 text-gray-900" />
                   {errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address" className="text-gray-900 font-medium">Address</Label>
+                  <Label htmlFor="address" className="text-orange-600 font-medium ">Address</Label>
                   <Input id="address" name="address" value={data.address} onChange={handleChange} disabled={processing} className="bg-white border-gray-300 text-gray-900" />
                   {errors.address && <p className="text-sm text-red-600">{errors.address}</p>}
                 </div>
@@ -204,7 +216,7 @@ export default function ProfilePage({ user, mustVerifyEmail, status }: ProfilePa
 
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }
 
