@@ -2,14 +2,10 @@ import { useState, useEffect } from "react";
 import {
   Search,
   HelpCircle,
-  ShoppingBag,
   LayoutDashboard,
   LogOut,
   Heart,
   Package,
-  Plus,
-  Minus,
-  X,
   UserCog
 } from "lucide-react";
 
@@ -33,8 +29,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 
 import {
@@ -46,13 +40,12 @@ import {
 } from "@/components/ui/dialog";
 
 import { Link, router, usePage } from "@inertiajs/react";
-import { useCart } from "../../contexts/cartContext";
+import ShoppingCartSheet from "@/components/ShopingCart";
+
 
 export default function NavBarOne() {
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Cart hook
-  const { cartItems, updateQuantity, removeItem, getCartTotal, getItemsCount } = useCart();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { auth } = usePage().props as any;
@@ -202,155 +195,7 @@ export default function NavBarOne() {
                     </Dialog>
 
                     {/* Shopping Cart */}
-                    <Sheet>
-                      <SheetTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full relative text-black hidden md:flex hover:bg-orange-200"
-                        >
-                          <ShoppingBag className="h-5 w-5 text-black" />
-                          {getItemsCount() > 0 && (
-                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-medium text-white">
-                              {getItemsCount()}
-                            </span>
-                          )}
-                        </Button>
-                      </SheetTrigger>
-
-                      <SheetContent className="flex flex-col w-full sm:max-w-md">
-                        <SheetHeader className="border-b pb-4">
-                          <SheetTitle className="text-xl">Your Shopping Bag</SheetTitle>
-                        </SheetHeader>
-
-                        <div className="flex-1 overflow-auto py-6">
-                          {cartItems.length === 0 ? (
-                            <div className="flex h-full flex-col items-center justify-center">
-                              <ShoppingBag className="h-16 w-16 text-slate-300" />
-                              <p className="mt-6 text-lg font-medium">
-                                Your shopping bag is empty
-                              </p>
-                              <p className="mt-2 text-sm text-slate-500 text-center max-w-xs">
-                                Looks like you haven't added anything to your bag yet.
-                              </p>
-                              <SheetClose asChild>
-                                <Button className="mt-8 bg-orange-500 hover:bg-orange-600">
-                                  Continue Shopping
-                                </Button>
-                              </SheetClose>
-                            </div>
-                          ) : (
-                            <div className="grid gap-6">
-                              {cartItems.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="grid grid-cols-[80px_1fr] gap-4"
-                                >
-                                  <div className="aspect-square overflow-hidden rounded-md bg-slate-50">
-                                    <img
-                                      src={item.image || "/placeholder.svg"}
-                                      alt={item.name}
-                                      className="h-full w-full object-cover"
-                                    />
-                                  </div>
-                                  <div className="grid gap-1">
-                                    <div className="flex items-start justify-between">
-                                      <h3 className="font-medium leading-tight">
-                                        {item.name}
-                                      </h3>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 rounded-full"
-                                        onClick={() => removeItem(item.id)}
-                                      >
-                                        <X className="h-4 w-4" />
-                                        <span className="sr-only">Remove</span>
-                                      </Button>
-                                    </div>
-                                    <p className="text-sm text-slate-500">
-                                      ${item.price.toFixed(2)}
-                                    </p>
-                                    <div className="flex items-center gap-3 mt-2">
-                                      <div className="flex items-center border rounded-full">
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 rounded-full"
-                                          onClick={() => updateQuantity(item.id, false)}
-                                        >
-                                          <Minus className="h-3 w-3" />
-                                          <span className="sr-only">
-                                            Decrease quantity
-                                          </span>
-                                        </Button>
-                                        <span className="w-8 text-center text-sm">
-                                          {item.quantity}
-                                        </span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 rounded-full"
-                                          onClick={() => updateQuantity(item.id, true)}
-                                        >
-                                          <Plus className="h-3 w-3" />
-                                          <span className="sr-only">
-                                            Increase quantity
-                                          </span>
-                                        </Button>
-                                      </div>
-                                      <div className="ml-auto font-medium">
-                                        ${(item.price * item.quantity).toFixed(2)}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {cartItems.length > 0 && (
-                          <SheetFooter className="border-t pt-6">
-                            <div className="w-full space-y-4">
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-slate-500">Subtotal</span>
-                                <span className="font-medium">
-                                  ${getCartTotal().toFixed(2)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-slate-500">Shipping</span>
-                                <span className="font-medium">
-                                  Calculated at checkout
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between border-t pt-4">
-                                <span className="text-base font-semibold">Total</span>
-                                <span className="text-base font-semibold">
-                                  ${getCartTotal().toFixed(2)}
-                                </span>
-                              </div>
-                              <div className="grid gap-2">
-                                <Link href="/checkout">
-                                  <Button className="w-full bg-orange-500 hover:bg-orange-600 py-6">
-                                    Proceed to Checkout
-                                  </Button>
-                                </Link>
-                                <SheetClose asChild>
-                                  <Button variant="outline" className="w-full">
-                                    Continue Shopping
-                                  </Button>
-                                </SheetClose>
-                              </div>
-                              <p className="text-xs text-center text-slate-500 mt-4">
-                                Shipping & taxes calculated at checkout
-                              </p>
-                            </div>
-                          </SheetFooter>
-                        )}
-                      </SheetContent>
-                    </Sheet>
+                    <ShoppingCartSheet />
 
                     {/* CLIENT PROFILE DROPDOWN */}
                     <DropdownMenu>

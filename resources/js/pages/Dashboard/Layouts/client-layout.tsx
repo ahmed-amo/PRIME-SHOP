@@ -27,6 +27,7 @@ const navigation = [
   { name: "Wishlist", href: "/client/wishlist", icon: Heart },
   { name: "Profile", href: "/client/profile", icon: User },
 ]
+import ShoppingCartSheet from "@/components/ShopingCart";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   // ✅ Correct way: get page props from Inertia
@@ -85,12 +86,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </div>
 
           <div className="flex items-center gap-4">
-          <Link href={route('home')}>
+
+            <Link href={route('home')}>
             <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium">
                 <Home className="h-4 w-4" />
                     Home
                 </Button>
-         </Link>
+            </Link>
          <DarkModeToggle />
             <Button variant="ghost" size="icon">
               <svg
@@ -107,6 +109,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 />
               </svg>
             </Button>
+            <ShoppingCartSheet />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

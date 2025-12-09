@@ -339,7 +339,7 @@ export default function CategoryDetail() {
                               description: product.description || "",
                               category: product.category || "",
                             }}
-                            variant="outline"
+                            variant="default"
                             disabled={!product.in_stock}
                           />
                         </div>

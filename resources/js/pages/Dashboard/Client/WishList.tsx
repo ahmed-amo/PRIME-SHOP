@@ -4,7 +4,6 @@ import { useState, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Heart, Search, ShoppingCart, Trash2 } from "lucide-react"
 import ClientLayout from "../Layouts/client-layout"
 import AddToCartButton from "@/components/AddToCartButton"
@@ -13,7 +12,7 @@ import { useCart } from "@/contexts/cartContext"
 
 export default function WishlistPage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist()
+  const { wishlistItems, removeFromWishlist } = useWishlist()
   const { addToCart } = useCart()
 
   const filteredItems = useMemo(() => {
