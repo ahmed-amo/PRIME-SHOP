@@ -282,9 +282,14 @@ export default function NavBarOne() {
                       <Link href="/categories" className="py-2 text-base text-black">
                         Categories
                       </Link>
-                      <Link href="/sales" className="py-2 text-base text-black">
-                        Sales
-                      </Link>
+                      <button
+                            onClick={() => {
+                                document.getElementById('sales-section')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="py-2 text-base text-black"
+                            >
+                            Sales
+                        </button>
                     </nav>
                   </div>
                 </SheetContent>

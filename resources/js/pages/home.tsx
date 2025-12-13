@@ -32,7 +32,7 @@ export default function Home({ categories, products, salesProducts }: { categori
         <ShopProducts products={products} />
       </div>
       {salesProducts && salesProducts.length > 0 && (
-        <div>
+        <div id="sales-section">
           <ShopSales products={salesProducts} />
         </div>
       )}

@@ -5,6 +5,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Inertia\Inertia;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -61,6 +62,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/wishlist', function () {
             return Inertia::render('Dashboard/Client/WishList');
         })->name('client-wishlist');
+
+        //CheckOut and Order Routes
+        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+        Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+        Route::get('/orders/success/{orderNumber}', [CheckoutController::class, 'success'])->name('orders.success');
+        Route::get('/my-orders', [CheckoutController::class, 'myOrders'])->name('orders.my');
     });
 
 

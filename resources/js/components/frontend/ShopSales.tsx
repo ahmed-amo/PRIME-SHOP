@@ -58,7 +58,7 @@ const ProductCard: React.FC<{
   const imageUrl = product.image_url || placeholder;
 
   return (
-    <div className="group relative flex flex-col h-full rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300">
+    <div  id="sales" className="group relative flex flex-col h-full rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300">
       {/* Image container with aspect ratio */}
       <div className="relative w-full pb-[100%] bg-gray-50 overflow-hidden">
         <img

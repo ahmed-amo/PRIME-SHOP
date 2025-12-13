@@ -132,7 +132,7 @@ export default function ShoppingCartSheet({
               </div>
 
               <div className="grid gap-3">
-                <Link href="/checkout">
+                <Link href="/client/checkout">
                   <Button className="w-full bg-orange-500 hover:bg-orange-600 py-6 text-lg">
                     Proceed to Checkout
                   </Button>
