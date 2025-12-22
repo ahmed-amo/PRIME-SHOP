@@ -15,3 +15,16 @@ export interface Product {
   images?: string[];
 }
 
+export interface SalesProduct {
+    id: number;
+    name: string;
+    slug: string;
+    originalPrice: number;
+    price: number;
+    discountPercentage: number;
+    description: string;
+    image_url: string | null;
+    category: string | null;
+    rating: number;
+    stock: number;
+  }

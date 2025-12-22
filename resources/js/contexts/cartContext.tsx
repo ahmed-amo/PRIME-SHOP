@@ -1,7 +1,7 @@
-// resources/js/Contexts/CartContext.tsx
+// resources/js/contexts/cartContext.tsx
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { usePage } from '@inertiajs/react';
-import { PageProps } from '@/types';
+
 interface CartItem {
   id: number;
   name: string;
@@ -33,12 +33,17 @@ export const useCart = () => {
   return context;
 };
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
+// ✅ Accept userId as prop instead of using usePage
+export const CartProvider = ({
+  children,
+  userId
+}: {
+  children: ReactNode;
+  userId?: number | null;
+}) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const { auth } = usePage<PageProps>().props;
-    const user = auth?.user;
-    const userId = user?.id || null;
 
+  // Load cart from localStorage on mount
   useEffect(() => {
     const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest';
     const savedCart = localStorage.getItem(cartKey);
@@ -61,10 +66,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [cartItems, userId]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
+    // ✅ Check if user is logged in
     if (!userId) {
-        alert('Please log in to add items to cart');
-        return; // Stop here if not logged in
-      }
+      alert('Please log in to add items to cart');
+      return;
+    }
 
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(
@@ -72,7 +78,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       );
 
       if (existingItemIndex > -1) {
-        // Update quantity if item exists
         const updatedItems = [...prevItems];
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
@@ -80,7 +85,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         };
         return updatedItems;
       } else {
-        // Add new item
         return [...prevItems, { ...product, quantity }];
       }
     });

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import ShopFrontLayout from "@/layouts/shop-layout"
 import { CheckCircle, Package, MapPin, CreditCard, Calendar, ArrowRight, Download } from "lucide-react"
 
 // Mock order data - in real app this comes from Inertia props
@@ -247,3 +248,4 @@ export default function OrderSuccess({ order = mockOrder }) {
     </div>
   )
 }
+OrderSuccess.layout = (page: React.ReactNode) => <ShopFrontLayout>{page}</ShopFrontLayout>

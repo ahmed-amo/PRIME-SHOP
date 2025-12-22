@@ -4,22 +4,8 @@ import ShopProducts from '@/components/frontend/ShopProducts';
 import ShopFrontLayout from '@/layouts/shop-layout';
 import React from 'react';
 import { Category } from '../types/categories';
-import { Product } from '../types/products';
+import { Product,SalesProduct } from '../types/products';
 import ShopSales from '@/components/frontend/ShopSales';
-
-interface SalesProduct {
-  id: number;
-  name: string;
-  slug: string;
-  originalPrice: number;
-  price: number;
-  discountPercentage: number;
-  description: string;
-  image_url: string | null;
-  category: string | null;
-  rating: number;
-  stock: number;
-}
 
 export default function Home({ categories, products, salesProducts }: { categories: Category[]; products: Product[]; salesProducts?: SalesProduct[] }) {
   return (
