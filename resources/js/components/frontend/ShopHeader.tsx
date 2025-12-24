@@ -220,7 +220,7 @@ export default function NavBarOne() {
                         </DropdownMenuItem>
 
                         <DropdownMenuItem asChild>
-                          <Link href="/client/orders" className="flex items-center gap-2 cursor-pointer">
+                          <Link href="/client/my-orders" className="flex items-center gap-2 cursor-pointer">
                             <Package size={18} />
                             My Orders
                           </Link>

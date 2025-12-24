@@ -5,60 +5,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, Package, Truck, CheckCircle, Clock } from "lucide-react"
+import { Search, Package, Truck, CheckCircle, Clock, X } from "lucide-react"
 import ClientLayout from "../Layouts/client-layout"
-
-const orders = [
-  {
-    id: "ORD-001",
-    date: "2024-01-15",
-    status: "Delivered",
-    total: "$129.99",
-    items: [
-      { name: "Wireless Headphones", quantity: 1, price: "$79.99", image: "/diverse-people-listening-headphones.png" },
-      { name: "Phone Case", quantity: 2, price: "$25.00", image: "/colorful-phone-case-display.png" },
-    ],
-  },
-  {
-    id: "ORD-002",
-    date: "2024-01-10",
-    status: "Shipped",
-    total: "$89.50",
-    items: [{ name: "Smart Watch", quantity: 1, price: "$89.50", image: "/modern-smartwatch.png" }],
-  },
-  {
-    id: "ORD-003",
-    date: "2024-01-05",
-    status: "Processing",
-    total: "$199.99",
-    items: [
-      { name: "Laptop Stand", quantity: 1, price: "$49.99", image: "/laptop-stand.png" },
-      { name: "Mechanical Keyboard", quantity: 1, price: "$150.00", image: "/mechanical-keyboard.png" },
-    ],
-  },
-  {
-    id: "ORD-004",
-    date: "2023-12-28",
-    status: "Delivered",
-    total: "$45.99",
-    items: [{ name: "USB Cable", quantity: 3, price: "$45.99", image: "/usb-cable.png" }],
-  },
-]
+import { usePage } from "@inertiajs/react"
+import { Order } from "@/types/order"
 
 const statusConfig = {
   Delivered: { icon: CheckCircle, color: "bg-green-100 text-green-700 border-green-200" },
   Shipped: { icon: Truck, color: "bg-blue-100 text-blue-700 border-blue-200" },
+  Canceled: { icon: X, color: "bg-red-100 text-blue-700 border-blue-200" },
   Processing: { icon: Clock, color: "bg-amber-100 text-amber-700 border-amber-200" },
   Pending: { icon: Package, color: "bg-gray-100 text-gray-700 border-gray-200" },
 }
 
 export default function OrdersPage() {
+
+    const { orders } = usePage<{ orders: Order[] }>().props
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredOrders = orders.filter(
     (order) =>
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.items.some((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase())),
+      order.items.some((item) => item.product_name.toLowerCase().includes(searchQuery.toLowerCase())),
   )
 
   return (
@@ -93,7 +61,7 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <CardTitle className="text-lg">{order.id}</CardTitle>
-                    <CardDescription>Placed on {order.date}</CardDescription>
+                    <CardDescription>Placed on {order.created_at}</CardDescription>
                   </div>
                   <div className="text-right space-y-2">
                     <Badge variant="outline" className={statusColor}>
@@ -110,11 +78,11 @@ export default function OrdersPage() {
                     <div key={index} className="flex items-center gap-4 p-3 border rounded-lg">
                       <img
                         src={item.image || "/placeholder.svg"}
-                        alt={item.name}
+                        alt={item.product_name}
                         className="w-16 h-16 rounded-lg object-cover"
                       />
                       <div className="flex-1">
-                        <p className="font-medium">{item.name}</p>
+                        <p className="font-medium">{item.product_name}</p>
                         <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                       </div>
                       <p className="font-semibold text-primary">{item.price}</p>

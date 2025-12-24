@@ -109,7 +109,8 @@ export const CartProvider = ({
   };
 
   const clearCart = () => {
-    setCartItems([]);
+    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest'
+    localStorage.removeItem(cartKey)
   };
 
   const getCartTotal = () => {

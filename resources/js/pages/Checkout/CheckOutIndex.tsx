@@ -11,13 +11,25 @@ import { router } from "@inertiajs/react"
 import { Package, ArrowRight, CreditCard, ShieldCheck, MapPin, User, Mail, Phone } from "lucide-react"
 import ShopFrontLayout from '../../../js/layouts/shop-layout'
 
-export default function CheckoutPage() {
+interface CheckoutPageProps {
+  auth: {
+    user?: {
+      name?: string
+      email?: string
+      phone?: string
+      address?: string
+    }
+  }
+}
+
+export default function CheckoutPage({ auth }: CheckoutPageProps) {
   const { cartItems, clearCart } = useCart()
   const [form, setForm] = useState({
-    customer_name: "",
-    customer_email: "",
-    customer_phone: "",
-    shipping_address: "",
+    customer_name: auth?.user?.name || "",
+    customer_email: auth?.user?.email || "",
+    customer_phone: auth?.user?.phone || "",
+    shipping_address: auth?.user?.address || "",
+    delivery_type: "home",
     payment_method: "card",
     notes: ""
   })
@@ -27,8 +39,8 @@ export default function CheckoutPage() {
 
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const tax = subtotal * 0.1
-  const shippingCost = 10
+  const tax = subtotal * 0.0
+  const shippingCost = 80
   const total = subtotal + tax + shippingCost
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,20 +54,23 @@ export default function CheckoutPage() {
   const handleSubmit = () => {
     setLoading(true)
 
-    router.post('/checkout', {
+    router.post('/client/checkout', {
       ...form,
       cart_items: cartItems.map(item => ({
         id: item.id,
         quantity: item.quantity
       }))
     }, {
-      onError: (err) => {
-        setErrors(err)
+        onSuccess: () => {
+          clearCart();
+          const cartKey = `prime-sh-cart-guest`;
+          localStorage.removeItem(cartKey);
+        },
+        onError: (err) => {
+          setErrors(err)
         setLoading(false)
       },
-      onSuccess: () => {
-        clearCart()
-      },
+
       onFinish: () => {
         setLoading(false)
       }
@@ -162,7 +177,24 @@ export default function CheckoutPage() {
                   <h2 className="text-xl font-semibold">Shipping Address</h2>
                 </div>
               </div>
-              <div className="p-8">
+              <div className="p-8 space-y-6">
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-2">Delivery Type *</Label>
+                  <Select
+                    value={form.delivery_type}
+                    onValueChange={(value) => setForm(prev => ({ ...prev, delivery_type: value }))}
+                  >
+                    <SelectTrigger className="h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500 text-gray-900">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="home">🏠 Home Delivery</SelectItem>
+                      <SelectItem value="business">🏢 Business/Company</SelectItem>
+                      <SelectItem value="pickup">📦 Pickup Point</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div>
                   <Label className="text-sm font-semibold text-gray-700 mb-2">Complete Address *</Label>
                   <Textarea
@@ -266,10 +298,6 @@ export default function CheckoutPage() {
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600 font-medium">Subtotal</span>
                       <span className="font-semibold text-gray-900">${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600 font-medium">Tax (10%)</span>
-                      <span className="font-semibold text-gray-900">${tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-base pb-4 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Shipping</span>

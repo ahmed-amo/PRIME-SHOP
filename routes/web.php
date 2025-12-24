@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Inertia\Inertia;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -42,7 +43,7 @@ Route::middleware('auth')->group(function () {
             return Inertia::render('Dashboard/Client/Dashpage');
         })->name('client-dashboard');
 
-        Route::get('/orders', function () {
+        Route::get('/my-orders', function () {
             return Inertia::render('Dashboard/Client/Orders');
         })->name('client-orders');
 
@@ -67,7 +68,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
         Route::get('/orders/success/{orderNumber}', [CheckoutController::class, 'success'])->name('orders.success');
-        Route::get('/my-orders', [CheckoutController::class, 'myOrders'])->name('orders.my');
+        Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.index');
     });
 
 
@@ -112,7 +113,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
             ->name('admin.categories.destroy');
 
-        Route::get('/orders', function() {
+        Route::get('/customer-orders', function() {
             return Inertia::render('Dashboard/Admin/ClientOrders');
         })->name('admin.orders');
 

@@ -25,6 +25,7 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'nullable|string|max:20',
+            'delivery_type' => 'required|in:home,business,pickup',
             'shipping_address' => 'required|string|max:255',
             'payment_method' => 'required|string|in:cash,card,paypal',
             'notes' => 'nullable|string|max:1000',
@@ -56,17 +57,17 @@ class CheckoutController extends Controller
                     'subtotal' => $itemSubtotal,
                 ];
             }
-
             $shippingCost = 80.00;
             $total = $subtotal + $shippingCost;
 
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
-                'user_id' => Auth::id(), // This should work now
+                'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
                 'customer_phone' => $validated['customer_phone'],
                 'shipping_address' => $validated['shipping_address'],
+                'delivery_type' => $validated['delivery_type'],
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'total' => $total,
@@ -91,20 +92,25 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            return redirect()->route('orders.success', $order->order_number);
+            return Inertia::location(route('orders.success', $order->order_number));
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-
-            return back()->withErrors(['error' => 'Failed to place order. Please try again.']);
+            dd(
+                'CHECKOUT ERROR',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            );
         }
     }
 
+
+
     public function success($orderNumber)
     {
-        $order = Order::with('items.product')
+        $order = Order::with('items.product') // Load relationship
             ->where('order_number', $orderNumber)
-            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         return Inertia::render('Checkout/Success', [
@@ -113,11 +119,13 @@ class CheckoutController extends Controller
                 'customer_name' => $order->customer_name,
                 'customer_email' => $order->customer_email,
                 'shipping_address' => $order->shipping_address,
+                'delivery_type' => $order->delivery_type,
                 'total' => (float) $order->total,
                 'subtotal' => (float) $order->subtotal,
                 'tax' => (float) $order->tax,
                 'shipping_cost' => (float) $order->shipping_cost,
                 'status' => $order->status,
+                'payment_method' => $order->payment_method,
                 'created_at' => $order->created_at->format('F d, Y'),
                 'items' => $order->items->map(function ($item) {
                     return [
@@ -125,30 +133,12 @@ class CheckoutController extends Controller
                         'quantity' => $item->quantity,
                         'price' => (float) $item->product_price,
                         'subtotal' => (float) $item->subtotal,
+                        'image' => $item->product && $item->product->image
+                        ? asset('storage/' . $item->product->image)
+                        : null,
                     ];
                 }),
             ],
-        ]);
-    }
-
-    public function myOrders()
-    {
-        $orders = Order::with('items')
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get()
-            ->map(function ($order) {
-                return [
-                    'order_number' => $order->order_number,
-                    'date' => $order->created_at->format('Y-m-d'),
-                    'total' => (float) $order->total,
-                    'status' => $order->status,
-                    'items_count' => $order->items->sum('quantity'),
-                ];
-            });
-
-        return Inertia::render('Orders/MyOrders', [
-            'orders' => $orders,
         ]);
     }
 }

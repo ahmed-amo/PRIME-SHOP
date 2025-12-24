@@ -2,7 +2,7 @@ import { ShoppingBag, Plus, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Link } from "@inertiajs/react";
-import { useCart } from "../contexts/cartContext"; // adjust path if needed
+import { useCart } from "../contexts/cartContext";
 
 type ShoppingCartSheetProps = {
   triggerClassName?: string;
@@ -132,11 +132,13 @@ export default function ShoppingCartSheet({
               </div>
 
               <div className="grid gap-3">
+              <SheetClose asChild>
                 <Link href="/client/checkout">
                   <Button className="w-full bg-orange-500 hover:bg-orange-600 py-6 text-lg">
                     Proceed to Checkout
                   </Button>
                 </Link>
+                </SheetClose>
 
                 <SheetClose asChild>
                   <Button variant="outline" className="w-full">
