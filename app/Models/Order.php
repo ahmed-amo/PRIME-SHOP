@@ -24,12 +24,14 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'notes',
+        'date',
     ];
 
     protected $casts = [
         'subtotal' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
+        'date' => 'datetime:Y-m-d H:i:s',
     ];
 
     // Relationships

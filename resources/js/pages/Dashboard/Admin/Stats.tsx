@@ -1,28 +1,34 @@
 "use client"
 
 import StatsCard from "@/components/extra/adminStats"
-import { Package, DollarSign, Users, ShoppingCart } from "lucide-react"
+import { DollarSign, Users, ShoppingCart } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import AdminLayout from "@/pages/Dashboard/Layouts/admin-layout";
+import AdminLayout from "@/pages/Dashboard/Layouts/admin-layout"
 
-
-const recentOrders = [
-  { id: "#ORD-001", customer: "John Doe", product: "Wireless Headphones", amount: "$129.99", status: "completed" },
-  { id: "#ORD-002", customer: "Jane Smith", product: "Smart Watch", amount: "$299.99", status: "processing" },
-  { id: "#ORD-003", customer: "Bob Johnson", product: "Laptop Stand", amount: "$49.99", status: "completed" },
-  { id: "#ORD-004", customer: "Alice Brown", product: "USB-C Cable", amount: "$19.99", status: "pending" },
-  { id: "#ORD-005", customer: "Charlie Wilson", product: "Keyboard", amount: "$89.99", status: "completed" },
-]
-
-const statusColors = {
-  completed: "bg-green-500/10 text-green-700 border-green-200",
-  processing: "bg-accent/10 text-accent border-accent/20",
-  pending: "bg-amber-500/10 text-amber-700 border-amber-200",
+interface Stats {
+  totalCustomers: number
+  totalOrders: number
+  totalRevenue: number
+  activeCustomers?: number
+  inactiveCustomers?: number
+  topCustomers?: Array<{
+    name: string
+    totalSpent: number
+    totalOrders: number
+  }>
+  monthlyRegistrations?: Array<{
+    month: string
+    count: number
+  }>
 }
 
-export default function DashboardPage() {
+interface StatsPageProps {
+  stats: Stats
+}
+
+export default function DashboardPage({ stats }: StatsPageProps) {
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -34,86 +40,130 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Total Products"
-          value="1,234"
-          icon={Package}
-          iconColor="primary"
-          trend={{ value: "12% from last month", isPositive: true }}
+          title="Total Customers"
+          value={stats.totalCustomers.toLocaleString()}
+          icon={Users}
+          iconColor="accent"
+          trend={{
+            value: stats.activeCustomers
+              ? `${stats.activeCustomers} active customers`
+              : "No activity data",
+            isPositive: true,
+          }}
         />
         <StatsCard
           title="Total Revenue"
-          value="$45,231"
+          value={`$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={DollarSign}
           iconColor="success"
-          trend={{ value: "8% from last month", isPositive: true }}
-        />
-        <StatsCard
-          title="Total Clients"
-          value="892"
-          icon={Users}
-          iconColor="accent"
-          trend={{ value: "3% from last month", isPositive: false }}
+          trend={{
+            value: stats.totalOrders > 0
+              ? `From ${stats.totalOrders} orders`
+              : "No orders yet",
+            isPositive: true,
+          }}
         />
         <StatsCard
           title="Total Orders"
-          value="2,345"
+          value={stats.totalOrders.toLocaleString()}
           icon={ShoppingCart}
           iconColor="warning"
-          trend={{ value: "15% from last month", isPositive: true }}
+          trend={{
+            value: stats.totalCustomers > 0
+              ? `Avg: $${(stats.totalRevenue / stats.totalOrders).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per order`
+              : "No data available",
+            isPositive: true,
+          }}
+        />
+        <StatsCard
+          title="Active Customers"
+          value={stats.activeCustomers?.toLocaleString() || "0"}
+          icon={Users}
+          iconColor="primary"
+          trend={{
+            value: stats.inactiveCustomers
+              ? `${stats.inactiveCustomers} inactive`
+              : "All customers active",
+            isPositive: (stats.activeCustomers || 0) > (stats.inactiveCustomers || 0),
+          }}
         />
       </div>
 
-      {/* Sales chart */}
+      {/* Top Customers */}
+      {stats.topCustomers && stats.topCustomers.length > 0 && (
+        <Card className="border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-foreground">Top Customers</CardTitle>
+            <p className="text-sm text-muted-foreground">Your best customers by total spending</p>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border">
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Total Orders</TableHead>
+                  <TableHead className="text-right">Total Spent</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stats.topCustomers.map((customer, index) => (
+                  <TableRow key={index} className="border-border">
+                    <TableCell className="font-medium">{customer.name}</TableCell>
+                    <TableCell>{customer.totalOrders}</TableCell>
+                    <TableCell className="text-right font-semibold">
+                      ${customer.totalSpent.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Sales chart placeholder */}
       <Card className="border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-foreground">Sales Overview</CardTitle>
           <p className="text-sm text-muted-foreground">Monthly sales performance for the year</p>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
-
+          <div className="h-80 flex items-center justify-center text-muted-foreground">
+            {stats.monthlyRegistrations && stats.monthlyRegistrations.length > 0 ? (
+              <div className="text-center">
+                <p className="text-lg font-medium mb-2">Monthly Customer Registrations</p>
+                <div className="space-y-2">
+                  {stats.monthlyRegistrations.map((reg, index) => (
+                    <div key={index} className="flex items-center justify-between gap-4">
+                      <span className="text-sm">{reg.month}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{
+                              width: `${(reg.count / Math.max(...stats.monthlyRegistrations!.map((r) => r.count))) * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium w-8 text-right">{reg.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p>No registration data available</p>
+            )}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent orders */}
-      <Card className="border-border shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-foreground">Recent Orders</CardTitle>
-          <p className="text-sm text-muted-foreground">Latest orders from your customers</p>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead>Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentOrders.map((order) => (
-                <TableRow key={order.id} className="border-border">
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.product}</TableCell>
-                  <TableCell className="font-semibold">{order.amount}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={statusColors[order.status as keyof typeof statusColors]}>
-                      {order.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </CardContent>
       </Card>
     </div>
   )
 }
-DashboardPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
+
+DashboardPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>

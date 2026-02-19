@@ -1,6 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { usePage } from '@inertiajs/react';
-import { PageProps } from '@/types';
 
 interface WishlistItem {
   id: number;
@@ -32,12 +30,17 @@ export const useWishlist = () => {
   return context;
 };
 
-export const WishlistProvider = ({ children }: { children: ReactNode }) => {
+// ✅ Accept userId as prop instead of using usePage
+export const WishlistProvider = ({
+  children,
+  userId
+}: {
+  children: ReactNode;
+  userId?: number | null;
+}) => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
-  const { auth } = usePage<PageProps>().props;
-  const user = auth?.user;
-  const userId = user?.id || null;
 
+  // Load wishlist from localStorage on mount
   useEffect(() => {
     const wishlistKey = userId ? `prime-sh-wishlist-${userId}` : 'prime-sh-wishlist-guest';
     const savedWishlist = localStorage.getItem(wishlistKey);
@@ -60,6 +63,12 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   }, [wishlistItems, userId]);
 
   const addToWishlist = (product: WishlistItem) => {
+    // ✅ Check if user is logged in
+    if (!userId) {
+      alert('Please log in to add items to wishlist');
+      return;
+    }
+
     setWishlistItems(prevItems => {
       const exists = prevItems.some(item => item.id === product.id);
       if (exists) {
@@ -87,6 +96,10 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   const clearWishlist = () => {
     setWishlistItems([]);
+
+    // CRITICAL: Also remove from localStorage!
+    const wishlistKey = userId ? `prime-sh-wishlist-${userId}` : 'prime-sh-wishlist-guest';
+    localStorage.removeItem(wishlistKey);
   };
 
   const getWishlistCount = () => {
@@ -105,4 +118,3 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 };
-

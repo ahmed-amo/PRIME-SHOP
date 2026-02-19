@@ -23,7 +23,7 @@ class OrderController extends Controller
         ->map(function ($order) {
             return [
                 'id' => $order->order_number,
-                'date' => $order->created_at->format('Y-m-d'),
+                'date' => $order->created_at->format('Y-m-d H:i:s'),
                 'status' => ucfirst($order->status),
                 'total' => '$' . number_format($order->total, 2),
                 'items' => $order->items->map(function ($item) {

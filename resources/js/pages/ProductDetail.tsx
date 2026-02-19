@@ -30,7 +30,7 @@ export default function ProductDetail({ product, category }: Props) {
 
   return (
     <ShopFrontLayout>
-      <div className="max-w-7xl mx-auto px-4 py-8 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 bg-white">
         {/* Breadcrumb - FIXED */}
         <nav className="flex mb-8 text-sm">
           <Link href="/" className="text-gray-500 hover:text-gray-700">
@@ -50,7 +50,7 @@ export default function ProductDetail({ product, category }: Props) {
           <span className="text-gray-900 font-medium">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
           {/* Product Images */}
           <div className="space-y-6">
             <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
@@ -81,7 +81,7 @@ export default function ProductDetail({ product, category }: Props) {
           {/* Product Info */}
           <div className="flex flex-col space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{product.name}</h1>
               <div className="mt-2 flex items-center">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
@@ -142,7 +142,7 @@ export default function ProductDetail({ product, category }: Props) {
               </div>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <AddToCartButton
                   product={{

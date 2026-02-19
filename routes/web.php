@@ -7,6 +7,7 @@ use App\Models\Category;
 use Inertia\Inertia;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -117,13 +118,12 @@ Route::middleware('auth')->group(function () {
             return Inertia::render('Dashboard/Admin/ClientOrders');
         })->name('admin.orders');
 
-        Route::get('/customers', function() {
-            return Inertia::render('Dashboard/Admin/Customers');
-        })->name('admin.customers');
+        Route::get('/customers', [CustomerController::class, 'index'])->name('admin.customers');
+        Route::get('/customers/{user}', [CustomerController::class, 'show'])->name('admin.customer.detail');
+        Route::get('/customers/{user}/json', [CustomerController::class, 'show'])->name('customers.show.json');
+        Route::get('/customers/statistics', [CustomerController::class, 'statistics'])->name('customers.statistics');
 
-        Route::get('/dashboard', function() {
-            return Inertia::render('Dashboard/Admin/Stats');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('admin.dashboard');
     });
 });
 

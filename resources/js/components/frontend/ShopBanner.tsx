@@ -176,7 +176,7 @@ export default function BannerOne(): JSX.Element {
 
   return (
        <section
-    className="my-8 relative w-full overflow-hidden h-screen max-h-[600px] min-h-[600px] rounded-2xl"
+    className="my-4 md:my-8 relative w-full overflow-hidden h-[400px] sm:h-[500px] md:h-screen md:max-h-[600px] md:min-h-[600px] rounded-xl md:rounded-2xl"
     onMouseEnter={() => setIsHovering(true)}
     onMouseLeave={() => setIsHovering(false)}
   >
@@ -219,7 +219,7 @@ export default function BannerOne(): JSX.Element {
                       : "mr-auto ml-0"
                   }`}
                 >
-                  <div className="backdrop-blur-sm bg-white/30 p-6 md:p-8 lg:p-10 rounded-2xl shadow-xl border border-white/50">
+                  <div className="backdrop-blur-sm bg-white/30 p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-xl border border-white/50">
                     {/* Badge */}
                     {slide.badge && (
                       <div className="inline-flex items-center gap-1 mb-4 px-3 py-1 bg-black/70 rounded-full">
@@ -237,14 +237,14 @@ export default function BannerOne(): JSX.Element {
 
                     {/* Title */}
                     <h2
-                      className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight ${slide.textColor}`}
+                      className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 leading-tight ${slide.textColor}`}
                     >
                       {slide.title}
                     </h2>
 
                     {/* Description */}
                     <p
-                      className={`mb-6 md:mb-8 text-base md:text-lg ${slide.textColor.replace(
+                      className={`mb-4 md:mb-6 lg:mb-8 text-sm sm:text-base md:text-lg ${slide.textColor.replace(
                         "900",
                         "700"
                       )}`}
@@ -364,6 +364,6 @@ export default function BannerOne(): JSX.Element {
         </div>
       </div>
     </section>
-    
+
   );
 }

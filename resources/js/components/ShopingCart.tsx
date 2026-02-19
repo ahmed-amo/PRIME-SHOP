@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Link } from "@inertiajs/react";
 import { useCart } from "../contexts/cartContext";
-
 type ShoppingCartSheetProps = {
   triggerClassName?: string;
   side?: "right" | "left" | "top" | "bottom";
@@ -141,8 +140,13 @@ export default function ShoppingCartSheet({
                 </SheetClose>
 
                 <SheetClose asChild>
-                  <Button variant="outline" className="w-full">
-                    Continue Shopping
+                  <Button
+                  variant="outline"
+                  className="w-full"
+                  >
+                    <Link href="/categories">
+                Continue Shopping
+                </Link>
                   </Button>
                 </SheetClose>
               </div>
@@ -157,9 +161,12 @@ export default function ShoppingCartSheet({
         {!hasItems && (
           <div className="border-t pt-6">
             <SheetClose asChild>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600">
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 ">
+                <Link href="/categories">
                 Continue Shopping
+                </Link>
               </Button>
+
             </SheetClose>
           </div>
         )}

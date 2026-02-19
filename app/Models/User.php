@@ -58,8 +58,12 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+    // app/Models/User.php
 
-
+    public function orders()
+    {
+    return $this->hasMany(Order::class);
+    }
     public function getRedirectRoute(): string
     {
         return $this->isAdmin() ? route('admin.dashboard') : '/home';

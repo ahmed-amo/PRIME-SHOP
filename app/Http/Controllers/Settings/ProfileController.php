@@ -61,4 +61,7 @@ class ProfileController extends Controller
         }
         return to_route('client.profile')->with('status', 'picture-failed');
     }
+
+
+
 }

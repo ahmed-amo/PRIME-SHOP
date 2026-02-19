@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Search, Eye, CheckCircle, XCircle, Clock, Package } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import AdminLayout from "../Layouts/admin-layout"
 
 // Mock orders data
@@ -143,71 +144,139 @@ export default function OrdersPage() {
         </Select>
       </div>
 
-      {/* Orders Table */}
-      <div className="border rounded-lg bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Items</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredOrders.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No orders found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredOrders.map((order) => {
-                const StatusIcon = statusConfig[order.status as keyof typeof statusConfig].icon
-                return (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {filteredOrders.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8 text-muted-foreground">
+              No orders found
+            </CardContent>
+          </Card>
+        ) : (
+          filteredOrders.map((order) => {
+            const StatusIcon = statusConfig[order.status as keyof typeof statusConfig].icon
+            return (
+              <Card key={order.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-medium text-base">{order.id}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{order.date}</div>
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className={`${statusConfig[order.status as keyof typeof statusConfig].color} text-white`}
+                    >
+                      <StatusIcon className="h-3 w-3 mr-1" />
+                      {statusConfig[order.status as keyof typeof statusConfig].label}
+                    </Badge>
+                  </div>
+                  <div className="space-y-2 text-sm mb-3">
+                    <div>
+                      <span className="text-muted-foreground">Customer: </span>
+                      <span className="font-medium">{order.customer}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Email: </span>
+                      <span className="text-xs">{order.email}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t">
                       <div>
-                        <div className="font-medium">{order.customer}</div>
-                        <div className="text-sm text-muted-foreground">{order.email}</div>
+                        <span className="text-muted-foreground">Items: </span>
+                        <span className="font-medium">{order.items}</span>
                       </div>
-                    </TableCell>
-                    <TableCell>{order.date}</TableCell>
-                    <TableCell>{order.items}</TableCell>
-                    <TableCell className="font-medium">${order.total.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={`${statusConfig[order.status as keyof typeof statusConfig].color} text-white`}
-                      >
-                        <StatusIcon className="h-3 w-3 mr-1" />
-                        {statusConfig[order.status as keyof typeof statusConfig].label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => handleViewOrder(order)}>
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
-                        {order.status === "pending" && (
-                          <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order.id)}>
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Confirm
+                      <div>
+                        <span className="text-muted-foreground">Total: </span>
+                        <span className="font-bold text-lg">${order.total.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => handleViewOrder(order)} className="flex-1">
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                    {order.status === "pending" && (
+                      <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order.id)} className="flex-1">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Confirm
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block border rounded-lg bg-card">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No orders found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders.map((order) => {
+                  const StatusIcon = statusConfig[order.status as keyof typeof statusConfig].icon
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{order.customer}</div>
+                          <div className="text-sm text-muted-foreground">{order.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{order.date}</TableCell>
+                      <TableCell>{order.items}</TableCell>
+                      <TableCell className="font-medium">${order.total.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className={`${statusConfig[order.status as keyof typeof statusConfig].color} text-white`}
+                        >
+                          <StatusIcon className="h-3 w-3 mr-1" />
+                          {statusConfig[order.status as keyof typeof statusConfig].label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleViewOrder(order)}>
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
                           </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })
-            )}
-          </TableBody>
-        </Table>
+                          {order.status === "pending" && (
+                            <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order.id)}>
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Confirm
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Order Details Dialog */}
@@ -219,7 +288,7 @@ export default function OrdersPage() {
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Order ID</p>
                   <p className="text-lg font-semibold">{selectedOrder.id}</p>

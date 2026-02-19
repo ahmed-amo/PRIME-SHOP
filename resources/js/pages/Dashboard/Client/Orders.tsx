@@ -33,8 +33,8 @@ export default function OrdersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">My Orders</h1>
-          <p className="text-muted-foreground mt-1">Track and manage your orders</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">My Orders</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Track and manage your orders</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <CardTitle className="text-lg">{order.id}</CardTitle>
-                    <CardDescription>Placed on {order.created_at}</CardDescription>
+                    <CardDescription>Placed on {order.date}</CardDescription>
                   </div>
                   <div className="text-right space-y-2">
                     <Badge variant="outline" className={statusColor}>
@@ -75,31 +75,31 @@ export default function OrdersPage() {
               <CardContent>
                 <div className="space-y-4">
                   {order.items.map((item, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3 border rounded-lg">
+                    <div key={index} className="flex items-center gap-3 sm:gap-4 p-3 border rounded-lg">
                       <img
                         src={item.image || "/placeholder.svg"}
                         alt={item.product_name}
-                        className="w-16 h-16 rounded-lg object-cover"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
                       />
-                      <div className="flex-1">
-                        <p className="font-medium">{item.product_name}</p>
-                        <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm sm:text-base truncate">{item.product_name}</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                       </div>
-                      <p className="font-semibold text-primary">{item.price}</p>
+                      <p className="font-semibold text-primary text-sm sm:text-base flex-shrink-0">{item.price}</p>
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-2 mt-4">
-                  <Button variant="outline" className="flex-1 bg-transparent">
+                <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                  <Button variant="outline" className="flex-1 bg-transparent text-sm">
                     View Details
                   </Button>
                   {order.status === "Delivered" && (
-                    <Button variant="outline" className="flex-1 bg-transparent">
+                    <Button variant="outline" className="flex-1 bg-transparent text-sm">
                       Write Review
                     </Button>
                   )}
                   {order.status === "Shipped" && (
-                    <Button variant="outline" className="flex-1 bg-transparent">
+                    <Button variant="outline" className="flex-1 bg-transparent text-sm">
                       Track Order
                     </Button>
                   )}

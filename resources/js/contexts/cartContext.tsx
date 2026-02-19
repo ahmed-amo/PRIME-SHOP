@@ -1,16 +1,14 @@
-// resources/js/contexts/cartContext.tsx
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
 interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-  description?: string;
-  category?: string;
-}
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    quantity: number;
+    description?: string;
+    category?: string;
+  }
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -33,7 +31,6 @@ export const useCart = () => {
   return context;
 };
 
-// ✅ Accept userId as prop instead of using usePage
 export const CartProvider = ({
   children,
   userId
@@ -66,11 +63,7 @@ export const CartProvider = ({
   }, [cartItems, userId]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
-    // ✅ Check if user is logged in
-    if (!userId) {
-      alert('Please log in to add items to cart');
-      return;
-    }
+
 
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(

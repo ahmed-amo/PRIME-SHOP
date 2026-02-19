@@ -10,11 +10,11 @@ import ShopSales from '@/components/frontend/ShopSales';
 export default function Home({ categories, products, salesProducts }: { categories: Category[]; products: Product[]; salesProducts?: SalesProduct[] }) {
   return (
     <div className="bg-white">
-      <div className='px-20'>
+      <div className='px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20'>
         <ShopBanner />
       </div>
       <ShopCategories categories={categories} />
-      <div className="py-18">
+      <div className="py-8 md:py-12 lg:py-18">
         <ShopProducts products={products} />
       </div>
       {salesProducts && salesProducts.length > 0 && (

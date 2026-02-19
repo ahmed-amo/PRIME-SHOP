@@ -18,6 +18,6 @@ export interface Order {
     shipping_cost: number
     status: string
     payment_method: string
-    created_at: string
+    date: string;
     items: OrderItem[]
   }
