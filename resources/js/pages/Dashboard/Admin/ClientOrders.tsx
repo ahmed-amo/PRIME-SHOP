@@ -17,63 +17,31 @@ import {
 import { Search, Eye, CheckCircle, XCircle, Clock, Package } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import AdminLayout from "../Layouts/admin-layout"
+import { router } from "@inertiajs/react"
 
-// Mock orders data
-const mockOrders = [
-  {
-    id: "ORD-001",
-    customer: "John Doe",
-    email: "john@example.com",
-    date: "2024-01-15",
-    total: 299.99,
-    status: "pending",
-    items: 3,
-    products: [
-      { name: "Wireless Headphones", quantity: 1, price: 149.99 },
-      { name: "Phone Case", quantity: 2, price: 75.0 },
-    ],
-  },
-  {
-    id: "ORD-002",
-    customer: "Jane Smith",
-    email: "jane@example.com",
-    date: "2024-01-14",
-    total: 599.99,
-    status: "confirmed",
-    items: 1,
-    products: [{ name: "Laptop Stand", quantity: 1, price: 599.99 }],
-  },
-  {
-    id: "ORD-003",
-    customer: "Mike Johnson",
-    email: "mike@example.com",
-    date: "2024-01-14",
-    total: 149.99,
-    status: "pending",
-    items: 2,
-    products: [{ name: "USB Cable", quantity: 2, price: 149.99 }],
-  },
-  {
-    id: "ORD-004",
-    customer: "Sarah Williams",
-    email: "sarah@example.com",
-    date: "2024-01-13",
-    total: 899.99,
-    status: "shipped",
-    items: 1,
-    products: [{ name: "Smart Watch", quantity: 1, price: 899.99 }],
-  },
-  {
-    id: "ORD-005",
-    customer: "David Brown",
-    email: "david@example.com",
-    date: "2024-01-12",
-    total: 449.99,
-    status: "cancelled",
-    items: 2,
-    products: [{ name: "Keyboard", quantity: 1, price: 449.99 }],
-  },
-]
+type OrderStatus = "pending" | "confirmed" | "shipped" | "cancelled"
+
+interface OrderProduct {
+  name: string
+  quantity: number
+  price: number
+}
+
+interface AdminOrder {
+  id: string // order_number like "ORD-ABC123"
+  order_id: number // numeric DB id, used for actions
+  customer: string
+  email: string
+  date: string
+  total: number
+  status: OrderStatus
+  items: number
+  products: OrderProduct[]
+}
+
+interface OrdersPageProps {
+  orders: AdminOrder[]
+}
 
 const statusConfig = {
   pending: { label: "Pending", color: "bg-yellow-500", icon: Clock },
@@ -82,11 +50,10 @@ const statusConfig = {
   cancelled: { label: "Cancelled", color: "bg-red-500", icon: XCircle },
 }
 
-export default function OrdersPage() {
-  const [orders, setOrders] = useState(mockOrders)
+export default function OrdersPage({ orders }: OrdersPageProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedOrder, setSelectedOrder] = useState<(typeof mockOrders)[0] | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const filteredOrders = orders.filter((order) => {
@@ -98,18 +65,23 @@ export default function OrdersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const handleStatusChange = (orderId: string, newStatus: string) => {
-    setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
-  }
-
-  const handleViewOrder = (order: (typeof mockOrders)[0]) => {
+  const handleViewOrder = (order: AdminOrder) => {
     setSelectedOrder(order)
     setIsDialogOpen(true)
   }
 
-  const handleConfirmOrder = (orderId: string) => {
-    handleStatusChange(orderId, "confirmed")
-    setIsDialogOpen(false)
+  const handleConfirmOrder = (order: AdminOrder) => {
+    router.put(
+      `/admin/customer-orders/${order.order_id}/confirm`,
+      {},
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsDialogOpen(false)
+          setSelectedOrder(null)
+        },
+      },
+    )
   }
 
   return (
@@ -197,7 +169,7 @@ export default function OrdersPage() {
                       View
                     </Button>
                     {order.status === "pending" && (
-                      <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order.id)} className="flex-1">
+                      <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order)} className="flex-1">
                         <CheckCircle className="h-4 w-4 mr-1" />
                         Confirm
                       </Button>
@@ -263,7 +235,7 @@ export default function OrdersPage() {
                             View
                           </Button>
                           {order.status === "pending" && (
-                            <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order.id)}>
+                            <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order)}>
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Confirm
                             </Button>
@@ -348,15 +320,9 @@ export default function OrdersPage() {
               Close
             </Button>
             {selectedOrder?.status === "pending" && (
-              <Button onClick={() => handleConfirmOrder(selectedOrder.id)}>
+              <Button onClick={() => handleConfirmOrder(selectedOrder)}>
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Confirm Order
-              </Button>
-            )}
-            {selectedOrder?.status === "confirmed" && (
-              <Button onClick={() => handleStatusChange(selectedOrder.id, "shipped")}>
-                <Package className="h-4 w-4 mr-2" />
-                Mark as Shipped
               </Button>
             )}
           </DialogFooter>

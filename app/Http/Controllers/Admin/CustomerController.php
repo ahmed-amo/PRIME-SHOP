@@ -149,7 +149,8 @@ class CustomerController extends Controller
     private function getDetailedStatistics()
     {
         // Monthly customer registrations (last 6 months)
-        $monthlyRegistrations = User::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        // Use PostgreSQL-compatible date formatting (to_char instead of MySQL DATE_FORMAT)
+        $monthlyRegistrations = User::selectRaw("to_char(created_at, 'YYYY-MM') as month, COUNT(*) as count")
             ->where('created_at', '>=', now()->subMonths(6))
             ->groupBy('month')
             ->orderBy('month')

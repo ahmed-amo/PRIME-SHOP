@@ -134,6 +134,9 @@ export default function NavBarOne() {
             {/* Guest */}
             {isGuest && (
               <>
+                {/* Shopping Cart available for guests */}
+                <ShoppingCartSheet />
+
                 <Link href={route("login")}>
                   <Button className="rounded-full text-black hover:bg-orange-300 px-4 py-2">
                     Login

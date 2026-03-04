@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -30,6 +31,11 @@ Route::get('/product', function() {
 
 Route::get('/category/{category:slug}', [HomeController::class, 'get_category_products'])
     ->name('category.show');
+
+// Checkout & order success (allow guests)
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/orders/success/{orderNumber}', [CheckoutController::class, 'success'])->name('orders.success');
 
 
 //PROTECTED ROUTES
@@ -65,10 +71,7 @@ Route::middleware('auth')->group(function () {
             return Inertia::render('Dashboard/Client/WishList');
         })->name('client-wishlist');
 
-        //CheckOut and Order Routes
-        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-        Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-        Route::get('/orders/success/{orderNumber}', [CheckoutController::class, 'success'])->name('orders.success');
+        //Order Routes
         Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.index');
     });
 
@@ -114,9 +117,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
             ->name('admin.categories.destroy');
 
-        Route::get('/customer-orders', function() {
-            return Inertia::render('Dashboard/Admin/ClientOrders');
-        })->name('admin.orders');
+        Route::get('/customer-orders', [AdminOrderController::class, 'index'])
+            ->name('admin.orders');
+
+        Route::put('/customer-orders/{order}/confirm', [AdminOrderController::class, 'confirm'])
+            ->name('admin.orders.confirm');
 
         Route::get('/customers', [CustomerController::class, 'index'])->name('admin.customers');
         Route::get('/customers/{user}', [CustomerController::class, 'show'])->name('admin.customer.detail');

@@ -54,7 +54,7 @@ export default function CheckoutPage({ auth }: CheckoutPageProps) {
   const handleSubmit = () => {
     setLoading(true)
 
-    router.post('/client/checkout', {
+    router.post(route("checkout.store"), {
       ...form,
       cart_items: cartItems.map(item => ({
         id: item.id,

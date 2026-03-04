@@ -12,6 +12,8 @@
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "*",
+        "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
         "tightenco/ziggy": "^2.6"
     },
