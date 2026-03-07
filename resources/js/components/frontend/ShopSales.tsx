@@ -8,8 +8,9 @@ import {
 import { Link } from "@inertiajs/react";
 import AddToCartButton from "@/components/AddToCartButton";
 import FavoriteButton from "@/components/FavoriteButton";
+import { motion } from "framer-motion";
+import { slideUp } from "@/lib/motionVariants";
 
-// Product type definition matching backend structure
 type SalesProduct = {
   id: number;
   name: string;
@@ -237,7 +238,13 @@ const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [] }) 
   const maxIndex = Math.max(0, products.length - visibleProducts);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8 bg-gradient-to-b from-gray-50 to-white">
+    <motion.div
+      id="sales"
+      className="w-full max-w-7xl mx-auto px-4 py-8 bg-gradient-to-b from-gray-50 to-white"
+      variants={slideUp}
+      initial="initial"
+      animate="animate"
+    >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <div className="inline-block px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-semibold tracking-wide mb-2">
@@ -291,9 +298,7 @@ const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [] }) 
               key={product.id}
               className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0 px-3"
             >
-              <ProductCard
-                product={product}
-              />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
@@ -328,7 +333,7 @@ const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [] }) 
           View All Sales
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

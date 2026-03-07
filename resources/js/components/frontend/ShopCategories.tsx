@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/motionVariants";
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Category } from "@/types/categories";
@@ -81,7 +83,12 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
   };
 
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50">
+    <motion.div
+      className="w-full overflow-hidden bg-gradient-to-b from-amber-50/70 to-amber-50/30 py-8 px-4 md:px-8 relative border-y border-amber-100/50"
+      variants={fadeUp}
+      initial="initial"
+      animate="animate"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="absolute top-0 left-0 w-32 h-32 bg-amber-200/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-40 h-40 bg-amber-300/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
@@ -107,13 +114,16 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
         </div>
 
         <div ref={carouselRef} className="relative overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-          <div className={`flex transition-transform duration-500 ease-in-out ${isVisible ? "opacity-100" : "opacity-0"}`} style={{ transform: `translateX(0%)`, width: "100%", transitionDelay: "0.2s" }}>
+          <div
+            className={`flex transition-transform duration-500 ease-in-out ${isVisible ? "opacity-100" : "opacity-0"}`}
+            style={{ transform: `translateX(0%)`, width: "100%", transitionDelay: "0.2s" }}
+          >
             <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-10">
               {visibleCategories().map((category, idx) => (
                 <Link
                   key={category.id}
                   href={`/category/${category.slug}`}
-                  className="flex flex-col items-center group mt-4" // added spacing
+                  className="flex flex-col items-center group mt-4"
                   onMouseEnter={() => setHoveredCategory(category.id)}
                   onMouseLeave={() => setHoveredCategory(null)}
                   style={{ transition: "all 0.5s ease", transitionDelay: `${idx * 0.05}s` }}
@@ -132,9 +142,7 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
                     </div>
                   </div>
                   <div className="mt-4 text-center">
-                    <h3
-                     className="text-xl font-medium line-clamp-2 transition-colors text-black"
-                    >
+                    <h3 className="text-xl font-medium line-clamp-2 transition-colors text-black">
                       {category.name}
                     </h3>
                   </div>
@@ -166,6 +174,6 @@ export default function CategoryOne({ categories = [] }: { categories?: Category
           </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

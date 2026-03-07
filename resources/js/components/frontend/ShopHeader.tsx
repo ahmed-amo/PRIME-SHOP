@@ -78,9 +78,7 @@ export default function NavBarOne() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-3xl font-bold tracking-tight text-black">
-              Prime SH
-            </span>
+          <img src="/primelogo.png" alt="Prime SH" className="h-30 w-auto" />
           </Link>
 
           {/* Search Bar */}
@@ -116,16 +114,21 @@ export default function NavBarOne() {
               >
                 Categories
               </Link>
-
-              <Link
-                href="/sales"
-                className="relative text-black hover:text-orange-500 font-medium"
-              >
-                Sales
-                <span className="absolute top-6 -right-7 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  NEW
-                </span>
-              </Link>
+              <span
+  onClick={() => {
+    const el = document.getElementById("sales");
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  }}
+  className="relative cursor-pointer text-black hover:text-orange-500 font-medium"
+>
+  Sales
+  <span className="absolute top-6 -right-7 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+    NEW
+  </span>
+</span>
             </nav>
           )}
 

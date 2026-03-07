@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AuthLayout from '@/layouts/auth-layout';
+import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 // Full list of countries - North Africa first, then popular ones
 const countries = [
@@ -215,6 +216,18 @@ export default function Register() {
                         {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                         Create Account
                     </Button>
+
+                    {/* OAuth separator */}
+                    <div className="relative my-4">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-gray-200" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white px-3 text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <GoogleLoginButton className="w-full" variant="outline" />
                 </div>
 
                 {/* Login Link */}

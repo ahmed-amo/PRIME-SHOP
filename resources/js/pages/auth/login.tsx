@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 type LoginForm = {
     email: string;
@@ -119,6 +120,18 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                         Log in
                     </Button>
+
+                    {/* OAuth separator */}
+                    <div className="relative my-1">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-gray-200" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white px-3 text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <GoogleLoginButton className="w-full" variant="outline" />
                 </div>
 
                 <div className="text-center text-sm">

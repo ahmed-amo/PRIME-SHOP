@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\WelcomeEmail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
@@ -62,18 +63,20 @@ class GoogleController extends Controller
                 Mail::to($user->email)->queue(new WelcomeEmail($user));
             }
 
+            // Log the user into the web guard so Inertia routes see them as authenticated
+            Auth::login($user);
+
             // Create Sanctum personal access token
             $token = $user->createToken('auth-token')->plainTextToken;
 
-            // Redirect to React app with token
-            $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
-            return redirect("{$frontendUrl}/auth/callback?token={$token}");
+            // Redirect to Inertia callback page (served by Laravel)
+            return redirect()->route('auth.callback', ['token' => $token]);
 
         } catch (\Exception $e) {
             // Log error and redirect to login with error
             Log::error('Google OAuth Error: ' . $e->getMessage());
-            $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
-            return redirect("{$frontendUrl}/login?error=oauth_failed");
+
+            return redirect()->route('login', ['error' => 'oauth_failed']);
         }
     }
 }

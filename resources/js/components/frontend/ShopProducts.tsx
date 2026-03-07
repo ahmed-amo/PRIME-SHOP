@@ -5,6 +5,8 @@ import { Link } from "@inertiajs/react";
 import { Product } from "@/types/products";
 import AddToCartButton from "@/components/AddToCartButton"
 import FavoriteButton from "@/components/FavoriteButton"
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/motionVariants";
 
 export default function ShopProducts({ products }: { products: Product[] | { data: Product[] } }) {
   // Handle both paginated or plain arrays
@@ -47,7 +49,12 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8 relative bg-gradient-to-r from-orange-600 via-orange-500 to-blue-600 rounded-2xl p-8 overflow-hidden shadow-2xl">
+      <motion.div
+        className="mb-8 relative bg-gradient-to-r from-orange-600 via-orange-500 to-blue-600 rounded-2xl p-8 overflow-hidden shadow-2xl"
+        variants={fadeUp}
+        initial="initial"
+        animate="animate"
+      >
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           Discover Premium Products
         </h1>
@@ -67,7 +74,7 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
             size={24}
           />
         </div>
-      </div>
+      </motion.div>
 
       <div className="flex flex-col lg:flex-row gap-4 mb-6 items-start lg:items-center justify-between">
         <div className="flex flex-wrap gap-3">

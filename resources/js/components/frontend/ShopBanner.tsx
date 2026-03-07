@@ -1,5 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef, JSX } from "react";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/motionVariants";
 import {
   ChevronLeft,
   ChevronRight,
@@ -175,11 +177,14 @@ export default function BannerOne(): JSX.Element {
   }, [currentSlide, goToSlide, slideCount]);
 
   return (
-       <section
-    className="my-4 md:my-8 relative w-full overflow-hidden h-[400px] sm:h-[500px] md:h-screen md:max-h-[600px] md:min-h-[600px] rounded-xl md:rounded-2xl"
-    onMouseEnter={() => setIsHovering(true)}
-    onMouseLeave={() => setIsHovering(false)}
-  >
+    <motion.section
+      className="my-4 md:my-8 relative w-full overflow-hidden h-[400px] sm:h-[500px] md:h-screen md:max-h-[600px] md:min-h-[600px] rounded-xl md:rounded-2xl"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      variants={fadeUp}
+      initial="initial"
+      animate="animate"
+    >
       {/* Full-width image carousel */}
       <div className="absolute inset-0 w-full h-full">
         {carouselData.map((slide: CarouselSlide, index: number) => (
@@ -363,7 +368,7 @@ export default function BannerOne(): JSX.Element {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
 
   );
 }

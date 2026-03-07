@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+html {
+    scroll-behavior: smooth;
+  }
 :root {
   /* White theme with orange primary and blue accent colors */
   --background: oklch(1 0 0);

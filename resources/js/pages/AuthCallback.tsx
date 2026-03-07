@@ -1,31 +1,30 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { router } from "@inertiajs/react";
 import { useAuth } from "@/contexts/authContext";
 import axios from "@/lib/axios";
 import { Loader2 } from "lucide-react";
 
 export default function AuthCallback() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { setUser, setToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const errorParam = searchParams.get("error");
+    const url = new URL(window.location.href);
+    const token = url.searchParams.get("token");
+    const errorParam = url.searchParams.get("error");
 
     if (errorParam) {
       setError("Authentication failed. Please try again.");
       setLoading(false);
-      setTimeout(() => navigate("/login"), 3000);
+      setTimeout(() => router.visit(route("login")), 3000);
       return;
     }
 
     if (!token) {
       setError("No authentication token received.");
       setLoading(false);
-      setTimeout(() => navigate("/login"), 3000);
+      setTimeout(() => router.visit(route("login")), 3000);
       return;
     }
 
@@ -40,17 +39,17 @@ export default function AuthCallback() {
         const user = response.data.user;
         setUser(user);
         setLoading(false);
-        // Redirect to dashboard
-        navigate("/dashboard");
+        // Redirect to client dashboard
+        router.visit(route("ClientHome"));
       })
       .catch((err) => {
         console.error("Failed to fetch user:", err);
         setError("Failed to load user data.");
         setLoading(false);
         localStorage.removeItem("auth_token");
-        setTimeout(() => navigate("/login"), 3000);
+        setTimeout(() => router.visit(route("login")), 3000);
       });
-  }, [searchParams, navigate, setUser, setToken]);
+  }, [setUser, setToken]);
 
   if (loading) {
     return (

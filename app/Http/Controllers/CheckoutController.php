@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -89,9 +90,8 @@ class CheckoutController extends Controller
 
                 $item['product']->decrement('stock', $item['quantity']);
             }
-
             DB::commit();
-
+            Mail::to($order->customer_email)->queue(new OrderConfirmationMail($order));
             return Inertia::location(route('orders.success', $order->order_number));
 
         } catch (\Throwable $e) {

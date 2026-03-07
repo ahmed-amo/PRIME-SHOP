@@ -13,6 +13,7 @@ use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Auth\GoogleController;
 
 
 //PUBLIC ROUTES
@@ -36,6 +37,15 @@ Route::get('/category/{category:slug}', [HomeController::class, 'get_category_pr
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/orders/success/{orderNumber}', [CheckoutController::class, 'success'])->name('orders.success');
+
+// Google OAuth callback view (Inertia page)
+Route::get('/auth/callback', function () {
+    return Inertia::render('AuthCallback');
+})->name('auth.callback');
+
+// Google OAuth callback endpoint (for Socialite)
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
+    ->name('auth.google.callback.web');
 
 
 //PROTECTED ROUTES
