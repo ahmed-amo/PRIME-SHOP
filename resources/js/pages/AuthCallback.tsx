@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 import { useAuth } from "@/contexts/authContext";
-import axios from "@/lib/axios";
 import { Loader2 } from "lucide-react";
 
 export default function AuthCallback() {
-  const { setUser, setToken } = useAuth();
+  const { setToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,28 +27,15 @@ export default function AuthCallback() {
       return;
     }
 
-    // Store token
-    localStorage.setItem("auth_token", token);
+    // Just set the token — authContext handles everything else
     setToken(token);
 
-    // Fetch user data
-    axios
-      .get("/api/user")
-      .then((response) => {
-        const user = response.data.user;
-        setUser(user);
-        setLoading(false);
-        // Redirect to client dashboard
-        router.visit(route("ClientHome"));
-      })
-      .catch((err) => {
-        console.error("Failed to fetch user:", err);
-        setError("Failed to load user data.");
-        setLoading(false);
-        localStorage.removeItem("auth_token");
-        setTimeout(() => router.visit(route("login")), 3000);
-      });
-  }, [setUser, setToken]);
+    // Give context time to fetch user then redirect
+    setTimeout(() => {
+      router.visit(route("ClientHome"));
+    }, 1000);
+
+  }, []);
 
   if (loading) {
     return (

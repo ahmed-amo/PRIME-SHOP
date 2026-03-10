@@ -11,16 +11,16 @@ import { usePage } from "@inertiajs/react"
 import { Order } from "@/types/order"
 
 const statusConfig = {
-  Delivered: { icon: CheckCircle, color: "bg-green-100 text-green-700 border-green-200" },
-  Shipped: { icon: Truck, color: "bg-blue-100 text-blue-700 border-blue-200" },
-  Canceled: { icon: X, color: "bg-red-100 text-blue-700 border-blue-200" },
-  Processing: { icon: Clock, color: "bg-amber-100 text-amber-700 border-amber-200" },
-  Pending: { icon: Package, color: "bg-gray-100 text-gray-700 border-gray-200" },
+  delivered: { icon: CheckCircle, color: "bg-green-100 text-green-700 border-green-200" },
+  shipped: { icon: Truck, color: "bg-blue-100 text-blue-700 border-blue-200" },
+  cancelled: { icon: X, color: "bg-red-100 text-red-700 border-red-200" },
+  processing: { icon: Clock, color: "bg-amber-100 text-amber-700 border-amber-200" },
+  pending: { icon: Package, color: "bg-gray-100 text-gray-700 border-gray-200" },
 }
 
 export default function OrdersPage() {
 
-    const { orders } = usePage<{ orders: Order[] }>().props
+  const { orders } = usePage<{ orders: Order[] }>().props
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredOrders = orders.filter(
@@ -52,8 +52,9 @@ export default function OrdersPage() {
       {/* Orders List */}
       <div className="space-y-4">
         {filteredOrders.map((order) => {
-          const StatusIcon = statusConfig[order.status as keyof typeof statusConfig].icon
-          const statusColor = statusConfig[order.status as keyof typeof statusConfig].color
+          const config = statusConfig[order.status as keyof typeof statusConfig] ?? statusConfig["pending"]
+          const StatusIcon = config.icon
+          const statusColor = config.color
 
           return (
             <Card key={order.id}>
@@ -93,12 +94,12 @@ export default function OrdersPage() {
                   <Button variant="outline" className="flex-1 bg-transparent text-sm">
                     View Details
                   </Button>
-                  {order.status === "Delivered" && (
+                  {order.status === "delivered" && (
                     <Button variant="outline" className="flex-1 bg-transparent text-sm">
                       Write Review
                     </Button>
                   )}
-                  {order.status === "Shipped" && (
+                  {order.status === "shipped" && (
                     <Button variant="outline" className="flex-1 bg-transparent text-sm">
                       Track Order
                     </Button>
@@ -122,4 +123,5 @@ export default function OrdersPage() {
     </div>
   )
 }
+
 OrdersPage.layout = (page: React.ReactNode) => <ClientLayout>{page}</ClientLayout>;
