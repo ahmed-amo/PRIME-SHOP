@@ -256,4 +256,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-<p align="center">Built with ❤️ by <strong>your name here</strong></p>
+<p align="center">Built with ❤️ by <strong>Ahmed Amokrane</strong></p>
