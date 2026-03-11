@@ -5,7 +5,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Inertia\Inertia;
+use App\Http\Controllers\Shop\SearchController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -23,6 +25,8 @@ Route::get('/', [HomeController::class, 'index'])
 Route::get('/categories', [HomeController::class, 'get_categories'])
     ->name('categories');
 
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
 Route::get('/product/{product:slug}', [ProductController::class, 'get_product_detail'])
     ->name('product_detail');
 
@@ -30,6 +34,7 @@ Route::get('/product', function() {
     return Inertia::render('ProductDetail');
 })->name('product');
 
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 Route::get('/category/{category:slug}', [HomeController::class, 'get_category_products'])
     ->name('category.show');
 

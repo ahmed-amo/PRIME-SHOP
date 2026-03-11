@@ -190,6 +190,8 @@ export default function ShopProducts({ products }: { products: Product[] | { dat
                       price: product.price,
                       image: product.image_url ?? "",
                       description: product.description ?? "",
+                      stock: product.stock,
+                      in_stock: product.in_stock,
                     }}
                   />
                 </div>

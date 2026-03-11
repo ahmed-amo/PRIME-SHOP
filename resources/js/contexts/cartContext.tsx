@@ -1,14 +1,14 @@
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-    quantity: number;
-    description?: string;
-    category?: string;
-  }
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  description?: string;
+  category?: string;
+}
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -19,115 +19,109 @@ interface CartContextType {
   getCartTotal: () => number;
   getItemsCount: () => number;
   isInCart: (productId: number) => boolean;
+  lastAdded: Omit<CartItem, 'quantity'> | null;
+  toastVisible: boolean;
+  setToastVisible: (v: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within CartProvider');
-  }
+  if (!context) throw new Error('useCart must be used within CartProvider');
   return context;
 };
 
 export const CartProvider = ({
   children,
-  userId
+  userId,
 }: {
   children: ReactNode;
   userId?: number | null;
 }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [lastAdded, setLastAdded] = useState<Omit<CartItem, 'quantity'> | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load cart from localStorage on mount
+  // Runs once on mount — Inertia full reloads on login/logout
+  // so this is always a "fresh start" — no need to track changes
   useEffect(() => {
-    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest';
-    const savedCart = localStorage.getItem(cartKey);
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error loading cart:', error);
+    // Always wipe guest cart — guests never get persistence
+    localStorage.removeItem('prime-sh-cart-guest');
+
+    if (userId) {
+      // Logged in — load this user's saved cart
+      const saved = localStorage.getItem(`prime-sh-cart-${userId}`);
+      if (saved) {
+        try { setCartItems(JSON.parse(saved)); }
+        catch { setCartItems([]); }
+      } else {
         setCartItems([]);
       }
     } else {
+      // Not logged in — always empty, no exceptions
       setCartItems([]);
     }
-  }, [userId]);
+  }, []); // empty deps — only runs on mount, which is always a fresh page load
 
-  // Save cart to localStorage whenever it changes
+  // Only persist cart for logged-in users
   useEffect(() => {
-    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest';
-    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+    if (!userId) return; // guests never save
+    localStorage.setItem(`prime-sh-cart-${userId}`, JSON.stringify(cartItems));
   }, [cartItems, userId]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
-
-
     setCartItems(prevItems => {
-      const existingItemIndex = prevItems.findIndex(
-        item => item.id === product.id
-      );
-
-      if (existingItemIndex > -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          quantity: updatedItems[existingItemIndex].quantity + quantity
+      const existingIndex = prevItems.findIndex(i => i.id === product.id);
+      if (existingIndex > -1) {
+        const updated = [...prevItems];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + quantity,
         };
-        return updatedItems;
-      } else {
-        return [...prevItems, { ...product, quantity }];
+        return updated;
       }
+      return [...prevItems, { ...product, quantity }];
     });
+
+    setLastAdded(product);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastVisible(true);
+    toastTimer.current = setTimeout(() => setToastVisible(false), 3500);
   };
 
   const updateQuantity = (id: number, increment: boolean) => {
-    setCartItems(prevItems =>
-      prevItems.map(item => {
-        if (item.id === id) {
-          const newQuantity = increment
-            ? item.quantity + 1
-            : Math.max(1, item.quantity - 1);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { ...item, quantity: increment ? item.quantity + 1 : Math.max(1, item.quantity - 1) }
+          : item
+      )
     );
   };
 
   const removeItem = (id: number) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+    setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
   const clearCart = () => {
-    const cartKey = userId ? `prime-sh-cart-${userId}` : 'prime-sh-cart-guest'
-    localStorage.removeItem(cartKey)
+    if (userId) localStorage.removeItem(`prime-sh-cart-${userId}`);
+    localStorage.removeItem('prime-sh-cart-guest');
+    setCartItems([]);
   };
 
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
+  const getCartTotal = () => cartItems.reduce((t, i) => t + i.price * i.quantity, 0);
+  const getItemsCount = () => cartItems.reduce((c, i) => c + i.quantity, 0);
+  const isInCart = (productId: number) => cartItems.some(i => i.id === productId);
 
-  const getItemsCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
-  };
-
-  const isInCart = (productId: number) => {
-    return cartItems.some(item => item.id === productId);
-  };
-
-  const value = {
-    cartItems,
-    addToCart,
-    updateQuantity,
-    removeItem,
-    clearCart,
-    getCartTotal,
-    getItemsCount,
-    isInCart
-  };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider value={{
+      cartItems, addToCart, updateQuantity, removeItem, clearCart,
+      getCartTotal, getItemsCount, isInCart,
+      lastAdded, toastVisible, setToastVisible,
+    }}>
+      {children}
+    </CartContext.Provider>
+  );
 };

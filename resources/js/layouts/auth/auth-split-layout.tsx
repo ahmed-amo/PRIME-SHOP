@@ -19,18 +19,22 @@ export default function AuthLayout({ children, title, description }: PropsWithCh
                 {/* Content */}
                 <div className="relative z-10 flex flex-col items-center justify-center w-full px-12 text-white">
                     {/* Logo */}
-                    <div className="mb-12">
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition-all duration-300" />
-                            <AppLogoIcon className="h-20 w-auto text-white relative z-10 drop-shadow-2xl" />
-                        </div>
-                    </div>
+                   {/* Logo */}
+{/* Logo */}
+<div className="mb-12">
+    <div className="relative group flex justify-center">
+        <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition-all duration-300" />
+        <img
+            src="/primelogo.png"
+            alt="Prime SH"
+            className="w-40 relative z-10 drop-shadow-2xl scale-[2] origin-center"
+        />
+    </div>
+</div>
 
                     {/* Welcome Message */}
                     <div className="text-center space-y-6 max-w-md">
-                        <h1 className="text-5xl font-bold leading-tight">
-                            Welcome to<br />Prime Shop
-                        </h1>
+
                         <div className="space-y-4 text-lg">
                             <div className="flex items-center justify-center gap-3">
                                 <span className="text-3xl">🎁</span>
@@ -38,11 +42,15 @@ export default function AuthLayout({ children, title, description }: PropsWithCh
                             </div>
                             <div className="flex items-center justify-center gap-3">
                                 <span className="text-3xl">🚀</span>
-                                <span className="font-medium">Fast Delivery Across Algeria</span>
+                                <span className="font-medium">Fast And Free Delivery Across Algeria</span>
                             </div>
                             <div className="flex items-center justify-center gap-3">
                                 <span className="text-3xl">💎</span>
-                                <span className="font-medium">Up to 70% Off Premium Items</span>
+                                <span className="font-medium">Up to 70% Off Sales</span>
+                            </div>
+                            <div className="flex items-center justify-center gap-3">
+                                <span className="text-3xl">💳</span>
+                                <span className="font-medium">Safe and Easy Payments</span>
                             </div>
                         </div>
 
