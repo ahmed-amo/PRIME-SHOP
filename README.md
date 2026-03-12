@@ -22,14 +22,35 @@
 
 > Add your screenshots here by replacing the placeholders below.
 
-| Home Page | Product Detail | Checkout |
-|-----------|---------------|----------|
-| ![Home](screenshots/home.png) | ![Product](screenshots/product.png) | ![Checkout](screenshots/checkout.png) |
+## 📸 Screenshots
 
-| Admin Dashboard | Orders | Search |
-|----------------|--------|--------|
-| ![Admin](screenshots/admin.png) | ![Orders](screenshots/orders.png) | ![Search](screenshots/search.png) |
-
+<p align="center">
+  <img src="public/screens/1 (1).png" width="49%"/>
+  <img src="public/screens/1 (2).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (3).png" width="49%"/>
+  <img src="public/screens/1 (4).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (5).png" width="49%"/>
+  <img src="public/screens/1 (6).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (7).png" width="49%"/>
+  <img src="public/screens/1 (8).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (9).png" width="49%"/>
+  <img src="public/screens/1 (10).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (11).png" width="49%"/>
+  <img src="public/screens/1 (12).png" width="49%"/>
+</p>
+<p align="center">
+  <img src="public/screens/1 (13).png" width="49%"/>
+</p>
 ---
 
 ## 🚀 Tech Stack
