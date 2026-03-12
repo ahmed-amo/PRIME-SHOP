@@ -18,9 +18,6 @@
 
 ---
 
-## 📸 Screenshots
-
-> Add your screenshots here by replacing the placeholders below.
 
 ## 📸 Screenshots
 
@@ -51,7 +48,7 @@
 <p align="center">
   <img src="public/screens/1 (13).png" width="49%"/>
 </p>
----
+
 
 ## 🚀 Tech Stack
 
