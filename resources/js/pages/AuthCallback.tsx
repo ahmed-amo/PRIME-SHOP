@@ -34,7 +34,8 @@ export default function AuthCallback() {
     setTimeout(() => {
       router.visit(route("shop"));
     }, 1000);
-
+    // Intentionally once on mount; setToken is not stable across provider re-renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- OAuth callback: parse URL once
   }, []);
 
   if (loading) {

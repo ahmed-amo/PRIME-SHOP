@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
   ChevronRight,
@@ -212,12 +212,12 @@ const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [], em
   }, []);
 
   // Navigation functions
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (products.length <= visibleProducts) return;
     setCurrentIndex((prev) =>
       prev + 1 >= products.length - visibleProducts + 1 ? 0 : prev + 1
     );
-  };
+  }, [products.length, visibleProducts]);
 
   const goToPrev = () => {
     if (products.length <= visibleProducts) return;
@@ -235,7 +235,7 @@ const ProductTwo: React.FC<ShopSalesProps> = ({ products: propsProducts = [], em
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, products.length, visibleProducts]);
+  }, [currentIndex, products.length, visibleProducts, goToNext]);
 
   // Don't render if no products
   if (!products || products.length === 0) {

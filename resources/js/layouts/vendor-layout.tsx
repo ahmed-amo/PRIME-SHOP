@@ -23,8 +23,6 @@ function postLogout() {
     router.post(route('logout'));
 }
 
-type VendorContext = { shop_name: string; slug: string } | null;
-
 export default function VendorLayout({ children }: { children: React.ReactNode }) {
     const { url, props } = usePage<PageProps>();
     const { t, direction } = useI18n();

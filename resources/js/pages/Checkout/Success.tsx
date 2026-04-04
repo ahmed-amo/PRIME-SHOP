@@ -26,6 +26,7 @@ export default function OrderSuccess({ order }: OrderSuccessProps) {
     // Hide confetti after 3 seconds
     const timer = setTimeout(() => setShowConfetti(false), 3000)
     return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- clear cart once on success mount; clearCart identity not stable
   }, [])
 
   return (
