@@ -7,6 +7,8 @@
   "Settings": "Settings",
   "Home": "Home",
   "Login": "Login",
+  "auth.google_oauth_missing": "Google sign-in is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to your server environment, and set GOOGLE_REDIRECT_URI to match Google Cloud Console (see GOOGLE_OAUTH_SETUP.md).",
+  "auth.google_oauth_failed": "Google sign-in failed. Please try again or use email and password.",
   "Sign Up": "Sign Up",
   "Logout": "Logout",
   "Profile": "Profile",

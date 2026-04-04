@@ -1,6 +1,6 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useMemo, useState } from 'react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -26,6 +26,11 @@ interface LoginProps {
 
 export default function Login({ status, canResetPassword }: LoginProps) {
     const { t, direction } = useI18n();
+    const page = usePage();
+    const queryError = useMemo(() => {
+        const raw = page.url.includes('?') ? page.url.split('?')[1] : '';
+        return new URLSearchParams(raw).get('error');
+    }, [page.url]);
     const isRtl = direction === 'rtl';
     const [activeTab, setActiveTab] = useState('client');
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
@@ -48,6 +53,24 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             {status && (
                 <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-3 text-center text-sm font-medium text-green-700">
                     {status}
+                </div>
+            )}
+
+            {queryError === 'google_oauth_missing' && (
+                <div
+                    className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-900"
+                    role="alert"
+                >
+                    {t('auth.google_oauth_missing')}
+                </div>
+            )}
+
+            {queryError === 'oauth_failed' && (
+                <div
+                    className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-800"
+                    role="alert"
+                >
+                    {t('auth.google_oauth_failed')}
                 </div>
             )}
 

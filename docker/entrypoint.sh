@@ -29,6 +29,9 @@ if [ -f /var/www/html/artisan ]; then
 
     # Run migrations safely (Railway friendly)
     php artisan migrate --force || true
+
+    # Run seeders **once** (remove after first run)
+    php artisan db:seed --force || true
 fi
 
 exec "$@"

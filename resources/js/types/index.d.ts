@@ -26,8 +26,6 @@ export interface SharedData {
     name: string;
     locale?: string;
     direction?: "ltr" | "rtl";
-    messages?: Record<string, string>;
-    quote: { message: string; author: string };
     auth: Auth;
     needs_phone?: boolean;
     adminNotifications?: {

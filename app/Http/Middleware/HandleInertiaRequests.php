@@ -2,28 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * @return array<string, string>
-     */
-    private function localeMessages(string $locale): array
-    {
-        $path = lang_path($locale.'.json');
-
-        if (! file_exists($path)) {
-            return [];
-        }
-
-        $decoded = json_decode((string) file_get_contents($path), true);
-
-        return is_array($decoded) ? $decoded : [];
-    }
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -52,7 +36,6 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
         $locale = app()->getLocale();
         $user = $request->user();
         $isAdmin = $user && $user->role === 'admin';
@@ -76,8 +59,6 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'locale' => $locale,
             'direction' => $locale === 'ar' ? 'rtl' : 'ltr',
-            'messages' => $this->localeMessages($locale),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,

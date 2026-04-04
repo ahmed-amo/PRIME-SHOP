@@ -7,6 +7,8 @@
   "Settings": "الإعدادات",
   "Home": "الرئيسية",
   "Login": "تسجيل الدخول",
+  "auth.google_oauth_missing": "تسجيل الدخول عبر Google غير مُعد. أضف GOOGLE_CLIENT_ID و GOOGLE_CLIENT_SECRET في بيئة الخادم، واضبط GOOGLE_REDIRECT_URI ليطابق Google Cloud Console (راجع GOOGLE_OAUTH_SETUP.md).",
+  "auth.google_oauth_failed": "فشل تسجيل الدخول عبر Google. حاول مرة أخرى أو استخدم البريد وكلمة المرور.",
   "Sign Up": "إنشاء حساب",
   "Logout": "تسجيل الخروج",
   "Profile": "الملف الشخصي",

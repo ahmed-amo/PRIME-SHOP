@@ -242,3 +242,48 @@ You can now easily add more transactional emails:
    Then attach PDF in the `attachments()` method.
 
 All emails will be queued automatically when using `Mail::queue()`.
+
+---
+
+## Error: `Missing required parameter: client_id` (400 invalid_request)
+
+Google shows this when the authorization URL is built **without** a client ID. In this app that almost always means:
+
+1. **`GOOGLE_CLIENT_ID` is empty** (or not loaded) on the server — e.g. Railway/Docker without variables set.
+2. **`GOOGLE_CLIENT_SECRET` is missing** — the app blocks the redirect if either is empty.
+
+### Fix (Railway / any host)
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → your **OAuth 2.0 Client ID**.
+2. Copy **Client ID** and **Client secret**.
+3. In Railway (or your host), add **Variables**:
+   - `GOOGLE_CLIENT_ID` = the Client ID string (ends with `.apps.googleusercontent.com`)
+   - `GOOGLE_CLIENT_SECRET` = the secret
+   - `GOOGLE_REDIRECT_URI` = **exact** callback URL (see below)
+4. Redeploy or restart so PHP reads the new env (and run `php artisan config:clear` if you cache config).
+
+### Authorized redirect URI (must match exactly)
+
+Socialite uses `GOOGLE_REDIRECT_URI` if set; otherwise `APP_URL` + `/auth/google/callback`.
+
+The **Continue with Google** button starts OAuth at **`/api/auth/google`**, but Google always sends the user back to the URI you configure — it must match **one** of:
+
+- **Recommended:** `https://YOUR_DOMAIN/auth/google/callback`  
+  Set `GOOGLE_REDIRECT_URI` to that full URL and add the same URL under **Authorized redirect URIs** in Google Cloud.
+
+If you prefer the API route, use:
+
+- `https://YOUR_DOMAIN/api/auth/google/callback`  
+  and set `GOOGLE_REDIRECT_URI` to that **exact** value (and register it in Google Cloud).
+
+Also set `APP_URL` to your public `https://` URL so fallbacks and links are correct.
+
+### Local development
+
+```env
+GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-...
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+```
+
+Add the same redirect URI in Google Cloud (HTTP localhost is allowed for dev).

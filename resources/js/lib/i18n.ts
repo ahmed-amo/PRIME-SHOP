@@ -1,8 +1,7 @@
 import { useCallback } from "react";
 import { usePage } from "@inertiajs/react";
 import { formatDA } from "@/lib/currency";
-
-type MessagesMap = Record<string, string>;
+import { messagesForLocale, type MessagesMap } from "@/lib/lang-catalog";
 
 /** Localize Laravel pagination link HTML for Arabic (Previous / Next). */
 export function localizePaginationLabelHtml(html: string, locale: string): string {
@@ -18,11 +17,10 @@ export function useI18n() {
   const props = usePage().props as {
     locale?: string;
     direction?: "rtl" | "ltr";
-    messages?: MessagesMap;
   };
 
-  const messages = props.messages ?? {};
   const locale = props.locale ?? "en";
+  const messages: MessagesMap = messagesForLocale(locale);
 
   const t = (key: string): string => messages[key] ?? key;
 

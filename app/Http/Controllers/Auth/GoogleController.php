@@ -20,6 +20,15 @@ class GoogleController extends Controller
      */
     public function redirect(): RedirectResponse
     {
+        $clientId = (string) config('services.google.client_id', '');
+        $clientSecret = (string) config('services.google.client_secret', '');
+
+        if ($clientId === '' || $clientSecret === '') {
+            Log::warning('Google OAuth redirect blocked: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the environment.');
+
+            return redirect()->route('login', ['error' => 'google_oauth_missing']);
+        }
+
         return $this->googleDriver()->redirect();
     }
 
