@@ -1,0 +1,313 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { FulfillmentStatusBadge } from "@/components/order-status-badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Search, Eye, CheckCircle } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import AdminLayout from "../Layouts/admin-layout"
+import { router } from "@inertiajs/react"
+import { formatDA } from "@/lib/currency"
+import { useI18n } from "@/lib/i18n"
+
+type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled"
+
+interface OrderProduct {
+  name: string
+  quantity: number
+  price: number
+}
+
+interface AdminOrder {
+  id: string // order_number like "ORD-ABC123"
+  order_id: number // numeric DB id, used for actions
+  customer: string
+  email: string
+  date: string
+  total: number
+  status: OrderStatus
+  items: number
+  products: OrderProduct[]
+}
+
+interface OrdersPageProps {
+  orders: AdminOrder[]
+}
+
+export default function OrdersPage({ orders }: OrdersPageProps) {
+  const { direction } = useI18n()
+  const isRtl = direction === "rtl"
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
+      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesStatus = statusFilter === "all" || order.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  const handleViewOrder = (order: AdminOrder) => {
+    setSelectedOrder(order)
+    setIsDialogOpen(true)
+  }
+
+  const handleConfirmOrder = (order: AdminOrder) => {
+    router.put(
+      `/admin/customer-orders/${order.order_id}/confirm`,
+      {},
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsDialogOpen(false)
+          setSelectedOrder(null)
+        },
+      },
+    )
+  }
+
+  return (
+    <div dir={direction} className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Orders Management</h1>
+        <p className="text-muted-foreground mt-2">View and manage customer orders</p>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground ${isRtl ? "right-3" : "left-3"}`} />
+          <Input
+            placeholder="Search by order ID, customer name, or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={isRtl ? "pr-9 text-right" : "pl-9"}
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="confirmed">Confirmed</SelectItem>
+            <SelectItem value="shipped">Shipped</SelectItem>
+            <SelectItem value="delivered">Delivered</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {filteredOrders.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8 text-muted-foreground">
+              No orders found
+            </CardContent>
+          </Card>
+        ) : (
+          filteredOrders.map((order) => {
+            return (
+              <Card key={order.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-medium text-base">{order.id}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{order.date}</div>
+                    </div>
+                    <FulfillmentStatusBadge status={order.status} />
+                  </div>
+                  <div className="space-y-2 text-sm mb-3">
+                    <div>
+                      <span className="text-muted-foreground">Customer: </span>
+                      <span className="font-medium">{order.customer}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Email: </span>
+                      <span className="text-xs">{order.email}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <div>
+                        <span className="text-muted-foreground">Items: </span>
+                        <span className="font-medium">{order.items}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Total: </span>
+                        <span className="font-bold text-lg">{formatDA(order.total)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => handleViewOrder(order)} className="flex-1">
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                    {order.status === "pending" && (
+                      <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order)} className="flex-1">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Confirm
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block border rounded-lg bg-card">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className={isRtl ? "text-left" : "text-right"}>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No orders found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders.map((order) => {
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{order.customer}</div>
+                          <div className="text-sm text-muted-foreground">{order.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{order.date}</TableCell>
+                      <TableCell>{order.items}</TableCell>
+                      <TableCell className="font-medium">{formatDA(order.total)}</TableCell>
+                      <TableCell>
+                        <FulfillmentStatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell className={isRtl ? "text-left" : "text-right"}>
+                        <div className={`flex gap-2 ${isRtl ? "justify-start" : "justify-end"}`}>
+                          <Button variant="ghost" size="sm" onClick={() => handleViewOrder(order)}>
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
+                          </Button>
+                          {order.status === "pending" && (
+                            <Button variant="default" size="sm" onClick={() => handleConfirmOrder(order)}>
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Confirm
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Order Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Order Details</DialogTitle>
+            <DialogDescription>View and manage order information</DialogDescription>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Order ID</p>
+                  <p className="text-lg font-semibold">{selectedOrder.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <FulfillmentStatusBadge status={selectedOrder.status} className="mt-1" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Customer</p>
+                  <p className="font-medium">{selectedOrder.customer}</p>
+                  <p className="text-sm text-muted-foreground">{selectedOrder.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Order Date</p>
+                  <p className="font-medium">{selectedOrder.date}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Products</p>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead className={isRtl ? "text-left" : "text-right"}>Price</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedOrder.products.map((product, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{product.name}</TableCell>
+                          <TableCell>{product.quantity}</TableCell>
+                          <TableCell className={isRtl ? "text-left" : "text-right"}>{formatDA(product.price)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-4 border-t">
+                <p className="text-lg font-semibold">Total</p>
+                <p className="text-2xl font-bold text-primary">{formatDA(selectedOrder.total)}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Close
+            </Button>
+            {selectedOrder?.status === "pending" && (
+              <Button onClick={() => handleConfirmOrder(selectedOrder)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Confirm Order
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+OrdersPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;

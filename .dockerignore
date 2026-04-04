@@ -1,0 +1,11 @@
+.git
+.gitignore
+node_modules
+vendor
+.env
+.env.*
+public/storage
+storage/app/public
+storage/logs
+storage/framework
+docker-compose.yml
