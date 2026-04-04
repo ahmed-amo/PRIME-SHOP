@@ -1,35 +1,28 @@
-services:
+version: '3.9'
 
-  # 1. Laravel Application (The "Brain")
+services:
   app:
     build:
       context: .
-      target: development
+      target: production
     container_name: primeshop_app
     restart: unless-stopped
     ports:
       - "8000:80"
-      - "5173:5173"
-    volumes:
-      - .:/var/www/html
-      - node_modules:/var/www/html/node_modules
     environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
+      APP_ENV: production
+      APP_DEBUG: "false"
       APP_KEY: ${APP_KEY}
-      # Database
       DB_CONNECTION: pgsql
       DB_HOST: db
       DB_PORT: 5432
       DB_DATABASE: ${DB_DATABASE:-primeshop}
       DB_USERNAME: ${DB_USERNAME:-primeshop}
       DB_PASSWORD: ${DB_PASSWORD:-zmartcs123}
-      # Redis — overrides whatever is in .env
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_CLIENT: phpredis
       REDIS_PASSWORD: "null"
-      # Use Redis for everything
       SESSION_DRIVER: redis
       CACHE_STORE: redis
       QUEUE_CONNECTION: redis
@@ -39,13 +32,10 @@ services:
       redis:
         condition: service_healthy
 
-  # 2. PostgreSQL (The "Memory")
   db:
     image: postgres:16-alpine
     container_name: primeshop_db
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_DB: ${DB_DATABASE:-primeshop}
       POSTGRES_USER: ${DB_USERNAME:-primeshop}
@@ -58,13 +48,10 @@ services:
       timeout: 5s
       retries: 5
 
-  # 3. Redis (The "Speed Boost")
   redis:
     image: redis:7-alpine
     container_name: primeshop_redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -75,5 +62,4 @@ services:
 
 volumes:
   db_data:
-  node_modules:
   redis_data:
