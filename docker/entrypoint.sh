@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Writable dirs for Laravel + Spatie Media Library
+# 1. Setup Directories
 if [ -d /var/www/html/storage ]; then
     mkdir -p \
         /var/www/html/storage/framework/sessions \
@@ -19,19 +19,21 @@ fi
 if [ -f /var/www/html/artisan ]; then
     cd /var/www/html
 
-    # Storage symlink
-    php artisan storage:link || true
+    # CRITICAL: Clear cache so artisan sees the DB_HOST from Railway env
+    php artisan config:clear
+    php artisan cache:clear
 
-    # Laravel caches for performance
+    # Run migrations
+    echo "Starting migrations..."
+    php artisan migrate --force
+
+    # Run seeders WITHOUT '|| true' so we can see errors in Railway logs
+    echo "Starting seeders..."
+    php artisan db:seed --force
+
+    # Now cache for performance
     php artisan config:cache || true
     php artisan route:cache || true
     php artisan view:cache || true
-
-    # Run migrations safely (Railway friendly)
-    php artisan migrate --force || true
-
-    # Run seeders **once** (remove after first run)
-    php artisan db:seed --force || true
 fi
-
 exec "$@"
