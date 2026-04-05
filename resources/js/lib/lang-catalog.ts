@@ -1,5 +1,5 @@
-import ar from "../../../lang/ar.json";
-import en from "../../../lang/en.json";
+import ar from "../../lang/ar.json";
+import en from "../../lang/en.json";
 
 export type MessagesMap = Record<string, string>;
 
