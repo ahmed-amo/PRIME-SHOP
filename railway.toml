@@ -4,7 +4,6 @@ dockerfilePath = "Dockerfile"
 buildTarget = "production"
 
 [deploy]
-
 startCommand = "/usr/local/bin/docker-entrypoint.sh /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3

@@ -2,10 +2,10 @@
   <img src="public/primelogo.png" alt="Prime SH Logo" width="180"/>
 </p>
 
-<h1 align="center">Prime SH — Full-Stack E-Commerce Platform</h1>
+<h1 align="center">Prime SH — SaaS E-Commerce Platform</h1>
 
 <p align="center">
-  A modern, production-ready e-commerce web application built with Laravel, React, and Inertia.js — featuring multi-gateway payments, real-time search, automated email notifications, and a full admin dashboard.
+  Full-stack e-commerce SaaS built with Laravel, React & Inertia.js — Stripe, PayPal, Chargily Pay, Google OAuth, PDF invoices, vendor onboarding, super-admin tooling, and dashboards.
 </p>
 
 <p align="center">
