@@ -191,7 +191,7 @@ export default function NavBarOne() {
             <img
               src="/primelogo.png"
               alt="Prime SH"
-              className="h-10 w-auto object-contain sm:h-[4.25rem] md:h-[5rem] lg:h-[5.5rem]"
+              className="h-16 w-auto object-contain sm:h-[4.5rem] md:h-[5rem] lg:h-[5.5rem]"
             />
           </Link>
 

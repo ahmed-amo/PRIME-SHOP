@@ -22,6 +22,7 @@ class SuperAdminVendorController extends Controller
             ->through(function (Vendor $v) {
                 return [
                     'id' => $v->id,
+                    'slug' => $v->slug,
                     'shop_name' => $v->shop_name,
                     'owner_email' => $v->user?->email,
                     'product_count' => $v->products_count,

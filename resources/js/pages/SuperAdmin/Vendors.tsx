@@ -9,6 +9,7 @@ import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface Row {
     id: number;
+    slug: string;
     shop_name: string;
     owner_email: string | null;
     product_count: number;
@@ -39,9 +40,9 @@ function statusBadgeClass(status: string): string {
 }
 
 export default function SuperAdminVendors({ vendors }: Props) {
-    const patchStatus = (id: number, status: 'pending' | 'active' | 'suspended') => {
+    const patchStatus = (slug: string, status: 'pending' | 'active' | 'suspended') => {
         router.patch(
-            route('super_admin.vendors.updateStatus', { vendor: id }),
+            route('super_admin.vendors.updateStatus', { vendor: slug }),
             { status },
             { preserveScroll: true },
         );
@@ -93,21 +94,21 @@ export default function SuperAdminVendors({ vendors }: Props) {
                                                             <Button
                                                                 size="sm"
                                                                 className="bg-green-600 hover:bg-green-700"
-                                                                onClick={() => patchStatus(v.id, 'active')}
+                                                                onClick={() => patchStatus(v.slug, 'active')}
                                                             >
                                                                 Approve
                                                             </Button>
                                                             <Button
                                                                 size="sm"
                                                                 variant="outline"
-                                                                onClick={() => patchStatus(v.id, 'suspended')}
+                                                                onClick={() => patchStatus(v.slug, 'suspended')}
                                                             >
                                                                 Reject
                                                             </Button>
                                                         </>
                                                     ) : null}
                                                     {v.status === 'active' ? (
-                                                        <Button size="sm" variant="outline" onClick={() => patchStatus(v.id, 'suspended')}>
+                                                        <Button size="sm" variant="outline" onClick={() => patchStatus(v.slug, 'suspended')}>
                                                             Suspend
                                                         </Button>
                                                     ) : null}
@@ -115,7 +116,7 @@ export default function SuperAdminVendors({ vendors }: Props) {
                                                         <Button
                                                             size="sm"
                                                             className="bg-orange-600 hover:bg-orange-700"
-                                                            onClick={() => patchStatus(v.id, 'active')}
+                                                            onClick={() => patchStatus(v.slug, 'active')}
                                                         >
                                                             Reactivate
                                                         </Button>
