@@ -105,14 +105,33 @@ class Product extends Model implements HasMedia
      */
     public function galleryImageUrl(): ?string
     {
-        if ($this->hasMedia('gallery')) {
-            $url = $this->getFirstMediaUrl('gallery');
-            if (is_string($url) && $url !== '' && $url !== '/') {
-                return $url;
+        return $this->galleryImageUrls()[0] ?? $this->legacyImageAssetUrl();
+    }
+
+    /**
+     * Gallery URLs for storefront cards/details (max 5).
+     *
+     * @return array<int, string>
+     */
+    public function galleryImageUrls(int $max = 5): array
+    {
+        $max = max(1, min(10, $max));
+
+        if ($this->relationLoaded('media') || $this->hasMedia('gallery')) {
+            $urls = $this->getMedia('gallery')
+                ->take($max)
+                ->map(fn ($m) => $m->getUrl())
+                ->filter(fn ($u) => is_string($u) && $u !== '' && $u !== '/')
+                ->values()
+                ->all();
+
+            if (! empty($urls)) {
+                return $urls;
             }
         }
 
-        return $this->legacyImageAssetUrl();
+        $legacy = $this->legacyImageAssetUrl();
+        return $legacy ? [$legacy] : [];
     }
 
     protected function legacyImageAssetUrl(): ?string
@@ -290,6 +309,8 @@ class Product extends Model implements HasMedia
      */
     public function toShopFrontArray(): array
     {
+        $images = $this->galleryImageUrls(5);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -310,9 +331,7 @@ class Product extends Model implements HasMedia
             'reviews_count' => $this->shopReviewsCount(),
             'image' => $this->image,
             'image_url' => $this->galleryImageUrl(),
-            'images' => array_values(array_filter([
-                $this->galleryImageUrl(),
-            ])),
+            'images' => $images,
             'sale_ends_at' => $this->saleScheduleActive() && $this->sale_ends_at
                 ? $this->sale_ends_at->toIso8601String()
                 : null,

@@ -31,7 +31,7 @@ class HomeController extends Controller
      */
     private function buildShopHomePayload(): array
     {
-        $products = Product::with(['category', 'vendor'])
+        $products = Product::with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)
@@ -54,7 +54,7 @@ class HomeController extends Controller
                     : null,
             ]);
 
-        $heroSlides = Product::with(['category', 'vendor'])
+        $heroSlides = Product::with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)
@@ -66,7 +66,7 @@ class HomeController extends Controller
             ->values()
             ->map(fn (Product $product, int $index) => $product->toHeroSlideArray($index));
 
-        $salesProducts = Product::with(['category', 'vendor'])
+        $salesProducts = Product::with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)
@@ -112,7 +112,7 @@ class HomeController extends Controller
         $q = trim((string) $request->query('q', ''));
 
         $query = Product::query()
-            ->with(['category', 'vendor'])
+            ->with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)
@@ -151,7 +151,7 @@ class HomeController extends Controller
         $products = $category->products()
             ->forPublicStorefront()
             ->where('status', true)
-            ->with(['category', 'vendor'])
+            ->with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->latest()
             ->paginate(12);

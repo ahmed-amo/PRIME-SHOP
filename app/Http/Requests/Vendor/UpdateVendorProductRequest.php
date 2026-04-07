@@ -21,6 +21,9 @@ class UpdateVendorProductRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'status' => ['sometimes', 'boolean'],
             'image' => ['nullable', 'image', 'max:20488'],
+            'gallery_images' => ['nullable', 'array', 'max:5'],
+            'gallery_images.*' => ['image', 'max:20488'],
+            'replace_gallery' => ['sometimes', 'boolean'],
         ];
     }
 }

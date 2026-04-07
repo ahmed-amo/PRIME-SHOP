@@ -38,7 +38,7 @@ class SearchController extends Controller
         $like = $this->likeContains(mb_strtolower($this->escapeLike($query)));
 
         $products = Product::query()
-            ->with(['category', 'vendor'])
+            ->with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)
@@ -93,6 +93,7 @@ class SearchController extends Controller
         $like = $this->likeContains(mb_strtolower($this->escapeLike($query)));
 
         $productRows = Product::query()
+            ->with('media')
             ->forPublicStorefront()
             ->where('status', true)
             ->where(function ($q) use ($like) {

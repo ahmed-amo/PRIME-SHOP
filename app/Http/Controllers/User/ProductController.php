@@ -22,6 +22,7 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         $products = Product::with('category')
+            ->with('media')
             ->latest()
             ->paginate(10)
             ->withQueryString()
@@ -39,6 +40,7 @@ class ProductController extends Controller
                 'category' => $product->category ? $product->category->name : null,
                 'category_id' => $product->category_id,
                 'image_url' => $product->galleryImageUrl(),
+                'images' => $product->galleryImageUrls(5),
             ]);
 
         $categories = Category::orderBy('name')->get(['id', 'name']);
@@ -71,7 +73,16 @@ class ProductController extends Controller
             $data['image'] = $path;
         }
 
-        Product::create($data);
+        $galleryFiles = $request->file('gallery_images', []);
+        unset($data['gallery_images'], $data['replace_gallery']);
+
+        $product = Product::create($data);
+
+        if (is_array($galleryFiles) && count($galleryFiles) > 0) {
+            foreach (array_slice($galleryFiles, 0, 5) as $file) {
+                $product->addMedia($file)->toMediaCollection('gallery');
+            }
+        }
 
         return redirect()->route('admin.products')
             ->with('success', 'Product created successfully')
@@ -82,6 +93,7 @@ class ProductController extends Controller
     {
         $this->authorize('update', $product);
 
+        $product->load('media');
         $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Dashboard/Admin/EditProduct', [
@@ -101,6 +113,7 @@ class ProductController extends Controller
                 'status' => $product->status,
                 'category_id' => $product->category_id,
                 'image_url' => $product->galleryImageUrl(),
+                'gallery_images' => $product->galleryImageUrls(5),
                 'hero_sort_order' => $product->hero_sort_order,
             ],
             'categories' => $categories,
@@ -125,7 +138,20 @@ class ProductController extends Controller
             $data['image'] = $path;
         }
 
+        $galleryFiles = $request->file('gallery_images', []);
+        $replace = (bool) ($data['replace_gallery'] ?? false);
+        unset($data['gallery_images'], $data['replace_gallery']);
+
         $product->update($data);
+
+        if (is_array($galleryFiles) && count($galleryFiles) > 0) {
+            if ($replace) {
+                $product->clearMediaCollection('gallery');
+            }
+            foreach (array_slice($galleryFiles, 0, 5) as $file) {
+                $product->addMedia($file)->toMediaCollection('gallery');
+            }
+        }
 
         return redirect()->route('admin.products')
             ->with('success', 'Product created successfully')
@@ -172,7 +198,7 @@ class ProductController extends Controller
     // app/Http/Controllers/ProductController.php
     public function get_product_detail(Product $product)
     {
-        $product->load(['category', 'vendor']);
+        $product->load(['category', 'vendor', 'media']);
 
         if ($product->vendor && $product->vendor->status !== 'active') {
             abort(404);
@@ -223,7 +249,7 @@ class ProductController extends Controller
         ]);
 
         $saleProducts = Product::query()
-            ->with(['category', 'vendor'])
+            ->with(['category', 'vendor', 'media'])
             ->withShopReviewStats()
             ->forPublicStorefront()
             ->where('status', true)

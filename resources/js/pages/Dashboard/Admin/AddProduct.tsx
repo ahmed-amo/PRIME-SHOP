@@ -31,6 +31,7 @@ export default function AddProduct({ categories }: Props) {
     hero_sort_order: "",
   })
   const [image, setImage] = useState<File | null>(null)
+  const [galleryImages, setGalleryImages] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = (e: FormEvent) => {
@@ -51,6 +52,7 @@ export default function AddProduct({ categories }: Props) {
     if (image) {
       data.append('image', image)
     }
+    galleryImages.slice(0, 5).forEach((file) => data.append('gallery_images[]', file))
 
     router.post(route('admin.products.store'), data, {
       onSuccess: () => {
@@ -218,27 +220,38 @@ export default function AddProduct({ categories }: Props) {
           <div className="space-y-6">
             <Card className="border-border shadow-sm">
               <CardHeader>
-                <CardTitle className="text-foreground">Product Image</CardTitle>
+                <CardTitle className="text-foreground">Product Gallery (max 5)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   <div className="space-y-2">
                     <div className="text-muted-foreground text-sm">
-                      {image ? image.name : "Drag and drop or click to upload"}
+                      {galleryImages.length > 0
+                        ? `${galleryImages.length} file(s) selected`
+                        : image
+                        ? image.name
+                        : "Drag and drop or click to upload"}
                     </div>
                     <Input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => setImage(e.target.files?.[0] || null)}
+                      multiple
+                      onChange={(e) => setGalleryImages(Array.from(e.target.files ?? []).slice(0, 5))}
                       className="hidden"
-                      id="image-upload"
+                      id="gallery-upload"
                     />
-                    <Label htmlFor="image-upload">
+                    <Label htmlFor="gallery-upload">
                       <Button variant="outline" size="sm" type="button" asChild>
                         <span>Choose File</span>
                       </Button>
                     </Label>
                   </div>
+                </div>
+                <div className="mt-3 text-xs text-muted-foreground">
+                  Optional: you can still upload a legacy single image below.
+                </div>
+                <div className="mt-3">
+                  <Input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] || null)} />
                 </div>
               </CardContent>
             </Card>

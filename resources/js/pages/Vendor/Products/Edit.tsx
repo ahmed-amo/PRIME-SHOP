@@ -26,6 +26,7 @@ interface ProductRow {
     category_id: number | null;
     status: boolean;
     image_url: string | null;
+    gallery_images?: string[];
 }
 
 interface Props {
@@ -41,6 +42,8 @@ export default function VendorProductEdit({ product, categories }: Props) {
     const [categoryId, setCategoryId] = useState(product.category_id != null ? String(product.category_id) : '');
     const [listed, setListed] = useState(product.status);
     const [image, setImage] = useState<File | null>(null);
+    const [galleryImages, setGalleryImages] = useState<File[]>([]);
+    const [replaceGallery, setReplaceGallery] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -56,6 +59,10 @@ export default function VendorProductEdit({ product, categories }: Props) {
         data.append('category_id', categoryId);
         data.append('status', listed ? '1' : '0');
         if (image) data.append('image', image);
+        if (galleryImages.length > 0) {
+            data.append('replace_gallery', replaceGallery ? '1' : '0');
+            galleryImages.slice(0, 5).forEach((file) => data.append('gallery_images[]', file));
+        }
         data.append('_method', 'put');
 
         router.post(route('vendor.products.update', product.id), data, {
@@ -90,10 +97,19 @@ export default function VendorProductEdit({ product, categories }: Props) {
                             <CardTitle>Details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {product.image_url ? (
+                            {(product.gallery_images?.length ?? 0) > 0 ? (
+                                <div className="space-y-2">
+                                    <p className="text-sm font-medium">Current gallery</p>
+                                    <div className="grid grid-cols-5 gap-2">
+                                        {product.gallery_images?.slice(0, 5).map((url) => (
+                                            <img key={url} src={url} alt="" className="h-16 w-full rounded-md border object-cover" />
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : product.image_url ? (
                                 <div className="flex items-center gap-4">
                                     <img src={product.image_url} alt="" className="h-24 w-24 rounded-lg border object-cover" />
-                                    <p className="text-sm text-muted-foreground">Upload a file to replace the image.</p>
+                                    <p className="text-sm text-muted-foreground">Upload files to create a gallery.</p>
                                 </div>
                             ) : null}
                             <div className="space-y-2">
@@ -151,7 +167,36 @@ export default function VendorProductEdit({ product, categories }: Props) {
                                 <InputError message={errors.category_id} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="image">New image</Label>
+                                <Label htmlFor="gallery_images">New gallery images (max 5)</Label>
+                                <Input
+                                    id="gallery_images"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => {
+                                        const files = Array.from(e.target.files ?? []).slice(0, 5);
+                                        setGalleryImages(files);
+                                    }}
+                                />
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        id="replace_gallery"
+                                        type="checkbox"
+                                        checked={replaceGallery}
+                                        onChange={(e) => setReplaceGallery(e.target.checked)}
+                                        className="rounded border-gray-300"
+                                    />
+                                    <Label htmlFor="replace_gallery">Replace existing gallery</Label>
+                                </div>
+                                <InputError message={errors.gallery_images as any} />
+                                <InputError message={errors['gallery_images.0']} />
+                                <InputError message={errors['gallery_images.1']} />
+                                <InputError message={errors['gallery_images.2']} />
+                                <InputError message={errors['gallery_images.3']} />
+                                <InputError message={errors['gallery_images.4']} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="image">Legacy single image (optional)</Label>
                                 <Input id="image" type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} />
                                 <InputError message={errors.image} />
                             </div>

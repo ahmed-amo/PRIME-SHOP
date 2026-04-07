@@ -35,6 +35,9 @@ class UpdateProductRequest extends FormRequest
             'sku' => ['nullable', 'string', 'max:255'],
             'status' => ['boolean'],
             'image' => ['nullable', 'image', 'max:20488'],
+            'gallery_images' => ['nullable', 'array', 'max:5'],
+            'gallery_images.*' => ['image', 'max:20488'],
+            'replace_gallery' => ['sometimes', 'boolean'],
             'hero_sort_order' => ['nullable', 'integer', 'min:1', 'max:30'],
         ];
     }

@@ -24,7 +24,7 @@ class VendorProductController extends Controller
         abort_unless($vendor, 403);
 
         $products = Product::query()
-            ->with('category')
+            ->with(['category', 'media'])
             ->where('vendor_id', $vendor->id)
             ->latest()
             ->paginate(10)
@@ -39,6 +39,7 @@ class VendorProductController extends Controller
                 'status' => $product->status ? 'Listed' : 'Hidden',
                 'listed' => (bool) $product->status,
                 'image_url' => $product->galleryImageUrl(),
+                'images' => $product->galleryImageUrls(5),
             ]);
 
         return Inertia::render('Vendor/Products/Index', [
@@ -76,7 +77,16 @@ class VendorProductController extends Controller
             $data['status'] = true;
         }
 
-        Product::create($data);
+        $galleryFiles = $request->file('gallery_images', []);
+        unset($data['gallery_images'], $data['replace_gallery']);
+
+        $product = Product::create($data);
+
+        if (is_array($galleryFiles) && count($galleryFiles) > 0) {
+            foreach (array_slice($galleryFiles, 0, 5) as $file) {
+                $product->addMedia($file)->toMediaCollection('gallery');
+            }
+        }
 
         return redirect()->route('vendor.products')
             ->with('success', 'Product created successfully.');
@@ -86,6 +96,7 @@ class VendorProductController extends Controller
     {
         $this->authorize('update', $product);
 
+        $product->load('media');
         $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Vendor/Products/Edit', [
@@ -98,6 +109,7 @@ class VendorProductController extends Controller
                 'category_id' => $product->category_id,
                 'status' => (bool) $product->status,
                 'image_url' => $product->galleryImageUrl(),
+                'gallery_images' => $product->galleryImageUrls(5),
             ],
             'categories' => $categories,
         ]);
@@ -114,7 +126,20 @@ class VendorProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
+        $galleryFiles = $request->file('gallery_images', []);
+        $replace = (bool) ($data['replace_gallery'] ?? false);
+        unset($data['gallery_images'], $data['replace_gallery']);
+
         $product->update($data);
+
+        if (is_array($galleryFiles) && count($galleryFiles) > 0) {
+            if ($replace) {
+                $product->clearMediaCollection('gallery');
+            }
+            foreach (array_slice($galleryFiles, 0, 5) as $file) {
+                $product->addMedia($file)->toMediaCollection('gallery');
+            }
+        }
 
         return redirect()->route('vendor.products')
             ->with('success', 'Product updated successfully.');

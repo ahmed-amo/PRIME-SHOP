@@ -35,6 +35,7 @@ interface Product {
   sku: string
   status: "active" | "low stock" | "out of stock"
   image_url: string | null
+  gallery_images?: string[]
   hero_sort_order?: number | null
 }
 
@@ -64,6 +65,8 @@ export default function EditProduct({ product: initialProduct, categories, error
 
   const [image, setImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [galleryImages, setGalleryImages] = useState<File[]>([])
+  const [replaceGallery, setReplaceGallery] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [flashMessage, setFlashMessage] = useState(flash?.success || "")
 
@@ -151,6 +154,10 @@ export default function EditProduct({ product: initialProduct, categories, error
 
     if (image) {
       data.append('image', image)
+    }
+    if (galleryImages.length > 0) {
+      data.append('replace_gallery', replaceGallery ? '1' : '0')
+      galleryImages.slice(0, 5).forEach((file) => data.append('gallery_images[]', file))
     }
 
     router.post(`/admin/products/${initialProduct.id}`, data, {
@@ -441,9 +448,20 @@ export default function EditProduct({ product: initialProduct, categories, error
           <div className="space-y-6">
             <Card className="border-border shadow-sm">
               <CardHeader>
-                <CardTitle className="text-foreground">Product Image</CardTitle>
+                <CardTitle className="text-foreground">Product Gallery (max 5)</CardTitle>
               </CardHeader>
               <CardContent>
+                {(initialProduct.gallery_images?.length ?? 0) > 0 ? (
+                  <div className="mb-4 space-y-2">
+                    <p className="text-sm font-medium text-foreground">Current gallery</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {initialProduct.gallery_images?.slice(0, 5).map((url) => (
+                        <img key={url} src={url} alt="" className="h-16 w-full rounded-md border object-cover" />
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
                 {imagePreview ? (
                   <div className="relative">
                     <img
@@ -483,6 +501,27 @@ export default function EditProduct({ product: initialProduct, categories, error
                     </div>
                   </div>
                 )}
+
+                <div className="mt-4 space-y-2">
+                  <Label htmlFor="gallery-upload">New gallery images</Label>
+                  <Input
+                    id="gallery-upload"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setGalleryImages(Array.from(e.target.files ?? []).slice(0, 5))}
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="replace_gallery"
+                      type="checkbox"
+                      checked={replaceGallery}
+                      onChange={(e) => setReplaceGallery(e.target.checked)}
+                      className="rounded border-gray-300"
+                    />
+                    <Label htmlFor="replace_gallery">Replace existing gallery</Label>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

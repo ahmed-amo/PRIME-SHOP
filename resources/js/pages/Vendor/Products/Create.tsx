@@ -29,6 +29,7 @@ export default function VendorProductCreate({ categories }: Props) {
     const [categoryId, setCategoryId] = useState('');
     const [listed, setListed] = useState(true);
     const [image, setImage] = useState<File | null>(null);
+    const [galleryImages, setGalleryImages] = useState<File[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -44,6 +45,7 @@ export default function VendorProductCreate({ categories }: Props) {
         data.append('category_id', categoryId);
         data.append('status', listed ? '1' : '0');
         if (image) data.append('image', image);
+        galleryImages.slice(0, 5).forEach((file) => data.append('gallery_images[]', file));
 
         router.post(route('vendor.products.store'), data, {
             forceFormData: true,
@@ -132,7 +134,26 @@ export default function VendorProductCreate({ categories }: Props) {
                                 <InputError message={errors.category_id} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="image">Image</Label>
+                                <Label htmlFor="gallery_images">Gallery images (max 5)</Label>
+                                <Input
+                                    id="gallery_images"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => {
+                                        const files = Array.from(e.target.files ?? []).slice(0, 5);
+                                        setGalleryImages(files);
+                                    }}
+                                />
+                                <InputError message={errors.gallery_images as any} />
+                                <InputError message={errors['gallery_images.0']} />
+                                <InputError message={errors['gallery_images.1']} />
+                                <InputError message={errors['gallery_images.2']} />
+                                <InputError message={errors['gallery_images.3']} />
+                                <InputError message={errors['gallery_images.4']} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="image">Legacy single image (optional)</Label>
                                 <Input id="image" type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} />
                                 <InputError message={errors.image} />
                             </div>
