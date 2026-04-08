@@ -19,6 +19,11 @@ fi
 if [ -f /var/www/html/artisan ]; then
     cd /var/www/html
 
+    # Clear any config cache baked into the image during Docker build so that
+    # runtime environment variables (e.g. APP_NAME) are picked up correctly
+    # when the cache is rebuilt below.
+    php artisan config:clear || true
+
     # Storage symlink
     php artisan storage:link --force || true
 
