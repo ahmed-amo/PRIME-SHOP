@@ -57,6 +57,7 @@ export default function NavBarOne() {
   const user = auth.user;
   const isGuest = !user;
   const isAdmin = user && user.role === "admin";
+  const isVendor = Boolean(user && (user.role === "vendor_admin" || user.role === "vendor_staff"));
   const avatarUrl = user ? getAvatarUrl(user.picture ?? user.avatar) : null;
   const userInitials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";
 
@@ -166,19 +167,25 @@ export default function NavBarOne() {
                       {t("Sales")}
                     </button>
                     <Link
-                      href={route("vendor.register")}
+                      href={isVendor ? route("vendor.products") : route("vendor.register")}
                       className="flex min-h-[3.5rem] items-center gap-4 rounded-2xl border border-orange-200/80 bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 text-lg font-semibold text-white shadow-md transition active:scale-[0.99] rtl:flex-row-reverse hover:from-orange-600 hover:to-amber-600"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
-                        <Store className="h-6 w-6" aria-hidden />
-                        <Upload
-                          className="absolute bottom-1 end-1 h-3.5 w-3.5 text-white"
-                          strokeWidth={2.5}
-                          aria-hidden
-                        />
+                        {isVendor ? (
+                          <LayoutDashboard className="h-6 w-6" aria-hidden />
+                        ) : (
+                          <>
+                            <Store className="h-6 w-6" aria-hidden />
+                            <Upload
+                              className="absolute bottom-1 end-1 h-3.5 w-3.5 text-white"
+                              strokeWidth={2.5}
+                              aria-hidden
+                            />
+                          </>
+                        )}
                       </span>
-                      {t("Become a seller")}
+                      {isVendor ? t("SELL PRODUCTS") : t("Become a seller")}
                     </Link>
                   </nav>
                 </div>
@@ -228,14 +235,24 @@ export default function NavBarOne() {
 
             {!isAdmin && (
               <Button variant="ghost" size="icon" className="hidden h-9 w-9 shrink-0 rounded-full text-black hover:bg-orange-200 sm:h-10 sm:w-10 md:flex" asChild>
-                <Link href={route("vendor.register")} aria-label={t("Sell with us")} title={t("Sell with us")}>
+                <Link
+                  href={isVendor ? route("vendor.products") : route("vendor.register")}
+                  aria-label={isVendor ? t("SELL PRODUCTS") : t("Sell with us")}
+                  title={isVendor ? t("SELL PRODUCTS") : t("Sell with us")}
+                >
                   <span className="relative flex h-9 w-9 items-center justify-center">
-                    <Store className="h-5 w-5" aria-hidden />
-                    <Upload
-                      className="absolute bottom-0 end-0 h-3 w-3 text-orange-500"
-                      strokeWidth={2.5}
-                      aria-hidden
-                    />
+                    {isVendor ? (
+                      <LayoutDashboard className="h-5 w-5" aria-hidden />
+                    ) : (
+                      <>
+                        <Store className="h-5 w-5" aria-hidden />
+                        <Upload
+                          className="absolute bottom-0 end-0 h-3 w-3 text-orange-500"
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
+                      </>
+                    )}
                   </span>
                 </Link>
               </Button>
@@ -306,7 +323,7 @@ export default function NavBarOne() {
                         <DropdownMenuLabel className="font-bold">{user.name}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href="/client/dashboard" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                          <Link href={isVendor ? "/vendor/dashboard" : "/client/dashboard"} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
                             <LayoutDashboard size={18} /> {t("Dashboard")}
                           </Link>
                         </DropdownMenuItem>
