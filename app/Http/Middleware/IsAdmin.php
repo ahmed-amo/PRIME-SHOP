@@ -17,7 +17,7 @@ class IsAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
+        if (Auth::check() && method_exists(Auth::user(), 'uiRole') && Auth::user()->uiRole() === 'admin') {
             return $next($request);
         }
 

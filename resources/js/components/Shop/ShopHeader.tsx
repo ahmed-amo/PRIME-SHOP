@@ -56,8 +56,9 @@ export default function NavBarOne() {
   const { auth } = usePage().props as any;
   const user = auth.user;
   const isGuest = !user;
-  const isAdmin = user && user.role === "admin";
-  const isVendor = Boolean(user && (user.role === "vendor_admin" || user.role === "vendor_staff"));
+  const isAdmin = user?.role === "admin";
+  const isVendor = user?.role === "vendor_admin" || user?.role === "vendor_staff";
+  const isClient = !isAdmin && !isVendor;
   const avatarUrl = user ? getAvatarUrl(user.picture ?? user.avatar) : null;
   const userInitials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";
 
@@ -167,25 +168,19 @@ export default function NavBarOne() {
                       {t("Sales")}
                     </button>
                     <Link
-                      href={isVendor ? route("vendor.products") : route("vendor.register")}
+                      href={route("vendor.register")}
                       className="flex min-h-[3.5rem] items-center gap-4 rounded-2xl border border-orange-200/80 bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 text-lg font-semibold text-white shadow-md transition active:scale-[0.99] rtl:flex-row-reverse hover:from-orange-600 hover:to-amber-600"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
-                        {isVendor ? (
-                          <LayoutDashboard className="h-6 w-6" aria-hidden />
-                        ) : (
-                          <>
-                            <Store className="h-6 w-6" aria-hidden />
-                            <Upload
-                              className="absolute bottom-1 end-1 h-3.5 w-3.5 text-white"
-                              strokeWidth={2.5}
-                              aria-hidden
-                            />
-                          </>
-                        )}
+                        <Store className="h-6 w-6" aria-hidden />
+                        <Upload
+                          className="absolute bottom-1 end-1 h-3.5 w-3.5 text-white"
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
                       </span>
-                      {isVendor ? t("SELL PRODUCTS") : t("Become a seller")}
+                      {t("Become a seller")}
                     </Link>
                   </nav>
                 </div>
@@ -208,7 +203,7 @@ export default function NavBarOne() {
           </div>
 
           {/* Main Navigation (desktop, client only) */}
-          {!isAdmin && (
+          {isClient && (
             <nav className="hidden shrink-0 items-center gap-5 md:flex lg:gap-6 rtl:flex-row-reverse">
               <Link href="/products" className="font-medium text-black hover:text-orange-500">
                 {t("Products")}
@@ -233,7 +228,7 @@ export default function NavBarOne() {
               <LanguageSwitcher />
             </div>
 
-            {!isAdmin && (
+            {isClient && (
               <Button variant="ghost" size="icon" className="hidden h-9 w-9 shrink-0 rounded-full text-black hover:bg-orange-200 sm:h-10 sm:w-10 md:flex" asChild>
                 <Link
                   href={isVendor ? route("vendor.products") : route("vendor.register")}
@@ -319,29 +314,61 @@ export default function NavBarOne() {
                           </Avatar>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
+                    <DropdownMenuContent className="w-56">
                         <DropdownMenuLabel className="font-bold">{user.name}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href={isVendor ? "/vendor/dashboard" : "/client/dashboard"} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
-                            <LayoutDashboard size={18} /> {t("Dashboard")}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/client/my-orders" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
-                            <Package size={18} /> {t("My Orders")}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/client/wishlist" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
-                            <Heart size={18} /> {t("Wishlist")}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/client/profile" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
-                            <UserCog size={18} /> {t("Profile")}
-                          </Link>
-                        </DropdownMenuItem>
+                      {isVendor ? (
+                        <>
+                          <DropdownMenuItem asChild>
+                            <Link href="/vendor/dashboard" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <LayoutDashboard size={18} /> {t("Vendor Dashboard")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={route("vendor.products")} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <Package size={18} /> {t("Products")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={route("vendor.orders")} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <Package size={18} /> {t("Orders")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={route("vendor.sales")} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <Tag size={18} /> {t("Sales")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={route("vendor.settings")} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <UserCog size={18} /> {t("Settings")}
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      ) : (
+                        <>
+                          <DropdownMenuItem asChild>
+                            <Link href="/client/dashboard" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <LayoutDashboard size={18} /> {t("Dashboard")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/client/my-orders" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <Package size={18} /> {t("My Orders")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/client/wishlist" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <Heart size={18} /> {t("Wishlist")}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/client/profile" className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
+                              <UserCog size={18} /> {t("Profile")}
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} className="flex cursor-pointer items-center gap-2 rtl:flex-row-reverse">
                           <LogOut size={18} /> {t("Logout")}

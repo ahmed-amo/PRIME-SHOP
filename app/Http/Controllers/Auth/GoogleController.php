@@ -96,7 +96,7 @@ class GoogleController extends Controller
                     'avatar' => $avatarUrl,
                     'email_verified_at' => now(), // Google emails are verified
                     'password' => null, // No password for Google users
-                    'role' => 'user', // Default role
+                    'role' => $intent === 'vendor' ? 'vendor_admin' : 'client',
                 ]);
 
                 if ($intent === 'vendor') {
@@ -144,6 +144,11 @@ class GoogleController extends Controller
     {
         if (method_exists($user, 'hasAnyRole') && ! $user->hasAnyRole(['vendor_admin', 'vendor_staff'])) {
             $user->assignRole('vendor_admin');
+        }
+
+        if ($user->role !== 'vendor_admin' && $user->role !== 'vendor_staff') {
+            $user->role = 'vendor_admin';
+            $user->save();
         }
 
         if ($user->vendor) {

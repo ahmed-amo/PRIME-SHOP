@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,19 +17,24 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name
 // Protected routes (require Sanctum authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
+        /** @var User $user */
+        $user = $request->user();
         return response()->json([
-            'user' => $request->user()->only([
-                'id',
-                'name',
-                'email',
-                'avatar',
-                'picture',
-                'phone',
-                'address',
-                'role',
-                'google_id',
-                'email_verified_at',
-            ]),
+            'user' => [
+                ...$user->only([
+                    'id',
+                    'name',
+                    'email',
+                    'avatar',
+                    'picture',
+                    'phone',
+                    'address',
+                    'google_id',
+                    'email_verified_at',
+                ]),
+                // Always expose an effective role string for frontend role detection.
+                'role' => $user->uiRole(),
+            ],
         ]);
     })->name('api.user');
 

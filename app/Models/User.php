@@ -105,6 +105,31 @@ class User extends Authenticatable
         return $this->vendor()->exists();
     }
 
+    /**
+     * UI-facing role string used by the frontend for consistent role detection.
+     * Values: admin | vendor_admin | vendor_staff | client
+     */
+    public function uiRole(): string
+    {
+        if (method_exists($this, 'hasRole') && $this->hasRole('super_admin')) {
+            return 'admin';
+        }
+
+        if ($this->role === 'admin') {
+            return 'admin';
+        }
+
+        if (method_exists($this, 'hasRole') && $this->hasRole('vendor_admin')) {
+            return 'vendor_admin';
+        }
+
+        if (method_exists($this, 'hasRole') && $this->hasRole('vendor_staff')) {
+            return 'vendor_staff';
+        }
+
+        return 'client';
+    }
+
     public function getRedirectRoute(): string
     {
         return $this->isAdmin() ? route('admin.dashboard') : '/home';

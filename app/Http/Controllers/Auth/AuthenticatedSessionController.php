@@ -53,7 +53,7 @@ class AuthenticatedSessionController extends Controller
             return route('vendor.dashboard');
         }
 
-        return route('shop');
+        return route('client-dashboard');
     }
 
     /**

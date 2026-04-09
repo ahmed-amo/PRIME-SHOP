@@ -42,7 +42,7 @@ class VendorRegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'user',
+            'role' => 'vendor_admin',
         ]);
 
         $user->assignRole('vendor_admin');

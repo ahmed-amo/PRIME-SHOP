@@ -16,7 +16,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard() {
     const { auth } = usePage<SharedData>().props;
     const user = auth.user;
-    const isAdmin = user.role === 'admin';
+    const isAdmin = user?.role === 'admin';
+    const isVendor = user?.role === 'vendor_admin' || user?.role === 'vendor_staff';
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -70,7 +71,9 @@ export default function Dashboard() {
                             </CardHeader>
                             <CardContent>
                                 <Button asChild variant="outline" className="w-full">
-                                    <Link href="/client/dashboard">Client dashboard</Link>
+                                    <Link href={isVendor ? "/vendor/dashboard" : "/client/dashboard"}>
+                                        {isVendor ? "Vendor dashboard" : "Client dashboard"}
+                                    </Link>
                                 </Button>
                             </CardContent>
                         </Card>
