@@ -261,7 +261,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
                 </div>
 
-                <GoogleLoginButton className="w-full" variant="outline" />
+                <GoogleLoginButton
+                    className="w-full"
+                    variant="outline"
+                    intent={activeTab === 'seller' ? 'vendor' : 'customer'}
+                />
 
                 <div className="text-center text-sm">
                     <span className="text-gray-600">{t("Don't have an account?")} </span>

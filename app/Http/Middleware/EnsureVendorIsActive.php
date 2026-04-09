@@ -9,7 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureVendorIsActive
 {
     /**
-     * Block seller panel until super admin approves (active) or account is not suspended-only landing.
+     * Block seller panel only when suspended.
+     *
+     * Pending vendors can access the seller panel (to start selling) but remain pending
+     * for super admin approval.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -29,10 +32,6 @@ class EnsureVendorIsActive
         $vendor = $user->vendor;
         if ($vendor === null) {
             abort(403, 'No shop profile.');
-        }
-
-        if ($vendor->status === 'pending') {
-            return redirect()->route('vendor.pending');
         }
 
         if ($vendor->status === 'suspended') {

@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 $vendorContext = [
                     'shop_name' => $vendor->shop_name,
                     'slug' => $vendor->slug,
+                    'status' => $vendor->status,
                 ];
             }
         }

@@ -4,6 +4,7 @@ interface GoogleLoginButtonProps {
   className?: string;
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg" | "icon";
+  intent?: "customer" | "vendor";
 }
 
 function GoogleIcon() {
@@ -38,6 +39,7 @@ function GoogleIcon() {
 export default function GoogleLoginButton({
   className = "",
   size = "default",
+  intent = "customer",
 }: GoogleLoginButtonProps) {
   const handleGoogleLogin = () => {
     const fromEnv = import.meta.env.VITE_API_URL as string | undefined;
@@ -45,7 +47,11 @@ export default function GoogleLoginButton({
       typeof fromEnv === "string" && fromEnv.trim() !== ""
         ? fromEnv.replace(/\/$/, "")
         : window.location.origin;
-    window.location.href = `${base}/api/auth/google`;
+    const url = new URL(`${base}/api/auth/google`);
+    if (intent === "vendor") {
+      url.searchParams.set("intent", "vendor");
+    }
+    window.location.href = url.toString();
   };
 
   return (

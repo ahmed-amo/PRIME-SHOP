@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import type { PageProps } from '@/types';
 import { useI18n } from '@/lib/i18n';
 import PhoneRequiredGate from '@/components/PhoneRequiredGate';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function postLogout() {
     router.post(route('logout'));
@@ -29,6 +30,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
     const isRtl = direction === 'rtl';
     const vendorContext = props.vendorContext ?? null;
     const shopLabel = vendorContext?.shop_name ?? t('My shop');
+    const vendorStatus = (props as { vendorContext?: { status?: string | null } | null }).vendorContext?.status ?? null;
 
     const navigation = [
         { name: t('Dashboard'), href: route('vendor.dashboard'), icon: BarChart3 },
@@ -120,16 +122,28 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
                     <Button
                         variant="outline"
                         size="sm"
-                        className="shrink-0 gap-2 border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-900 dark:text-orange-400 dark:hover:bg-orange-950/50"
+                        className="shrink-0 gap-2 border-gray-200 text-gray-900 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-100 dark:hover:bg-gray-800/60"
                         onClick={postLogout}
                     >
-                        <LogOut className="h-4 w-4" />
+                        <LogOut className="h-4 w-4 text-gray-900 dark:text-gray-100" />
                         <span className="hidden sm:inline">{t('Logout')}</span>
                     </Button>
                 </header>
 
                 <main className="flex-1 overflow-y-auto">
-                    <div className="mx-auto max-w-7xl p-4 md:p-6">{children}</div>
+                    <div className="mx-auto max-w-7xl p-4 md:p-6">
+                        {vendorStatus === 'pending' ? (
+                            <Alert className="mb-6 border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+                                <AlertTitle>{t('Seller verification pending')}</AlertTitle>
+                                <AlertDescription>
+                                    {t(
+                                        'You can start selling now. Please make sure your phone number is added. A super admin will approve your shop soon.',
+                                    )}
+                                </AlertDescription>
+                            </Alert>
+                        ) : null}
+                        {children}
+                    </div>
                 </main>
             </div>
         </div>

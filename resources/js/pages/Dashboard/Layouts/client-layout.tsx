@@ -64,8 +64,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {/* Logo Section */}
             <div className="p-6 border-b border-gray-200/50 dark:border-gray-800/50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <ShoppingBag className="h-5 w-5 text-white" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm bg-white/90 border border-gray-200 text-gray-900 dark:bg-gray-900/90 dark:border-gray-800 dark:text-white">
+                  <ShoppingBag className="h-5 w-5" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t("Prime Shop")}</h1>
@@ -302,10 +302,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
                     <DropdownMenuItem
                       onClick={handleLogout}
-                      className="flex items-center gap-3 cursor-pointer py-2 px-2 rounded-md text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
+                      className="flex items-center gap-3 cursor-pointer py-2 px-2 rounded-md text-gray-900 dark:text-gray-100 focus:text-gray-900 focus:bg-gray-50 dark:focus:bg-gray-800/60"
                     >
-                      <div className="w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center">
-                        <LogOut className="h-4 w-4 text-red-600 dark:text-red-400" />
+                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800/70 rounded-lg flex items-center justify-center">
+                        <LogOut className="h-4 w-4 text-gray-900 dark:text-gray-100" />
                       </div>
                       <span className="font-medium">{t("Logout")}</span>
                     </DropdownMenuItem>

@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\WelcomeEmail;
 use App\Models\User;
+use App\Models\Vendor;
 use GuzzleHttp\Client;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\GoogleProvider;
 
@@ -18,7 +21,7 @@ class GoogleController extends Controller
     /**
      * Redirect to Google OAuth
      */
-    public function redirect(): RedirectResponse
+    public function redirect(Request $request): RedirectResponse
     {
         $clientId = (string) config('services.google.client_id', '');
         $clientSecret = (string) config('services.google.client_secret', '');
@@ -29,7 +32,24 @@ class GoogleController extends Controller
             return redirect()->route('login', ['error' => 'google_oauth_missing']);
         }
 
-        return $this->googleDriver()->redirect();
+        $intent = $request->query('intent');
+        $intentValue = $intent === 'vendor' ? 'vendor' : 'customer';
+
+        $response = $this->googleDriver()->redirect();
+
+        // Persist intended account type across OAuth roundtrip (Socialite is stateless here).
+        // Short-lived, httpOnly cookie.
+        return $response->withCookie(cookie()->make(
+            'ps_oauth_intent',
+            $intentValue,
+            10,     // minutes
+            null,
+            null,
+            false,
+            true,
+            false,
+            'Lax',
+        ));
     }
 
     /**
@@ -39,6 +59,7 @@ class GoogleController extends Controller
     {
         try {
             $googleUser = $this->googleDriver()->user();
+            $intent = request()->cookie('ps_oauth_intent') === 'vendor' ? 'vendor' : 'customer';
 
             $avatarUrl = $googleUser->getAvatar();
             if (is_string($avatarUrl) && $avatarUrl !== '' && str_contains($avatarUrl, 'googleusercontent.com')) {
@@ -88,6 +109,10 @@ class GoogleController extends Controller
                 }
             }
 
+            if ($intent === 'vendor') {
+                $this->ensureVendorAccount($user);
+            }
+
             // Log the user into the web guard so Inertia routes see them as authenticated
             Auth::login($user);
 
@@ -95,7 +120,9 @@ class GoogleController extends Controller
             $token = $user->createToken('auth-token')->plainTextToken;
 
             // Redirect to Inertia callback page (served by Laravel)
-            return redirect()->route('auth.callback', ['token' => $token]);
+            return redirect()
+                ->route('auth.callback', ['token' => $token])
+                ->withCookie(cookie()->forget('ps_oauth_intent'));
 
         } catch (\Throwable $e) {
             Log::error('Google OAuth Error', [
@@ -105,6 +132,40 @@ class GoogleController extends Controller
 
             return redirect()->route('login', ['error' => 'oauth_failed']);
         }
+    }
+
+    private function ensureVendorAccount(User $user): void
+    {
+        if (method_exists($user, 'hasAnyRole') && ! $user->hasAnyRole(['vendor_admin', 'vendor_staff'])) {
+            $user->assignRole('vendor_admin');
+        }
+
+        if ($user->vendor) {
+            return;
+        }
+
+        $name = trim((string) $user->name);
+        $baseShopName = $name !== '' ? "{$name}'s Shop" : 'My Shop';
+        $slugBase = Str::slug($baseShopName);
+        if ($slugBase === '') {
+            $slugBase = 'shop';
+        }
+
+        $slug = $slugBase;
+        $n = 2;
+        while (Vendor::where('slug', $slug)->exists()) {
+            $slug = $slugBase.'-'.$n;
+            $n++;
+        }
+
+        Vendor::create([
+            'user_id' => $user->id,
+            'shop_name' => $baseShopName,
+            'slug' => $slug,
+            'phone' => $user->phone ?? null,
+            'description' => null,
+            'status' => 'pending',
+        ]);
     }
 
     private function googleDriver(): GoogleProvider
