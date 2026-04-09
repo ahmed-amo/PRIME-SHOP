@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 import { formatDA } from '@/lib/currency';
 
 interface Row {
@@ -201,4 +201,4 @@ export default function VendorProductsIndex({ products, success }: Props) {
     );
 }
 
-VendorProductsIndex.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorProductsIndex.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

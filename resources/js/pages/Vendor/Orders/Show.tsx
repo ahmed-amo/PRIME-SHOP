@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 import { formatDA } from '@/lib/currency';
 
 interface Item {
@@ -167,4 +167,4 @@ export default function VendorOrderShow({ vendorOrder, order, items }: Props) {
     );
 }
 
-VendorOrderShow.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorOrderShow.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

@@ -3,7 +3,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Package, ShoppingCart, Clock, Banknote } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 import type { PageProps } from '@/types';
 import { formatDA } from '@/lib/currency';
 
@@ -96,4 +96,4 @@ export default function VendorDashboardPage() {
     );
 }
 
-VendorDashboardPage.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorDashboardPage.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

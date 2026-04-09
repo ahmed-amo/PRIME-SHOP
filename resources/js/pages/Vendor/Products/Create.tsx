@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 
 interface Category {
     id: number;
@@ -180,4 +180,4 @@ export default function VendorProductCreate({ categories }: Props) {
     );
 }
 
-VendorProductCreate.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorProductCreate.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

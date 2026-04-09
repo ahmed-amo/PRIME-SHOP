@@ -82,8 +82,10 @@ class GoogleController extends Controller
                     $user->avatar = $avatarUrl;
                 }
                 $user->save();
-                if (! $user->hasRole('customer') && ! $user->hasAnyRole(['super_admin', 'vendor_admin', 'vendor_staff'])) {
-                    $user->assignRole('customer');
+                if ($intent === 'customer') {
+                    if (! $user->hasRole('customer') && ! $user->hasAnyRole(['super_admin', 'vendor_admin', 'vendor_staff'])) {
+                        $user->assignRole('customer');
+                    }
                 }
             } else {
                 // New user: create account
@@ -97,7 +99,11 @@ class GoogleController extends Controller
                     'role' => 'user', // Default role
                 ]);
 
-                $user->assignRole('customer');
+                if ($intent === 'vendor') {
+                    $user->assignRole('vendor_admin');
+                } else {
+                    $user->assignRole('customer');
+                }
 
                 try {
                     Mail::to($user->email)->queue(new WelcomeEmail($user));
@@ -121,7 +127,7 @@ class GoogleController extends Controller
 
             // Redirect to Inertia callback page (served by Laravel)
             return redirect()
-                ->route('auth.callback', ['token' => $token])
+                ->route('auth.callback', ['token' => $token, 'intent' => $intent])
                 ->withCookie(cookie()->forget('ps_oauth_intent'));
 
         } catch (\Throwable $e) {
@@ -164,7 +170,7 @@ class GoogleController extends Controller
             'slug' => $slug,
             'phone' => $user->phone ?? null,
             'description' => null,
-            'status' => 'pending',
+            'status' => 'active',
         ]);
     }
 

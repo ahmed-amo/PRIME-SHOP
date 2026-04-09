@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Search, Percent, Save, XCircle, RefreshCw } from "lucide-react";
-import VendorLayout from "@/layouts/vendor-layout";
+import VendorDashboardLayout from "@/pages/Dashboard/Layouts/vendor-dashboard-layout";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useI18n } from "@/lib/i18n";
 
@@ -331,4 +331,4 @@ export default function VendorSales({ products }: Props) {
   );
 }
 
-VendorSales.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorSales.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

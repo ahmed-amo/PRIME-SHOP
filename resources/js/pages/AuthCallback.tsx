@@ -27,12 +27,18 @@ export default function AuthCallback() {
       return;
     }
 
+    const intent = url.searchParams.get("intent");
+
     // Just set the token — authContext handles everything else
     setToken(token);
 
     // Give context time to fetch user then redirect
     setTimeout(() => {
-      router.visit(route("shop"));
+      if (intent === "vendor") {
+        router.visit(route("vendor.dashboard"));
+        return;
+      }
+      router.visit(route("client-dashboard"));
     }, 1000);
     // Intentionally once on mount; setToken is not stable across provider re-renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- OAuth callback: parse URL once

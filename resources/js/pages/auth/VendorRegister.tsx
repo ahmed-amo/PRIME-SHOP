@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import AuthLayout from '@/layouts/auth-layout';
+import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { useI18n } from '@/lib/i18n';
 
 type VendorRegisterForm = {
@@ -187,6 +188,17 @@ export default function VendorRegister() {
                     {processing && <LoaderCircle className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 animate-spin`} />}
                     {t('Create shop')}
                 </Button>
+
+                <div className="relative my-1">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-3 text-gray-500">{t('Or continue with')}</span>
+                    </div>
+                </div>
+
+                <GoogleLoginButton className="w-full" variant="outline" intent="vendor" />
 
                 <div className="text-center text-sm">
                     <span className="text-gray-600">{t('Already have an account?')} </span>

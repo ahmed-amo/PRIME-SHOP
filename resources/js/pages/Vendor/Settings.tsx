@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Head } from '@inertiajs/react';
 
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 
 export default function VendorSettingsPage() {
     return (
@@ -13,4 +13,4 @@ export default function VendorSettingsPage() {
     );
 }
 
-VendorSettingsPage.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorSettingsPage.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;

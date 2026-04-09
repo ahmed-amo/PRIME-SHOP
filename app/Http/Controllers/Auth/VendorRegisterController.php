@@ -55,15 +55,15 @@ class VendorRegisterController extends Controller
             'slug' => $slug,
             'phone' => $validated['phone'] ?? null,
             'description' => $validated['description'] ?? null,
-            'status' => 'pending',
+            'status' => 'active',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->route('vendor.pending')
-            ->with('success', 'Your seller application was submitted. A platform admin will approve your shop shortly.');
+        return redirect()->route('vendor.dashboard')
+            ->with('success', 'Welcome! Your shop is ready — you can start selling now.');
     }
 
     private function uniqueSlugFromShopName(string $shopName): string

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import VendorLayout from '@/layouts/vendor-layout';
+import VendorDashboardLayout from '@/pages/Dashboard/Layouts/vendor-dashboard-layout';
 import { formatDA } from '@/lib/currency';
 
 interface Row {
@@ -141,4 +141,4 @@ export default function VendorOrdersIndex({ orders, filters }: Props) {
     );
 }
 
-VendorOrdersIndex.layout = (page: ReactNode) => <VendorLayout>{page}</VendorLayout>;
+VendorOrdersIndex.layout = (page: ReactNode) => <VendorDashboardLayout>{page}</VendorDashboardLayout>;
