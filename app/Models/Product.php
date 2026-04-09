@@ -34,6 +34,7 @@ class Product extends Model implements HasMedia
         'status',
         'hero_sort_order',
         'image',
+        'gallery_urls',
     ];
 
     protected $casts = [
@@ -46,6 +47,7 @@ class Product extends Model implements HasMedia
         'stock' => 'integer',
         'status' => 'boolean',
         'hero_sort_order' => 'integer',
+        'gallery_urls' => 'array',
     ];
 
     protected $appends = [
@@ -96,7 +98,35 @@ class Product extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('gallery');
+        $disk = (string) config('media-library.disk_name', 's3');
+
+        $this->addMediaCollection('gallery')
+            ->useDisk($disk)
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']);
+    }
+
+    /**
+     * Persist public gallery URLs on the product row (R2/S3). Call after add/remove/reorder media.
+     *
+     * @return $this
+     */
+    public function syncGalleryUrlsFromMedia(): self
+    {
+        if (! $this->exists) {
+            return $this;
+        }
+
+        $urls = $this->getMedia('gallery')
+            ->sortBy(fn ($m) => $m->order_column ?? $m->id)
+            ->values()
+            ->map(fn ($media) => $media->getUrl())
+            ->filter(fn ($u) => is_string($u) && $u !== '' && $u !== '/')
+            ->values()
+            ->all();
+
+        $this->forceFill(['gallery_urls' => $urls])->saveQuietly();
+
+        return $this;
     }
 
     /**
@@ -128,6 +158,10 @@ class Product extends Model implements HasMedia
             if (! empty($urls)) {
                 return $urls;
             }
+        }
+
+        if (is_array($this->gallery_urls) && count($this->gallery_urls) > 0) {
+            return array_slice(array_values(array_filter($this->gallery_urls, fn ($u) => is_string($u) && $u !== '')), 0, $max);
         }
 
         $legacy = $this->legacyImageAssetUrl();

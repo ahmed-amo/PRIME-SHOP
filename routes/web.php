@@ -8,6 +8,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\RequiredPhoneController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\ProductGalleryBladeController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\Shop\ProductReviewController;
 use App\Http\Controllers\Shop\SearchController;
@@ -80,6 +81,10 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/product/{product:slug}', [ProductController::class, 'get_product_detail'])
     ->name('product_detail');
+
+/** Optional Blade demo: R2 gallery URLs (remove route if unused). */
+Route::get('/product/{product:slug}/gallery-blade', [ProductGalleryBladeController::class, 'show'])
+    ->name('product.gallery.blade');
 
 Route::post('/product/{product:slug}/reviews', [ProductReviewController::class, 'store'])
     ->middleware('auth')

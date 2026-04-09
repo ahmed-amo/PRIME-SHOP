@@ -88,6 +88,8 @@ class VendorProductController extends Controller
             }
         }
 
+        $product->syncGalleryUrlsFromMedia();
+
         return redirect()->route('vendor.products')
             ->with('success', 'Product created successfully.');
     }
@@ -140,6 +142,8 @@ class VendorProductController extends Controller
                 $product->addMedia($file)->toMediaCollection('gallery');
             }
         }
+
+        $product->syncGalleryUrlsFromMedia();
 
         return redirect()->route('vendor.products')
             ->with('success', 'Product updated successfully.');

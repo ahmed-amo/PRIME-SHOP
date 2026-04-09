@@ -84,6 +84,8 @@ class ProductController extends Controller
             }
         }
 
+        $product->syncGalleryUrlsFromMedia();
+
         return redirect()->route('admin.products')
             ->with('success', 'Product created successfully')
             ->with('preserveScroll', true);
@@ -152,6 +154,8 @@ class ProductController extends Controller
                 $product->addMedia($file)->toMediaCollection('gallery');
             }
         }
+
+        $product->syncGalleryUrlsFromMedia();
 
         return redirect()->route('admin.products')
             ->with('success', 'Product created successfully')
