@@ -51,9 +51,9 @@ class ProfileController extends Controller
         $user = $request->user();
         if ($request->hasFile('picture')) {
             $file = $request->file('picture');
-            $path = $file->store('avatars', ['disk' => 'public']);
+            $path = $file->store('avatars', ['disk' => config('filesystems.default')]);
             if ($user->picture) {
-                Storage::disk('public')->delete($user->picture);
+                Storage::disk(config('filesystems.default'))->delete($user->picture);
             }
             $user->picture = $path;
             $user->save();

@@ -26,7 +26,7 @@ class CategoryController extends Controller
             if (Str::startsWith($category->image, 'catpics/')) {
                 $category->image_url = asset($category->image);
             } else {
-                $category->image_url = asset('storage/' . $category->image);
+                $category->image_url = Storage::disk(config('filesystems.default'))->url($category->image);
             }
         }
         return $category;
@@ -58,7 +58,7 @@ class CategoryController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('categories', 'public');
+            $path = $request->file('image')->store('categories', config('filesystems.default'));
             $validated['image'] = $path;
         }
 
@@ -96,10 +96,10 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($category->image) {
-                Storage::disk('public')->delete($category->image);
+                Storage::disk(config('filesystems.default'))->delete($category->image);
             }
 
-            $path = $request->file('image')->store('categories', 'public');
+            $path = $request->file('image')->store('categories', config('filesystems.default'));
             $validated['image'] = $path;
         }
 
@@ -112,7 +112,7 @@ class CategoryController extends Controller
     {
         // Delete image if exists
         if ($category->image) {
-            Storage::disk('public')->delete($category->image);
+            Storage::disk(config('filesystems.default'))->delete($category->image);
         }
 
         $category->delete();

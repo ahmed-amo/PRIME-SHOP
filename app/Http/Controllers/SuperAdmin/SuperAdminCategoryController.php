@@ -25,7 +25,7 @@ class SuperAdminCategoryController extends Controller
             if ($category->image) {
                 $category->image_url = Str::startsWith($category->image, 'catpics/')
                     ? asset($category->image)
-                    : asset('storage/'.$category->image);
+                    : Storage::disk(config('filesystems.default'))->url($category->image);
             } else {
                 $category->image_url = null;
             }
@@ -63,7 +63,7 @@ class SuperAdminCategoryController extends Controller
         $validated['slug'] = $slug;
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('categories', 'public');
+            $validated['image'] = $request->file('image')->store('categories', config('filesystems.default'));
         }
 
         if (! array_key_exists('status', $validated)) {
@@ -101,7 +101,7 @@ class SuperAdminCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteCategoryImage($category->image);
-            $validated['image'] = $request->file('image')->store('categories', 'public');
+            $validated['image'] = $request->file('image')->store('categories', config('filesystems.default'));
         }
 
         $category->update($validated);
@@ -131,6 +131,6 @@ class SuperAdminCategoryController extends Controller
         if (Str::startsWith($path, ['catpics/', 'producss/'])) {
             return;
         }
-        Storage::disk('public')->delete($path);
+        Storage::disk(config('filesystems.default'))->delete($path);
     }
 }

@@ -69,7 +69,7 @@ class VendorProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = $request->file('image')->store('products', config('filesystems.default'));
         }
 
         $data['vendor_id'] = $vendor->id;
@@ -123,7 +123,7 @@ class VendorProductController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteUploadableProductImage($product->image);
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = $request->file('image')->store('products', config('filesystems.default'));
         }
 
         $galleryFiles = $request->file('gallery_images', []);
@@ -167,6 +167,6 @@ class VendorProductController extends Controller
         if (Str::startsWith($path, ['http://', 'https://'])) {
             return;
         }
-        Storage::disk('public')->delete($path);
+        Storage::disk(config('filesystems.default'))->delete($path);
     }
 }

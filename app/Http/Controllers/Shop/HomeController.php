@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Support\ShopHomeCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -50,7 +51,9 @@ class HomeController extends Controller
                 'description' => $category->description,
                 'color' => $category->color,
                 'image_url' => $category->image
-                    ? (Str::startsWith($category->image, 'catpics/') ? asset($category->image) : asset('storage/'.$category->image))
+                    ? (Str::startsWith($category->image, 'catpics/')
+                        ? asset($category->image)
+                        : Storage::disk(config('filesystems.default'))->url($category->image))
                     : null,
             ]);
 
@@ -164,7 +167,7 @@ class HomeController extends Controller
         if ($category->image) {
             $imageUrl = Str::startsWith($category->image, 'catpics/')
                 ? asset($category->image)
-                : asset('storage/'.$category->image);
+                : Storage::disk(config('filesystems.default'))->url($category->image);
         }
 
         return Inertia::render('CategoryDetail', [
@@ -192,7 +195,9 @@ class HomeController extends Controller
                 'description' => $category->description,
                 'color' => $category->color,
                 'image_url' => $category->image
-                    ? (Str::startsWith($category->image, 'catpics/') ? asset($category->image) : asset('storage/'.$category->image))
+                    ? (Str::startsWith($category->image, 'catpics/')
+                        ? asset($category->image)
+                        : Storage::disk(config('filesystems.default'))->url($category->image))
                     : null,
             ]);
 

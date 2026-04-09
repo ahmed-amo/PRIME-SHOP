@@ -7,6 +7,7 @@ export function getAvatarUrl(picture?: string | null): string | null {
     return picture;
   }
 
+  // Backward-compat: if backend still sends a relative path, fall back to storage route.
   return `/storage/${picture.replace(/^storage\//, "")}`;
 }
 

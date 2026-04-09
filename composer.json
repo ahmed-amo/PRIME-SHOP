@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
+        "league/flysystem-aws-s3-v3": "3.0",
         "predis/predis": "^3.4",
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-permission": "^7.2",

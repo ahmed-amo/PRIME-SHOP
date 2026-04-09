@@ -148,7 +148,7 @@ class Product extends Model implements HasMedia
             return asset($this->image);
         }
 
-        return Storage::disk('public')->url($this->image);
+        return Storage::disk(config('filesystems.default'))->url($this->image);
     }
 
     public function vendor(): BelongsTo

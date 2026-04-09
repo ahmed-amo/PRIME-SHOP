@@ -66,7 +66,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'email' => $user->email,
                     'role' => method_exists($user, 'uiRole') ? $user->uiRole() : $user->role,
-                    'picture' => $user->picture,
+                    'picture' => $user->avatarDisplayUrl(),
                     'avatar' => $user->avatar,
                     'phone' => $user->phone,
                     'phone_country_dial' => $user->phone_country_dial,

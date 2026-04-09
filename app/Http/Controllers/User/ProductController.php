@@ -69,7 +69,7 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
+            $path = $request->file('image')->store('products', config('filesystems.default'));
             $data['image'] = $path;
         }
 
@@ -134,7 +134,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteUploadableProductImage($product->image);
-            $path = $request->file('image')->store('products', 'public');
+            $path = $request->file('image')->store('products', config('filesystems.default'));
             $data['image'] = $path;
         }
 
@@ -192,7 +192,7 @@ class ProductController extends Controller
         if (Str::startsWith($path, ['http://', 'https://'])) {
             return;
         }
-        Storage::disk('public')->delete($path);
+        Storage::disk(config('filesystems.default'))->delete($path);
     }
 
     // app/Http/Controllers/ProductController.php

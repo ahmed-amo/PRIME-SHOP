@@ -26,12 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
                     'name',
                     'email',
                     'avatar',
-                    'picture',
                     'phone',
                     'address',
                     'google_id',
                     'email_verified_at',
                 ]),
+                'picture' => $user->avatarDisplayUrl(),
                 // Always expose an effective role string for frontend role detection.
                 'role' => $user->uiRole(),
             ],
