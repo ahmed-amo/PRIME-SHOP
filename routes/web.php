@@ -31,6 +31,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// DEBUG ROUTE
+Route::get('/debug-app-name', function () {
+    return response()->json([
+        'APP_NAME_env' => env('APP_NAME'),
+        'config_app_name' => config('app.name'),
+    ]);
+});
+
 // PUBLIC ROUTES
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
